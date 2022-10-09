@@ -19,6 +19,7 @@ All **data** is stored in a single **SQLite database** for full control and port
 * **Strength training chart:** :x:
 * **Endurance workout:** :x:
 * **Endurance workout chart:** :x:
+* **Authentication** :heavy_check_mark:
 * **Dockerfile** :heavy_check_mark:
 
 ## Screenshots
@@ -60,3 +61,7 @@ dotnet watch
 ## Development
 
 Use Visual Studio.
+
+## Resources used
+
+* [Combining Bearer Token and Cookie Authentication in ASP.NET](https://weblog.west-wind.com/posts/2022/Mar/29/Combining-Bearer-Token-and-Cookie-Auth-in-ASPNET)
