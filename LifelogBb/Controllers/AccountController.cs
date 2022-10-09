@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using LifelogBb.Models.Account;
+using Microsoft.AspNetCore.Identity;
 
 namespace LifelogBb.Controllers
 {
@@ -50,7 +51,7 @@ namespace LifelogBb.Controllers
                 return RedirectToAction(actionName: "Index", controllerName: "Home");
             }
 
-            // Message = "Invalid password.";
+            ModelState.AddModelError("Password", "Invalid password.");
 
             return View(loginModel);
         }
@@ -59,6 +60,27 @@ namespace LifelogBb.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Redirect("/Account/Login");
+        }
+
+        [AllowAnonymous]
+        public IActionResult GeneratePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public IActionResult GeneratePassword([Bind("Password")] GeneratePasswordModel model)
+        {
+            if (model.Password is null)
+            {
+                ModelState.AddModelError("Password", "Invalid password.");
+                return View(model);
+            }
+
+            model.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            return View(model);
         }
     }
 }
