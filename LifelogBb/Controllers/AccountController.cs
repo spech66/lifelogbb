@@ -54,5 +54,11 @@ namespace LifelogBb.Controllers
 
             return View(loginModel);
         }
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Redirect("/Account/Login");
+        }
     }
 }
