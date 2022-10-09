@@ -19,6 +19,7 @@ namespace LifelogBb
             services.AddControllersWithViews() // MVC controllers
                 .AddMvcOptions(options => options.Filters.Add(new AuthorizeFilter())); // Add Authorize Attribute globally
             services.AddControllers(); // API controllers
+            services.AddSwaggerGen(); // Swagger
 
             ConfigureCookieJwt(services, config);
 
@@ -44,6 +45,12 @@ namespace LifelogBb
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapControllers();
+
+            // Swagger
+            app.UseSwagger();
+            app.UseSwaggerUI(options => {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+            });
 
             app.Run();
         }

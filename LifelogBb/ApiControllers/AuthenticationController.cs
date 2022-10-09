@@ -11,7 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 
-namespace LifelogBb.Controllers
+namespace LifelogBb.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
