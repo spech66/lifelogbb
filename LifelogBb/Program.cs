@@ -4,6 +4,12 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using System.Text;
+using AutoMapper;
+using LifelogBb.Interfaces;
+using LifelogBb.ApiServices;
+using LifelogBb.ApiRepositories;
+using LifelogBb.Models;
+using Microsoft.OpenApi.Models;
 
 namespace LifelogBb
 {
@@ -16,10 +22,47 @@ namespace LifelogBb
             var config = builder.Configuration;
 
             // Add services to the container.
+            services.AddEntityFrameworkSqlite().AddDbContext<LifelogBbContext>();
+
             services.AddControllersWithViews() // MVC controllers
                 .AddMvcOptions(options => options.Filters.Add(new AuthorizeFilter())); // Add Authorize Attribute globally
-            services.AddControllers(); // API controllers
-            services.AddSwaggerGen(); // Swagger
+            services.AddControllers() // API controllers
+                .AddMvcOptions(options => options.Filters.Add(new AuthorizeFilter())); // Add Authorize Attribute globally
+            services.AddSwaggerGen(option =>
+            {
+                option.SwaggerDoc("v1", new OpenApiInfo { Title = "LifelogBb API", Version = "v1" });
+                option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter the JWT.",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "Bearer"
+                });
+                option.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type=ReferenceType.SecurityScheme,
+                                Id="Bearer"
+                            }
+                        },
+                        new string[]{}
+                    }
+                });
+            }); // Swagger
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            // Add all Repositories
+            services.AddScoped(typeof(IRepository<>), typeof(EntityRepository<>));
+
+            // Add scoped (per client connection) services
+            services.AddScoped<WeightsService>();
 
             ConfigureCookieJwt(services, config);
 
@@ -50,6 +93,7 @@ namespace LifelogBb
             app.UseSwagger();
             app.UseSwaggerUI(options => {
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                options.EnablePersistAuthorization();
             });
 
             app.Run();

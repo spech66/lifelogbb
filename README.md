@@ -68,6 +68,10 @@ Use Visual Studio.
 
 Swagger UI at `https://localhost:7290/Swagger/`.
 
+Generate database migrations using `Add-Migration NAME`.
+
+Apply migrations using `Update-Database`.
+
 ## Resources used
 
 * [Combining Bearer Token and Cookie Authentication in ASP.NET](https://weblog.west-wind.com/posts/2022/Mar/29/Combining-Bearer-Token-and-Cookie-Auth-in-ASPNET)
