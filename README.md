@@ -1,6 +1,6 @@
 # lifelogbb
 
-Lifelog - All your life related things in one place. **Journal, weight, Strength training, endurance training tracker, Bucket list, Vision board, ... **.
+Lifelog - All your life related things in one place. **Journal, weight, Strength training, endurance training tracker, Bucket list, Vision board, ...**.
 
 This service is build for a **single user**. **Password authentication** is included for the sites and API endpoints.
 
@@ -18,6 +18,7 @@ All **data** is stored in a single **SQLite database** for full control and port
 * **Endurance workout:** :x:
 * **Endurance workout chart:** :x:
 * **Authentication** :heavy_check_mark:
+* **SQLite** :construction:
 * **Dockerfile** :heavy_check_mark:
 
 ## Screenshots
@@ -28,9 +29,14 @@ All **data** is stored in a single **SQLite database** for full control and port
 
 Clone the repository and run docker.
 
-```powershell
+```sh
 git clone https://github.com/spech66/lifelogbb.git
-docker run
+```
+
+Set database path to `"/database"` in the `appsettings`.
+
+```sh
+sudo docker run -v lifelogbbdatabase:/database -p 80:80 -p 443:443
 ```
 
 Hosting a [secure app](https://learn.microsoft.com/en-us/aspnet/core/security/docker-https?view=aspnetcore-6.0).
