@@ -1,7 +1,5 @@
 # lifelogbb
 
-[![Known Vulnerabilities](https://snyk.io/test/github/spech66/lifelogbb/badge.svg)](https://snyk.io/test/github/spech66/lifelogbb)
-
 Lifelog - All your life related things in one place. **Journal, weight, Strength training, endurance training tracker, Bucket list, Vision board, ... **.
 
 This service is build for a **single user**. **Password authentication** is included for the sites and API endpoints.
