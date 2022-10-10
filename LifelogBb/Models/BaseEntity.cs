@@ -6,7 +6,7 @@ namespace LifelogBb.Models
     {
         public long Id { get; set; }
 
-        [Display(Name = "Creation Date")]
+        [Display(Name = "Date")]
         [DataType(DataType.Date)]
         public DateTime CreatedAt { get; set; }
 
