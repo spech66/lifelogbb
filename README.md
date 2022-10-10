@@ -1,4 +1,4 @@
-# lifelogbb
+# LifelogBB
 
 Lifelog - All your life related things in one place. **Journal, weight, Strength training, endurance training tracker, Bucket list, Vision board, ...**.
 
@@ -49,7 +49,7 @@ Run it by pressing F5 in Visual Studio or using the [dotnet cli](https://dotnet.
 
 ```powershell
 git clone https://github.com/spech66/lifelogbb.git
-cd LifelogBB
+cd LifelogBb
 dotnet watch
 ```
 
