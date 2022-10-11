@@ -43,6 +43,7 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index"><i class="fa-solid fa-arrow-circle-left fa-2x"></i></a> <i class="fa-solid fa-grip-lines-vertical fa-2x opacity-0"></i>
+    <a asp-action="Edit" asp-route-id="@Model?.Id"><i class="fa-solid fa-pen fa-2x"></i></a> <i class="fa-solid fa-grip-lines-vertical fa-2x opacity-0"></i>
+    <a asp-action="Delete" asp-route-id="@Model?.Id"><i class="fa-solid fa-trash fa-2x"></i></a>
 </div>

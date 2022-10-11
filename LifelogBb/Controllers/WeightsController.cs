@@ -22,7 +22,7 @@ namespace LifelogBb.Controllers
         // GET: Weights
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Weights.ToListAsync());
+              return View(await _context.Weights.OrderByDescending(o => o.CreatedAt).ToListAsync());
         }
 
         // GET: Weights/Details/5
@@ -46,6 +46,13 @@ namespace LifelogBb.Controllers
         // GET: Weights/Create
         public IActionResult Create()
         {
+            Weight? weight = _context.Weights.OrderByDescending(o => o.CreatedAt).FirstOrDefault();
+            if(weight != null)
+            {
+                weight.Id = 0;
+                return View(weight);
+            }
+
             return View();
         }
 

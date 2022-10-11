@@ -7,11 +7,11 @@ namespace LifelogBb.Models
         public long Id { get; set; }
 
         [Display(Name = "Date")]
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         public DateTime CreatedAt { get; set; }
 
         [Display(Name = "Last Update Date")]
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         public DateTime UpdatedAt { get; set; }
 
         public void SetCreateFields()

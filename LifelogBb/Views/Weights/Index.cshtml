@@ -9,23 +9,23 @@
     {
         if (weight.Bmi < 18.5M)
         { // < 18,49
-            return "colun";
+            return "colunder";
         }
         else if (weight.Bmi < 25.0M)
         { // 18,50–24,99
-            return "colno";
+            return "colnormal";
         }
         else if (weight.Bmi < 30.0M)
         { // 25,00–29,99
-            return "colov";
+            return "colover1";
         }
         else if (weight.Bmi < 35.0M)
         { // 30,00–34,99
-            return "colo1";
+            return "colover2";
         }
         else
         { // ≥ 35,00
-            return "colo2";
+            return "colover3";
         }
     }
 }
@@ -33,11 +33,17 @@
 <div class="container text-center">
     <h1>@ViewData["Title"]</h1>
 
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
+    <div class="row">
+        <div class="col-6">
+            <a class="btn btn-primary btn-lg" asp-action="Create" role="button"><i class="fas fa-plus-square fa-4x"></i><br />New</a>
+        </div>
+        <div class="col-6">
+            <a class="btn btn-success btn-lg" asp-action="Graph" role="button"><i class="fas fa-chart-bar fa-4x"></i><br />Graph</a>
+        </div>
+    </div>
+
     <table class="table table-striped">
-        <thead class="table-light">
+        <thead class="table-dark">
             <tr>
                 <th>
                     @Html.DisplayNameFor(model => model.CreatedAt)
@@ -51,7 +57,6 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Bmi)
                 </th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -59,7 +64,7 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.CreatedAt)
+                        <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.BodyWeight) kg
@@ -69,11 +74,6 @@
                     </td>
                     <td class="@GetBmiColorClass(item)">
                         @Html.DisplayFor(modelItem => item.Bmi)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen fa-2x"></i></a> <i class="fa-solid fa-grip-lines-vertical fa-2x opacity-0"></i>
-                        <a asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-file-lines fa-2x"></i></a> <i class="fa-solid fa-grip-lines-vertical fa-2x opacity-0"></i>
-                        <a asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-trash fa-2x"></i></a>
                     </td>
                 </tr>
             }

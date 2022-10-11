@@ -33,3 +33,7 @@ select {
     text-align: center;
     text-align-last: center;
 }
+
+td {
+    vertical-align: middle;
+}
