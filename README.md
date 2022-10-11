@@ -23,7 +23,7 @@ All **data** is stored in a single **SQLite database** for full control and port
 
 ## Screenshots
 
-![Start](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/s_001_start.jpgg "Start")
+![Start](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/s_001_start.jpg "Start")
 ![Weight](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/s_002_weight_01.jpg "Weight")
 
 [More screenshots](https://github.com/spech66/lifelogbb/tree/main/_screenshots)
