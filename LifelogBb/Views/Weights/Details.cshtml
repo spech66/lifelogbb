@@ -1,49 +1,50 @@
 ﻿@model LifelogBb.Models.Weight.Weight
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Weight - Details";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Weight</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Height)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Height)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.BodyWeight)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.BodyWeight)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Bmi)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Bmi)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UpdatedAt)
-        </dd>
-    </dl>
+<div class="container text-center">
+    <h1>@ViewData["Title"]</h1>
 </div>
-<div>
-    <a asp-action="Index"><i class="fa-solid fa-arrow-circle-left fa-2x"></i></a> <i class="fa-solid fa-grip-lines-vertical fa-2x opacity-0"></i>
-    <a asp-action="Edit" asp-route-id="@Model?.Id"><i class="fa-solid fa-pen fa-2x"></i></a> <i class="fa-solid fa-grip-lines-vertical fa-2x opacity-0"></i>
-    <a asp-action="Delete" asp-route-id="@Model?.Id"><i class="fa-solid fa-trash fa-2x"></i></a>
+<div class="container">
+    <div>
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Height)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Height)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.BodyWeight)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.BodyWeight)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Bmi)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Bmi)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CreatedAt)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CreatedAt)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.UpdatedAt)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.UpdatedAt)
+            </dd>
+        </dl>
+    </div>
+    <div class="row">
+        <div class="col-4"><a class="btn btn-secondary btn-lg" asp-action="Index"><i class="fa-solid fa-arrow-circle-left fa-2x"></i><br />Back</a></div>
+        <div class="col-4"><a class="col-3 btn btn-dark btn-lg" asp-action="Edit" asp-route-id="@Model?.Id"><i class="fa-solid fa-pen fa-2x"></i><br />Edit</a></div>
+        <div class="col-4"><a class="col-3 btn btn-danger btn-lg" asp-action="Delete" asp-route-id="@Model?.Id"><i class="fa-solid fa-trash fa-2x"></i><br />Delete</a></div>
+    </div>
 </div>

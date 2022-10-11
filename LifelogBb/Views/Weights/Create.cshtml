@@ -1,38 +1,40 @@
 ﻿@model LifelogBb.Models.Weight.Weight
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Weight - Create";
 }
 
-<h1>Create</h1>
+<div class="container text-center">
+    <h1>@ViewData["Title"]</h1>
 
-<h4>Weight</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group mb-3">
-                <label asp-for="Height" class="control-label"></label>
-                <input asp-for="Height" class="form-control" />
-                <span asp-validation-for="Height" class="text-danger"></span>
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="BodyWeight" class="control-label"></label>
-                <input asp-for="BodyWeight" class="form-control" />
-                <span asp-validation-for="BodyWeight" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+    <div class="row">
+        <div>
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group mb-3">
+                    <label asp-for="Height" class="control-label mb-1"></label>
+                    <input asp-for="Height" class="form-control form-control-lg" />
+                    <span asp-validation-for="Height" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="BodyWeight" class="control-label mb-1"></label>
+                    <input asp-for="BodyWeight" class="form-control form-control-lg" />
+                    <span asp-validation-for="BodyWeight" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <button type="submit" value="Create" class="btn btn-primary btn-lg"><i class="fas fa-plus-square fa-4x"></i><br />Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div>
+            <a class="btn btn-secondary btn-lg" asp-action="Index" role="button"><i class="fa-solid fa-arrow-circle-left fa-2x"></i><br />Back</a>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }
