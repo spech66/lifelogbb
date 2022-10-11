@@ -1,0 +1,210 @@
+﻿@model IEnumerable<LifelogBb.Models.Weight.Weight>
+
+@{
+    ViewData["Title"] = "Weight - Graph";
+}
+
+<div class="container text-center">
+    <h1>@ViewData["Title"]</h1>
+
+    <div class="row">
+        <canvas id="weightChartShort"></canvas>
+    </div>
+    <div class="row">
+        <canvas id="weightChartYear"></canvas>
+    </div>
+    <div class="row">
+        <canvas id="weightChartYearBmi"></canvas>
+    </div>
+    <div class="row">
+        <canvas id="weightChartAll"></canvas>
+    </div>
+    <div class="row">
+        <canvas id="weightChartAllBmi"></canvas>
+    </div>
+
+    <div class="row">
+        <div>
+            <a class="btn btn-secondary btn-lg" asp-action="Index" role="button"><i class="fa-solid fa-arrow-circle-left fa-2x"></i><br />Back</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script src="~/lib/regression/regression.min.js"></script>
+    <script src="~/lib/luxon/luxon.min.js"></script>
+    <script src="~/lib/chartjs/chart.min.js"></script>
+    <script src="~/lib/chartjs-adapter-luxon/chartjs-adapter-luxon.min.js"></script>
+    <script type="text/javascript">
+        var DateTime = luxon.DateTime;
+
+        function Measurement(data) {
+            this.date = DateTime.fromISO(data.createdAt);
+            this.weight = data.bodyWeight;
+            this.height = data.height;
+            this.bmi = (parseFloat(data.bmi).toFixed(1));
+            this.bmioverweight = data.bmiOverweight;
+            this.bmiunderweight = data.bmiUnderweight;
+        }
+
+        function generateChart(selDiv, chartTitle, chartColor, chartColor2, chartData, chartDataTrend = null, bmiThresholds = null) {
+            var ctx = document.getElementById(selDiv).getContext('2d');
+
+            datasets = [];
+
+            // Main dataset
+            datasets.push({
+                label: chartTitle,
+                borderColor: chartColor,
+                backgroundColor: chartColor2,
+                data: chartData
+            });
+
+            // Background fills
+            if (bmiThresholds != null) {
+                for (let bmit of bmiThresholds) {
+                    datasets.push(bmit);
+                }
+            }
+
+            if (chartDataTrend != null) {
+                chartDataTrend.label = `${chartTitle} ${chartDataTrend.label}`;
+                datasets.push(chartDataTrend);
+            }
+
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                // Luxon format string
+                                tooltipFormat: 'DD T'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateXYArray(data, maxRange, property) {
+            return data.filter(dat => dat.date > maxRange).map(sel => {
+                return {
+                    x: sel.date,
+                    y: sel[property]
+                }
+            });
+        }
+
+        function generateTrend(data) {
+            if (data.length < 2) {
+                return null;
+            }
+
+            const arrayData = data.map(dat => [
+                (new Date(dat.x)).getTime(),
+                +dat.y
+            ]);
+            const result = regression('linear', arrayData);
+
+            const trend = [
+                {
+                    x: data[0].x,
+                    y: [arrayData[0][0] * result.equation[0] + result.equation[1]]
+                }, {
+                    x: data[arrayData.length - 1].x,
+                    y: [arrayData[arrayData.length - 1][0] * result.equation[0] + result.equation[1]]
+                }
+            ];
+            return {
+                label: "Trend",
+                borderColor: '#335d99',
+                backgroundColor: '#00000000',
+                data: trend
+            };
+        }
+
+        function generateBmiThresholds(data) {
+            if (data.length < 2) {
+                return null;
+            }
+            let xStart = data[0].x;
+            let xEnd = data[data.length - 1].x;
+            let steps = [15.0, 18.5, 25.0, 30.0, 35.0, 40.0]; // < is name
+            let colors = ["#4c79b3", "#69B34C", "#d19a2b", "#ce3a09", "#b40000", "#b40000"]
+            let names = ["Underweight", "Normal", "Overweight", "Moderately obese", "Severely obese", "Very severely obese"]
+
+            let trends = [];
+            for (let i = 0; i < steps.length; i++) {
+                const trend = [
+                    {
+                        x: xStart,
+                        y: steps[i]
+                    }, {
+                        x: xEnd,
+                        y: steps[i]
+                    }
+                ];
+                trends.push({
+                    label: names[i],
+                    borderColor: colors[i],
+                    backgroundColor: colors[i],
+                    fill: true,
+                    data: trend
+                });
+            }
+            return trends;
+        }
+
+        $(function () {
+            $.getJSON("/api/weights", function (data) {
+                data = data.value;
+                data = data.sort((a, b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0)); // Ascending!
+                var mappedMeasurements = $.map(data, function (item) { return new Measurement(item) });
+
+                var twoMonth = DateTime.now().startOf('day').minus({ months: 2 });
+                const result2Month = generateXYArray(mappedMeasurements, twoMonth, "weight");
+                const result2MonthTrend = generateTrend(result2Month);
+
+                var oneYear = DateTime.now().startOf('day').minus({ years: 1 });
+                const result1Year = generateXYArray(mappedMeasurements, oneYear, "weight");
+                const result1YearTrend = generateTrend(result1Year);
+                const result1YearBmi = generateXYArray(mappedMeasurements, oneYear, "bmi");
+                const result1YearBmiThresholds = generateBmiThresholds(result1YearBmi);
+
+                const resultAll = mappedMeasurements.map(sel => {
+                    return {
+                        x: sel.date,
+                        y: sel.weight
+                    }
+                });
+                const resultAllTrend = generateTrend(resultAll);
+                const resultAllBmi = mappedMeasurements.map(sel => {
+                    return {
+                        x: sel.date,
+                        y: sel.bmi
+                    }
+                });
+                const resultAllBmiThresholds = generateBmiThresholds(resultAllBmi);
+
+                generateChart("weightChartShort", "2 Month", '#7EB26D', '#7EB26D88', result2Month, result2MonthTrend);
+
+                generateChart("weightChartYear", "1 Year Weight", '#7EB26D', '#7EB26D88', result1Year, result1YearTrend);
+                generateChart("weightChartYearBmi", "1 Year BMI", '#335d99', '#335d9988', result1YearBmi, null, result1YearBmiThresholds);
+
+                generateChart("weightChartAll", "All", '#7EB26D', '#7EB26D88', resultAll, resultAllTrend);
+                generateChart("weightChartAllBmi", "All BMI", '#335d99', '#335d9988', resultAllBmi, null, resultAllBmiThresholds);
+            });
+        });
+    </script>
+}

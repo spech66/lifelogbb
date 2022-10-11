@@ -25,6 +25,12 @@ namespace LifelogBb.Controllers
               return View(await _context.Weights.OrderByDescending(o => o.CreatedAt).ToListAsync());
         }
 
+        // GET: Weights/Graph
+        public async Task<IActionResult> Graph()
+        {
+            return View(await _context.Weights.OrderBy(o => o.CreatedAt).ToListAsync());
+        }
+
         // GET: Weights/Details/5
         public async Task<IActionResult> Details(long? id)
         {
