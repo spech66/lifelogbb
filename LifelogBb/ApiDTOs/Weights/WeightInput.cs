@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LifelogBb.DTOs.Weights
+namespace LifelogBb.ApiDTOs.Weights
 {
     public class WeightInput
     {

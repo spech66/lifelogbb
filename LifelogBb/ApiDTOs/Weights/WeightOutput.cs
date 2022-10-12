@@ -1,6 +1,6 @@
 ﻿using LifelogBb.Interfaces.DTOs;
 
-namespace LifelogBb.DTOs.Weights
+namespace LifelogBb.ApiDTOs.Weights
 {
     public class WeightOutput : IBaseOutput
     {

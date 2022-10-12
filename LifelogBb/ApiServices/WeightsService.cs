@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using LifelogBb.DTOs.Weights;
+using LifelogBb.ApiDTOs.Weights;
 using LifelogBb.Interfaces;
 using LifelogBb.Models.Entities;
 
