@@ -13,15 +13,6 @@ namespace LifelogBb.Models.Entities
         public decimal Distance { get; set; }
 
         public TimeSpan? Duration { get; set; } // TimeSpan should work now https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/types
-        /*[DisplayName("Duration")]
-        public double DurationMilliseconds { get; set; }
-
-        [NotMapped]
-        public TimeSpan Duration
-        {
-            get { return TimeSpan.FromMilliseconds(DurationMilliseconds); }
-            set { DurationMilliseconds = value.TotalMilliseconds; }
-        }*/
 
         public string? Notes { get; set; }
 
