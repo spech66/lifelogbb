@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using LifelogBb.DTOs.Weights;
-using LifelogBb.Models.Weight;
+using LifelogBb.Models.Entities;
 
 namespace LifelogBb.DTOs
 {

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LifelogBb.Models;
-using LifelogBb.Models.Weight;
+using LifelogBb.Models.Entities;
 
 namespace LifelogBb.Controllers
 {

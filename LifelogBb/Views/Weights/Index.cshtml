@@ -1,11 +1,11 @@
-﻿@model IEnumerable<LifelogBb.Models.Weight.Weight>
+﻿@model IEnumerable<LifelogBb.Models.Entities.Weight>
 
 @{
     ViewData["Title"] = "Weight";
 }
 
 @functions {
-    string GetBmiColorClass(LifelogBb.Models.Weight.Weight weight)
+    string GetBmiColorClass(LifelogBb.Models.Entities.Weight weight)
     {
         if (weight.Bmi < 18.5M)
         { // < 18,49

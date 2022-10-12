@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LifelogBb.Models.Weight
+namespace LifelogBb.Models.Entities
 {
     public class Weight : BaseEntity
     {

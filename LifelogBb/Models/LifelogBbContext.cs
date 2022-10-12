@@ -1,11 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using LifelogBb.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LifelogBb.Models
 {
     public class LifelogBbContext : DbContext
     {
-        public DbSet<Weight.Weight> Weights { get; set; }
+        public DbSet<Weight> Weights { get; set; }
+        public DbSet<StrengthTraining> StrengthTrainings { get; set; }
+        public DbSet<EnduranceTraining> EnduranceTrainings { get; set; }
+        public DbSet<Journal> Journals { get; set; }
 
         private readonly IConfiguration Configuration;
 

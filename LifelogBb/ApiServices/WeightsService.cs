@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using LifelogBb.DTOs.Weights;
 using LifelogBb.Interfaces;
-using LifelogBb.Models.Weight;
+using LifelogBb.Models.Entities;
 
 namespace LifelogBb.ApiServices
 {
