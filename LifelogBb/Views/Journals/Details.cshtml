@@ -1,7 +1,7 @@
-﻿@model LifelogBb.Models.Entities.Weight
+﻿@model LifelogBb.Models.Entities.Journal
 
 @{
-    ViewData["Title"] = "Weight - Details";
+    ViewData["Title"] = "Journal - Details";
 }
 
 <div class="container text-center">
@@ -11,22 +11,10 @@
     <div>
         <dl class="row">
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.BodyWeight)
+                @Html.DisplayNameFor(model => model.Text)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.BodyWeight)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Height)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Height)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Bmi)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Bmi)
+                @Html.DisplayFor(model => model.Text)
             </dd>
             <dt class="col-sm-2">
                 @Html.DisplayNameFor(model => model.CreatedAt)

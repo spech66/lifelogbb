@@ -1,0 +1,41 @@
+﻿@model IEnumerable<LifelogBb.Models.Entities.Journal>
+
+@{
+    ViewData["Title"] = "Journal";
+}
+
+<div class="container text-center">
+    <h1>@ViewData["Title"]</h1>
+
+    <div class="row">
+        <div class="col-12">
+            <a class="btn btn-primary btn-lg" asp-action="Create" role="button"><i class="fas fa-plus-square fa-4x"></i><br />New</a>
+        </div>
+    </div>
+
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.CreatedAt)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Text)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <th scope="row">
+                        <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
+                    </th>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Text)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

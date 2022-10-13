@@ -31,4 +31,12 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="D:\Development\Web\LifelogBb\LifelogBb\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="D:\Development\Web\LifelogBb\LifelogBb\.editorconfig" />
+  </ItemGroup>
+
 </Project>

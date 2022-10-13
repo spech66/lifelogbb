@@ -1,33 +1,7 @@
-﻿@model IEnumerable<LifelogBb.Models.Entities.Weight>
+﻿@model IEnumerable<LifelogBb.Models.Entities.StrengthTraining>
 
 @{
-    ViewData["Title"] = "Weight";
-}
-
-@functions {
-    string GetBmiColorClass(LifelogBb.Models.Entities.Weight weight)
-    {
-        if (weight.Bmi < 18.5M)
-        { // < 18,49
-            return "colunder";
-        }
-        else if (weight.Bmi < 25.0M)
-        { // 18,50–24,99
-            return "colnormal";
-        }
-        else if (weight.Bmi < 30.0M)
-        { // 25,00–29,99
-            return "colover1";
-        }
-        else if (weight.Bmi < 35.0M)
-        { // 30,00–34,99
-            return "colover2";
-        }
-        else
-        { // ≥ 35,00
-            return "colover3";
-        }
-    }
+    ViewData["Title"] = "Strength Training";
 }
 
 <div class="container text-center">
@@ -49,13 +23,19 @@
                     @Html.DisplayNameFor(model => model.CreatedAt)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.BodyWeight)
+                    @Html.DisplayNameFor(model => model.Exercise)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Height)
+                    @Html.DisplayNameFor(model => model.Reps)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Bmi)
+                    @Html.DisplayNameFor(model => model.Weight)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Rating)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Notes)
                 </th>
             </tr>
         </thead>
@@ -67,13 +47,19 @@
                         <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
                     </th>
                     <td>
-                        @Html.DisplayFor(modelItem => item.BodyWeight) kg
+                        <a asp-action="Graph" asp-route-exercise="@item.Exercise">@Html.DisplayFor(modelItem => item.Exercise)</a>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Height) cm
+                        @Html.DisplayFor(modelItem => item.Reps)
                     </td>
-                    <td class="@GetBmiColorClass(item)">
-                        @Html.DisplayFor(modelItem => item.Bmi)
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Weight)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Rating)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Notes)
                     </td>
                 </tr>
             }

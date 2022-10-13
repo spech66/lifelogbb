@@ -1,7 +1,7 @@
-﻿@model LifelogBb.Models.Entities.Weight
+﻿@model LifelogBb.Models.Entities.EnduranceTraining
 
 @{
-    ViewData["Title"] = "Weight - Details";
+    ViewData["Title"] = "Endurance Training - Details";
 }
 
 <div class="container text-center">
@@ -11,22 +11,34 @@
     <div>
         <dl class="row">
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.BodyWeight)
+                @Html.DisplayNameFor(model => model.Exercise)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.BodyWeight)
+                @Html.DisplayFor(model => model.Exercise)
             </dd>
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Height)
+                @Html.DisplayNameFor(model => model.Distance)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Height)
+                @Html.DisplayFor(model => model.Distance)
             </dd>
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Bmi)
+                @Html.DisplayNameFor(model => model.Duration)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Bmi)
+                @Html.DisplayFor(model => model.Duration)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Notes)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Notes)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Rating)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Rating)
             </dd>
             <dt class="col-sm-2">
                 @Html.DisplayNameFor(model => model.CreatedAt)

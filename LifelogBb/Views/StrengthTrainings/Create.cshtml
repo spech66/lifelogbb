@@ -1,0 +1,57 @@
+﻿@model LifelogBb.Models.Entities.StrengthTraining
+
+@{
+    ViewData["Title"] = "Strength Training - Create";
+}
+
+<div class="container text-center">
+    <h1>@ViewData["Title"]</h1>
+
+    <div class="row">
+        <div>
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group mb-3">
+                    <label asp-for="Exercise" class="control-label mb-1"></label>
+                    <input asp-for="Exercise" class="form-control form-control-lg" />
+                    <span asp-validation-for="Exercise" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="Reps" class="control-label mb-1"></label>
+                    <input asp-for="Reps" class="form-control form-control-lg" />
+                    <span asp-validation-for="Reps" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="Weight" class="control-label mb-1"></label>
+                    <input asp-for="Weight" class="form-control form-control-lg" />
+                    <span asp-validation-for="Weight" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="Rating" class="control-label mb-1"></label>
+                    <input asp-for="Rating" class="form-control form-control-lg" />
+                    <span asp-validation-for="Rating" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="Notes" class="control-label mb-1"></label>
+                    <input asp-for="Notes" class="form-control form-control-lg" />
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <button type="submit" value="Create" class="btn btn-primary btn-lg"><i class="fas fa-plus-square fa-4x"></i><br />Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div>
+            <a class="btn btn-secondary btn-lg" asp-action="Index" role="button"><i class="fa-solid fa-arrow-circle-left fa-2x"></i><br />Back</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

@@ -12,14 +12,14 @@
             <form asp-action="Create">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group mb-3">
-                    <label asp-for="Height" class="control-label mb-1"></label>
-                    <input asp-for="Height" class="form-control form-control-lg" />
-                    <span asp-validation-for="Height" class="text-danger"></span>
-                </div>
-                <div class="form-group mb-3">
                     <label asp-for="BodyWeight" class="control-label mb-1"></label>
                     <input asp-for="BodyWeight" class="form-control form-control-lg" />
                     <span asp-validation-for="BodyWeight" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="Height" class="control-label mb-1"></label>
+                    <input asp-for="Height" class="form-control form-control-lg" />
+                    <span asp-validation-for="Height" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <button type="submit" value="Create" class="btn btn-primary btn-lg"><i class="fas fa-plus-square fa-4x"></i><br />Submit</button>

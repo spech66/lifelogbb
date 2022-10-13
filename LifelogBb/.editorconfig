@@ -1,0 +1,67 @@
+# EditorConfig for standard code style
+# Inspired by the following projects
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/code-style-rule-options
+# https://github.com/dotnet/roslyn/blob/main/.editorconfig
+# https://github.com/autofac/Autofac/blob/develop/.editorconfig
+# https://github.com/RehanSaeed/EditorConfig
+
+# top-most EditorConfig file
+root = true
+
+# Don't use tabs for indentation.
+[*]
+indent_style = space
+
+# Code files
+[*.{cs,csx,vb,vbx}]
+indent_size = 4
+trim_trailing_whitespace = true
+insert_final_newline = true
+# charset = utf-8-bom
+
+# .NET project files and MSBuild - match defaults for VS
+[*.{csproj,nuspec,proj,projitems,props,shproj,targets,vbproj,vcxproj,vcxproj.filters,vsixmanifest,vsct}]
+indent_size = 2
+
+# .NET solution files - match defaults for VS
+[*.sln]
+indent_style = tab
+
+# Config - match XML and default nuget.config template
+[*.config]
+indent_size = 2
+
+# Resources - match defaults for VS
+[*.resx]
+indent_size = 2
+
+# Static analysis rulesets - match defaults for VS
+[*.ruleset]
+indent_size = 2
+
+# HTML, XML - match defaults for VS
+[*.{cshtml,html,xml}]
+indent_size = 4
+
+# JavaScript and JS mixes - match eslint settings; JSON also matches .NET Core templates
+[*.{js,json,ts,vue}]
+indent_size = 2
+
+# Markdown - match markdownlint settings
+[*.{md,markdown,mdx}]
+indent_size = 2
+trim_trailing_whitespace = false
+
+# PowerShell - match defaults for New-ModuleManifest and PSScriptAnalyzer Invoke-Formatter
+[*.{ps1,psd1,psm1}]
+indent_size = 4
+# charset = utf-8-bom
+
+# Shell script files
+[*.sh]
+end_of_line = lf
+indent_size = 2
+
+# YAML Files
+[*.{yml,yaml}]
+indent_size = 2

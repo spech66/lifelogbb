@@ -16,9 +16,9 @@ All **data** is stored in a single **SQLite database** for full control and port
 * **Weight:** :heavy_check_mark:
 * **Weight chart:** :heavy_check_mark:
 * **Journal:** :construction:
-* **Strength training:** :x:
+* **Strength training:** :construction:
 * **Strength training chart:** :construction:
-* **Endurance workout:** :x:
+* **Endurance workout:** :construction:
 * **Endurance workout chart:** :construction:
 * **Dashboard:** :x:
 * **Authentication** :heavy_check_mark:

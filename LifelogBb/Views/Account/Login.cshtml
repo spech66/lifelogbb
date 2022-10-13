@@ -4,25 +4,27 @@
     ViewData["Title"] = "Login";
 }
 
-<h1>Login</h1>
+<div class="container text-center">
+    <h1>@ViewData["Title"]</h1>
 
-<p class="fs-5 col-md-8">Access LifelogBb using the password provided in the configuration.</p>
+    <p class="fs-5">Access LifelogBB using the password provided in the configuration.</p>
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Login">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group mb-3">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-groupmb-3">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+    <div class="row">
+        <div>
+            <form asp-action="Login">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group mb-3">
+                    <label asp-for="Password" class="control-label mb-1"></label>
+                    <input asp-for="Password" class="form-control form-control-lg" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <button type="submit" value="Create" class="btn btn-primary btn-lg"><i class="fa-solid fa-right-to-bracket fa-4x"></i><br />Login</button>
+                </div>
+            </form>
 
-        <p class="mt-5 mb-3"><a href="/Account/GeneratePassword">Generate password hash</a></p>
+            <p class="mt-5 mb-3"><a href="/Account/GeneratePassword">Generate password hash</a></p>
+        </div>
     </div>
 </div>
 
