@@ -12,6 +12,8 @@ namespace LifelogBb.Models.Entities
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Distance { get; set; }
 
+        [DataType(DataType.Time)]
+        [DisplayFormat(DataFormatString = "{0:hh\\:mm\\:ss}", ApplyFormatInEditMode = true)]
         public TimeSpan? Duration { get; set; } // TimeSpan should work now https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/types
 
         public string? Notes { get; set; }

@@ -8,7 +8,7 @@ namespace LifelogBb.ApiDTOs.Weights
 
         public int Height { get; set; }
 
-        public int BodyWeight { get; set; }
+        public decimal BodyWeight { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

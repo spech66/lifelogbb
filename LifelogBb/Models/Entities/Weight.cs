@@ -12,7 +12,8 @@ namespace LifelogBb.Models.Entities
 
         [DisplayName("Weight")]
         [Range(40, 440)] // 200 Kg => 440 lbs...
-        public int BodyWeight { get; set; }
+        [Column(TypeName = "decimal(18, 1)")]
+        public decimal BodyWeight { get; set; }
 
         [DisplayName("BMI")]
         [Column(TypeName = "decimal(18, 2)")]
