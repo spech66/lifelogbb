@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - LifelogBB</title>
     <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
+    @await RenderSectionAsync("Styles", required: false)
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LifelogBb.styles.css" asp-append-version="true" />
 </head>

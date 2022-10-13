@@ -13,7 +13,7 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group mb-3">
                     <label asp-for="Text" class="control-label mb-1"></label>
-                    <input asp-for="Text" class="form-control form-control-lg" />
+                    <textarea asp-for="Text" class="form-control form-control-lg" rows="3" style="min-height: 24em"></textarea>
                     <span asp-validation-for="Text" class="text-danger"></span>
                 </div>
                 <input type="hidden" asp-for="Id" />
@@ -31,8 +31,16 @@
     </div>
 </div>
 
+@section Styles {
+    <link rel="stylesheet" href="~/lib/easymde/dist/easymde.min.css" />
+}
+
 @section Scripts {
+    <script src="~/lib/easymde/dist/easymde.min.js"></script>
+    <script>
+        const easyMDE = new EasyMDE({ spellChecker: false });
+    </script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    }
+}
