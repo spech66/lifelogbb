@@ -26,9 +26,16 @@ namespace LifelogBb.Controllers
         }
 
         // GET: EnduranceTrainings/Graph
-        public async Task<IActionResult> Graph()
+        public async Task<IActionResult> Graph(string? exercise)
         {
-            return View(await _context.EnduranceTrainings.OrderBy(o => o.CreatedAt).ToListAsync());
+            var enduranceTrainings = from et in _context.EnduranceTrainings select et;
+
+            if (!String.IsNullOrEmpty(exercise))
+            {
+                enduranceTrainings = enduranceTrainings.Where(s => s.Exercise == exercise);
+            }
+
+            return View(await enduranceTrainings.OrderBy(o => o.CreatedAt).ToListAsync());
         }
 
         // GET: EnduranceTrainings/Details/5

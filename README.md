@@ -13,17 +13,7 @@ All **data** is stored in a single **SQLite database** for full control and port
 
 ## Status
 
-* **Weight:** :heavy_check_mark:
-* **Weight chart:** :heavy_check_mark:
-* **Journal:** :construction:
-* **Strength training:** :construction:
-* **Strength training chart:** :construction:
-* **Endurance workout:** :construction:
-* **Endurance workout chart:** :construction:
-* **Dashboard:** :x:
-* **Authentication** :heavy_check_mark:
-* **SQLite** :heavy_check_mark:
-* **Dockerfile** :heavy_check_mark:
+[TODO](https://github.com/spech66/lifelogbb/blob/main/TODO.md)
 
 ## Screenshots
 
