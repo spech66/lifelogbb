@@ -11,13 +11,49 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LifelogBb.Migrations
 {
     [DbContext(typeof(LifelogBbContext))]
-    [Migration("20221012173125_Initial")]
+    [Migration("20221015160726_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.9");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.10");
+
+            modelBuilder.Entity("LifelogBb.Models.Entities.BucketList", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Category")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("ImageData")
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("ImageName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BucketLists");
+                });
 
             modelBuilder.Entity("LifelogBb.Models.Entities.EnduranceTraining", b =>
                 {
@@ -112,8 +148,8 @@ namespace LifelogBb.Migrations
                     b.Property<decimal>("Bmi")
                         .HasColumnType("decimal(18, 2)");
 
-                    b.Property<int>("BodyWeight")
-                        .HasColumnType("INTEGER");
+                    b.Property<decimal>("BodyWeight")
+                        .HasColumnType("decimal(18, 1)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");

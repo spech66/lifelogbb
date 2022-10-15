@@ -19,10 +19,10 @@ ToDos and Features for LifelogBB.
 ### In Progress :construction:
 
 - [ ] Dashboard
-- [ ] [Bucket list (cards + images)](https://getbootstrap.com/docs/5.2/components/card/)
 
 ### Done :heavy_check_mark:
 
+- [x] Bucket list (cards + images)
 - [x] Strength training chart
 - [x] Endurance workout chart
 - [x] Journal (MD Editor)

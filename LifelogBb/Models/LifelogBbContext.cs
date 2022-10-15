@@ -10,6 +10,7 @@ namespace LifelogBb.Models
         public DbSet<StrengthTraining> StrengthTrainings { get; set; }
         public DbSet<EnduranceTraining> EnduranceTrainings { get; set; }
         public DbSet<Journal> Journals { get; set; }
+        public DbSet<BucketList> BucketLists { get; set; }
 
         private readonly IConfiguration Configuration;
 

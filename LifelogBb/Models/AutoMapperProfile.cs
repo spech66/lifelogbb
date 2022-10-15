@@ -4,6 +4,7 @@ using LifelogBb.Models.Weights;
 using LifelogBb.Models.Journals;
 using LifelogBb.Models.StrengthTrainings;
 using LifelogBb.Models.EnduranceTrainings;
+using LifelogBb.Models.BucketLists;
 
 namespace LifelogBb.Models
 {
@@ -26,6 +27,20 @@ namespace LifelogBb.Models
             // EnduranceTrainings
             CreateMap<EditEnduranceTrainingViewModel, EnduranceTraining>();
             CreateMap<EnduranceTraining, EditEnduranceTrainingViewModel>();
+
+            // BucketLists
+            CreateMap<EditBucketListViewModel, BucketList>();
+            CreateMap<BucketList, EditBucketListViewModel>();
+            CreateMap<BucketList, IndexBucketListViewModel>();            
+            CreateMap<CreateBucketListViewModel, BucketList>()
+                .ForSourceMember(source => source.ImageData, opt => opt.DoNotValidate())
+                .ForMember(dest => dest.ImageData, opt => opt.Ignore());
+            CreateMap<EditBucketListViewModel, BucketList>()
+                .ForSourceMember(source => source.ImageData, opt => opt.DoNotValidate())
+                .ForMember(dest => dest.ImageData, opt => opt.Ignore());
+            CreateMap<BucketList, EditBucketListViewModel>()
+                .ForSourceMember(source => source.ImageData, opt => opt.DoNotValidate())
+                .ForMember(dest => dest.ImageData, opt => opt.Ignore());
         }
     }
 }

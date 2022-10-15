@@ -72,3 +72,4 @@ Apply migrations using `Update-Database`.
 ## Resources used
 
 * [Combining Bearer Token and Cookie Authentication in ASP.NET](https://weblog.west-wind.com/posts/2022/Mar/29/Combining-Bearer-Token-and-Cookie-Auth-in-ASPNET)
+* [Import a CSV File Into an SQLite Table](https://www.sqlitetutorial.net/sqlite-import-csv/) - Migrate from lifelogspd to LifelogBB

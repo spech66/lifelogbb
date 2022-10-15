@@ -10,6 +10,26 @@ namespace LifelogBb.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "BucketLists",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Title = table.Column<string>(type: "TEXT", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Category = table.Column<string>(type: "TEXT", nullable: true),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false),
+                    ImageName = table.Column<string>(type: "TEXT", nullable: true),
+                    ImageData = table.Column<byte[]>(type: "BLOB", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BucketLists", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "EnduranceTrainings",
                 columns: table => new
                 {
@@ -69,7 +89,7 @@ namespace LifelogBb.Migrations
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Height = table.Column<int>(type: "INTEGER", nullable: false),
-                    BodyWeight = table.Column<int>(type: "INTEGER", nullable: false),
+                    BodyWeight = table.Column<decimal>(type: "decimal(18, 1)", nullable: false),
                     Bmi = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
@@ -82,6 +102,9 @@ namespace LifelogBb.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "BucketLists");
+
             migrationBuilder.DropTable(
                 name: "EnduranceTrainings");
 
