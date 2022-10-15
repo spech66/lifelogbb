@@ -4,6 +4,24 @@
 
 <div class="container text-center">
     <h1 class="display-4">LifelogBB</h1>
+
+    <h2>Quick add</h2>
+    <div class="row">
+        <div class="col-6 col-md-3">
+            <a class="btn btn-primary btn-lg" asp-controller="Weights" asp-action="Create" role="button"><i class="fa-solid fa-weight-scale fa-4x"></i><br />Weight</a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a class="btn btn-primary btn-lg" asp-controller="Journals" asp-action="Create" role="button"><i class="fa-solid fa-pencil fa-4x"></i><br />Journal</a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a class="btn btn-primary btn-lg" asp-controller="StrengthTrainings" asp-action="Create" role="button"><i class="fa-solid fa-dumbbell fa-4x"></i><br />Strength training</a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a class="btn btn-primary btn-lg" asp-controller="EnduranceTrainings" asp-action="Create" role="button"><i class="fa-solid fa-running fa-4x"></i><br />Endurance training</a>
+        </div>
+    </div>
+
+    <h2>Views</h2>
     <div class="row">
         <div class="col-12 col-md-6">
             <a class="btn btn-primary btn-lg" asp-controller="Weights" role="button"><i class="fa-solid fa-weight-scale fa-4x"></i><br />Weight</a>
