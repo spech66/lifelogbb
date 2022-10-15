@@ -10,7 +10,7 @@ namespace LifelogBb.ApiControllers
     [ApiController]
     public class BaseRController<S, OUTP> : ControllerBase where S : IBaseRService<OUTP> where OUTP : IBaseOutput
     {
-        private readonly S _service;
+        protected readonly S _service;
 
         public BaseRController(S service)
         {

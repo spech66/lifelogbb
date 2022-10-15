@@ -2,6 +2,7 @@
 using LifelogBb.ApiDTOs.EnduranceTrainings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using LifelogBb.ApiDTOs.StrengthTrainings;
 
 namespace LifelogBb.ApiControllers
 {

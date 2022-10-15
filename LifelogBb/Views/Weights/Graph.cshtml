@@ -1,6 +1,4 @@
-﻿@model IEnumerable<LifelogBb.Models.Entities.Weight>
-
-@{
+﻿@{
     ViewData["Title"] = "Weight - Graph";
 }
 
@@ -49,7 +47,7 @@
         }
 
         function generateChart(selDiv, chartTitle, chartColor, chartColor2, chartData, chartDataTrend = null, bmiThresholds = null) {
-            var ctx = document.getElementById(selDiv).getContext('2d');
+            var ctx = document.getElementById(selDiv);
 
             datasets = [];
 
@@ -85,7 +83,8 @@
                             type: 'time',
                             time: {
                                 // Luxon format string
-                                tooltipFormat: 'DD T'
+                                tooltipFormat: 'DD T',
+                                unit: 'day'
                             },
                             title: {
                                 display: true,

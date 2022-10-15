@@ -11,7 +11,7 @@ namespace LifelogBb.ApiControllers
     [ApiController]
     public class BaseCRUDController<S, INP, OUTP> : ControllerBase where S : IBaseCRUDService<INP, OUTP> where OUTP : IBaseOutput
     {
-        private readonly S _service;
+        protected readonly S _service;
 
         public BaseCRUDController(S service)
         {

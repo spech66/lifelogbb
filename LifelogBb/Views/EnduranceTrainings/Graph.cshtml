@@ -1,11 +1,25 @@
-﻿@model IEnumerable<LifelogBb.Models.Entities.EnduranceTraining>
+﻿@model string?
 
 @{
     ViewData["Title"] = "Endurance Training - Graph";
+    @if (!string.IsNullOrEmpty(@Model))
+    {
+        ViewData["Title"] = $"Endurance Training - {Model} - Graph";
+    }
 }
 
 <div class="container text-center">
     <h1>@ViewData["Title"]</h1>
+
+    <div class="row">
+        <canvas id="enduranceworkoutDistance"></canvas>
+    </div>
+    <div class="row">
+        <canvas id="enduranceworkoutDuration"></canvas>
+    </div>
+    <div class="row">
+        <canvas id="enduranceworkoutRating"></canvas>
+    </div>
 
     <div class="row">
         <div>
@@ -13,3 +27,93 @@
         </div>
     </div>
 </div>
+
+@section Scripts
+    {
+    <script src="~/lib/regression/regression.min.js"></script>
+    <script src="~/lib/luxon/luxon.min.js"></script>
+    <script src="~/lib/chartjs/chart.min.js"></script>
+    <script src="~/lib/chartjs-adapter-luxon/chartjs-adapter-luxon.min.js"></script>
+    <script type="text/javascript">
+        var DateTime = luxon.DateTime;
+        var Duration = luxon.Duration;
+
+        function Enduranceworkout(data) {
+            this.date = data.createdAt;
+            this.exercise = data.exercise;
+            this.distance = data.distance;
+            this.duration = data.duration;
+            this.notes = data.notes;
+            this.rating = data.rating;
+        }
+
+        function generateChart(selDiv, chartTitle, chartColor, chartColor2, chartData) {
+            const ctx = document.getElementById(selDiv);
+
+            const myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartData.map(sel => sel.x),
+                    datasets: [{
+                        label: chartTitle,
+                        data: chartData.map(sel => sel.y),
+                        backgroundColor: chartColor2,
+                        borderColor: chartColor,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        },
+                        x: {
+                            type: 'time',
+                            time: {
+                                // Luxon format string
+                                tooltipFormat: 'DD T',
+                                unit: 'day'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        $.getJSON("@Url.Action("GraphGet")", { exercise: "@Model" }, function (data) {
+            data = data.sort((a, b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0)); // Ascending!
+            var mappedEnduranceworkout = $.map(data, function (item) { return new Enduranceworkout(item) });
+
+            const resultDistance = mappedEnduranceworkout.map(sel => {
+                return {
+                    x: sel.date,
+                    y: sel.distance / 1000.0
+                }
+            });
+
+            const resultDuration = mappedEnduranceworkout.map(sel => {
+                var timeSegments = sel.duration.split(":");
+                var duration = Duration.fromObject({ hours: timeSegments[0], minutes: timeSegments[1], seconds: timeSegments[2] })
+                return {
+                    x: sel.date,
+                    y: ((duration.hours * 3600.0) + (duration.minutes * 60.0) + duration.seconds) / 60.0
+                }
+            });
+
+            const resultRating = mappedEnduranceworkout.map(sel => {
+                return {
+                    x: sel.date,
+                    y: sel.rating
+                }
+            });
+
+            generateChart("enduranceworkoutDistance", "Distance (Km)", '#7EB26D', '#7EB26D88', resultDistance);
+            generateChart("enduranceworkoutDuration", "Duration (Min.)", '#7EB26D', '#7EB26D88', resultDuration);
+            generateChart("enduranceworkoutRating", "Rating", '#7EB26D', '#7EB26D88', resultRating);
+        });
+    </script>
+}

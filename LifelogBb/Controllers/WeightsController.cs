@@ -30,9 +30,9 @@ namespace LifelogBb.Controllers
         }
 
         // GET: Weights/Graph
-        public async Task<IActionResult> Graph()
+        public IActionResult Graph()
         {
-            return View(await _context.Weights.OrderBy(o => o.CreatedAt).ToListAsync());
+            return View();
         }
 
         // GET: Weights/Details/5

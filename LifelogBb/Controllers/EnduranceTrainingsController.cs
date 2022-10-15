@@ -31,7 +31,12 @@ namespace LifelogBb.Controllers
         }
 
         // GET: EnduranceTrainings/Graph
-        public async Task<IActionResult> Graph(string? exercise)
+        public IActionResult Graph(string? exercise)
+        {
+            return View("Graph", exercise);
+        }
+
+        public async Task<IActionResult> GraphGet(string? exercise)
         {
             var enduranceTrainings = from et in _context.EnduranceTrainings select et;
 
@@ -40,7 +45,7 @@ namespace LifelogBb.Controllers
                 enduranceTrainings = enduranceTrainings.Where(s => s.Exercise == exercise);
             }
 
-            return View(await enduranceTrainings.OrderBy(o => o.CreatedAt).ToListAsync());
+            return Json(await enduranceTrainings.OrderBy(o => o.CreatedAt).ToListAsync());
         }
 
         // GET: EnduranceTrainings/Details/5

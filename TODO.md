@@ -4,7 +4,6 @@ ToDos and Features for LifelogBB.
 
 ### Todo
 
-- [ ] [Bucket list (cards + images)](https://getbootstrap.com/docs/5.2/components/card/)
 - [ ] Vision board from bucket list
 - [ ] Settings (Units, Start of week, ...)
 - [ ] Goals (SMART)
@@ -19,15 +18,16 @@ ToDos and Features for LifelogBB.
 
 ### In Progress :construction:
 
-- [ ] Journal (MD Editor)
-- [ ] Strength training
-- [ ] Strength training chart
-- [ ] Endurance workout
-- [ ] Endurance workout chart
 - [ ] Dashboard
+- [ ] [Bucket list (cards + images)](https://getbootstrap.com/docs/5.2/components/card/)
 
 ### Done :heavy_check_mark:
 
+- [x] Strength training chart
+- [x] Endurance workout chart
+- [x] Journal (MD Editor)
+- [x] Strength training
+- [x] Endurance workout
 - [x] Weight
 - [x] Weight chart
 - [x] SQLite

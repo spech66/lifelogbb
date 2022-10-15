@@ -1,11 +1,25 @@
-﻿@model IEnumerable<LifelogBb.Models.Entities.StrengthTraining>
+﻿@model string?
 
 @{
     ViewData["Title"] = "Strength Training - Graph";
+    @if (!string.IsNullOrEmpty(@Model))
+    {
+        ViewData["Title"] = $"Strength Training - {Model} - Graph";
+    }
 }
 
 <div class="container text-center">
     <h1>@ViewData["Title"]</h1>
+
+    <div class="row">
+        <canvas id="strengthtrainingTotal"></canvas>
+    </div>
+    <div class="row">
+        <canvas id="strengthtrainingWeight"></canvas>
+    </div>
+    <div class="row">
+        <canvas id="strengthtrainingReps"></canvas>
+    </div>
 
     <div class="row">
         <div>
@@ -13,3 +27,90 @@
         </div>
     </div>
 </div>
+
+@section Scripts
+    {
+    <script src="~/lib/regression/regression.min.js"></script>
+    <script src="~/lib/luxon/luxon.min.js"></script>
+    <script src="~/lib/chartjs/chart.min.js"></script>
+    <script src="~/lib/chartjs-adapter-luxon/chartjs-adapter-luxon.min.js"></script>
+    <script type="text/javascript">
+        var DateTime = luxon.DateTime;
+
+        function Strengthtraining(data) {
+            this.date = data.createdAt;
+            this.exercise = data.exercise;
+            this.reps = data.reps;
+            this.weight = parseFloat(data.weight).toFixed(2);
+            this.notes = data.notes;
+            this.rating = data.rating;
+        }
+
+        function generateChart(selDiv, chartTitle, chartColor, chartColor2, chartData) {
+            const ctx = document.getElementById(selDiv);
+
+            const myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartData.map(sel => sel.x),
+                    datasets: [{
+                        label: chartTitle,
+                        data: chartData.map(sel => sel.y),
+                        backgroundColor: chartColor2,
+                        borderColor: chartColor,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        },
+                        x: {
+                            type: 'time',
+                            time: {
+                                // Luxon format string
+                                tooltipFormat: 'DD T',
+                                unit: 'day'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        $.getJSON("@Url.Action("GraphGet")", { exercise: "@Model" }, function (data) {
+            data = data.sort((a, b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0)); // Ascending!
+            var mappedStrengthtraining = $.map(data, function (item) { return new Strengthtraining(item) });
+
+            const resultTotal = mappedStrengthtraining.map(sel => {
+                return {
+                    x: sel.date,
+                    y: sel.reps * sel.weight
+                }
+            });
+
+            const resultSingle = mappedStrengthtraining.map(sel => {
+                return {
+                    x: sel.date,
+                    y: sel.weight
+                }
+            });
+
+            const resultReps = mappedStrengthtraining.map(sel => {
+                return {
+                    x: sel.date,
+                    y: sel.reps
+                }
+            });
+
+            generateChart("strengthtrainingTotal", "Total by set", '#7EB26D', '#7EB26D88', resultTotal);
+            generateChart("strengthtrainingWeight", "Weight by set", '#7EB26D', '#7EB26D88', resultSingle);
+            generateChart("strengthtrainingReps", "Reps by set", '#7EB26D', '#7EB26D88', resultReps);
+        });
+    </script>
+}
