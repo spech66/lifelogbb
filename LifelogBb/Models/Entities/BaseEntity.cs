@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LifelogBb.Models
+namespace LifelogBb.Models.Entities
 {
     public class BaseEntity
     {

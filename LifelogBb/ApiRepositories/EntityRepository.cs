@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using LifelogBb.Interfaces;
 using System.Threading.Tasks;
 using LifelogBb.Models;
+using LifelogBb.Models.Entities;
 
 namespace LifelogBb.ApiRepositories
 {

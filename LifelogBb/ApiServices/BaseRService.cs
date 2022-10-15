@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using LifelogBb.Models;
 using LifelogBb.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using LifelogBb.Models.Entities;
 
 namespace LifelogBb.ApiServices
 {
