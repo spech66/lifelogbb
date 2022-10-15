@@ -7,16 +7,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LifelogBb.Models;
 using LifelogBb.Models.Entities;
+using AutoMapper;
+using LifelogBb.Models.EnduranceTrainings;
+using LifelogBb.Models.Journals;
 
 namespace LifelogBb.Controllers
 {
     public class JournalsController : Controller
     {
         private readonly LifelogBbContext _context;
+        protected readonly IMapper _mapper;
 
-        public JournalsController(LifelogBbContext context)
+        public JournalsController(LifelogBbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: Journals
@@ -72,20 +77,21 @@ namespace LifelogBb.Controllers
                 return NotFound();
             }
 
-            var journal = await _context.Journals.FindAsync(id);
-            if (journal == null)
+            var journalDb = await _context.Journals.FindAsync(id);
+            if (journalDb == null)
             {
                 return NotFound();
             }
+            var journal = _mapper.Map<EditJournalViewModel>(journalDb);
             return View(journal);
         }
 
         // POST: Journals/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Text,Id")] Journal journal)
+        public async Task<IActionResult> Edit(long id, [Bind("Text,Id")] EditJournalViewModel journalViewModel)
         {
-            if (id != journal.Id)
+            if (id != journalViewModel.Id)
             {
                 return NotFound();
             }
@@ -95,14 +101,14 @@ namespace LifelogBb.Controllers
             {
                 try
                 {
-                    journalDb.Text = journal.Text;
+                    journalDb = _mapper.Map(journalViewModel, journalDb);
                     journalDb.UpdatedAt = DateTime.Now;
                     _context.Update(journalDb);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!JournalExists(journal.Id))
+                    if (!JournalExists(journalViewModel.Id))
                     {
                         return NotFound();
                     }
@@ -113,7 +119,7 @@ namespace LifelogBb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(journal);
+            return View(journalViewModel);
         }
 
         // GET: Journals/Delete/5

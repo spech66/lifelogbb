@@ -7,16 +7,20 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LifelogBb.Models;
 using LifelogBb.Models.Entities;
+using LifelogBb.Models.Weights;
+using AutoMapper;
 
 namespace LifelogBb.Controllers
 {
     public class WeightsController : Controller
     {
         private readonly LifelogBbContext _context;
+        protected readonly IMapper _mapper;
 
-        public WeightsController(LifelogBbContext context)
+        public WeightsController(LifelogBbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: Weights
@@ -86,20 +90,21 @@ namespace LifelogBb.Controllers
                 return NotFound();
             }
 
-            var weight = await _context.Weights.FindAsync(id);
-            if (weight == null)
+            var weightDb = await _context.Weights.FindAsync(id);
+            if (weightDb == null)
             {
                 return NotFound();
             }
+            var weight = _mapper.Map<EditWeightViewModel>(weightDb);
             return View(weight);
         }
 
         // POST: Weights/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Height,BodyWeight,Id")] Weight weight)
+        public async Task<IActionResult> Edit(long id, [Bind("Height,BodyWeight,Id")] EditWeightViewModel weightViewModel)
         {
-            if (id != weight.Id)
+            if (id != weightViewModel.Id)
             {
                 return NotFound();
             }
@@ -109,16 +114,15 @@ namespace LifelogBb.Controllers
             {
                 try
                 {
-                    weightDb.Height = weight.Height;
-                    weightDb.BodyWeight = weight.BodyWeight;
-                    weightDb.Bmi = ((weight.BodyWeight * 1.0M) / (((weight.Height * 0.01M) * weight.Height) * 0.01M));
+                    weightDb = _mapper.Map(weightViewModel, weightDb);
+                    weightDb.Bmi = ((weightViewModel.BodyWeight * 1.0M) / (((weightViewModel.Height * 0.01M) * weightViewModel.Height) * 0.01M));
                     weightDb.UpdatedAt = DateTime.Now;
                     _context.Update(weightDb);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!WeightExists(weight.Id))
+                    if (!WeightExists(weightViewModel.Id))
                     {
                         return NotFound();
                     }
@@ -129,7 +133,7 @@ namespace LifelogBb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(weight);
+            return View(weightViewModel);
         }
 
         // GET: Weights/Delete/5

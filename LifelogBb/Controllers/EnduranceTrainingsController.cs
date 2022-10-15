@@ -7,16 +7,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LifelogBb.Models;
 using LifelogBb.Models.Entities;
+using AutoMapper;
+using LifelogBb.Models.StrengthTrainings;
+using LifelogBb.Models.EnduranceTrainings;
 
 namespace LifelogBb.Controllers
 {
     public class EnduranceTrainingsController : Controller
     {
         private readonly LifelogBbContext _context;
+        protected readonly IMapper _mapper;
 
-        public EnduranceTrainingsController(LifelogBbContext context)
+        public EnduranceTrainingsController(LifelogBbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: EnduranceTrainings
@@ -85,20 +90,21 @@ namespace LifelogBb.Controllers
                 return NotFound();
             }
 
-            var enduranceTraining = await _context.EnduranceTrainings.FindAsync(id);
-            if (enduranceTraining == null)
+            var enduranceTrainingDb = await _context.EnduranceTrainings.FindAsync(id);
+            if (enduranceTrainingDb == null)
             {
                 return NotFound();
             }
+            var enduranceTraining = _mapper.Map<EditEnduranceTrainingViewModel>(enduranceTrainingDb);
             return View(enduranceTraining);
         }
 
         // POST: EnduranceTrainings/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Exercise,Distance,Duration,Notes,Rating,Id")] EnduranceTraining enduranceTraining)
+        public async Task<IActionResult> Edit(long id, [Bind("Exercise,Distance,Duration,Notes,Rating,Id")] EditEnduranceTrainingViewModel enduranceTrainingViewModel)
         {
-            if (id != enduranceTraining.Id)
+            if (id != enduranceTrainingViewModel.Id)
             {
                 return NotFound();
             }
@@ -108,18 +114,14 @@ namespace LifelogBb.Controllers
             {
                 try
                 {
-                    enduranceTrainingDb.Exercise = enduranceTraining.Exercise;
-                    enduranceTrainingDb.Distance = enduranceTraining.Distance;
-                    enduranceTrainingDb.Duration = enduranceTraining.Duration;
-                    enduranceTrainingDb.Notes = enduranceTraining.Notes;
-                    enduranceTrainingDb.Rating = enduranceTraining.Rating;
+                    enduranceTrainingDb = _mapper.Map(enduranceTrainingViewModel, enduranceTrainingDb);
                     enduranceTrainingDb.UpdatedAt = DateTime.Now;
                     _context.Update(enduranceTrainingDb);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EnduranceTrainingExists(enduranceTraining.Id))
+                    if (!EnduranceTrainingExists(enduranceTrainingViewModel.Id))
                     {
                         return NotFound();
                     }
@@ -130,7 +132,7 @@ namespace LifelogBb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(enduranceTraining);
+            return View(enduranceTrainingViewModel);
         }
 
         // GET: EnduranceTrainings/Delete/5

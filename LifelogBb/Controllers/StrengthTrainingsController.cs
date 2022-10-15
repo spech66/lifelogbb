@@ -7,16 +7,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LifelogBb.Models;
 using LifelogBb.Models.Entities;
+using AutoMapper;
+using LifelogBb.Models.Weights;
+using LifelogBb.Models.StrengthTrainings;
 
 namespace LifelogBb.Controllers
 {
     public class StrengthTrainingsController : Controller
     {
         private readonly LifelogBbContext _context;
+        protected readonly IMapper _mapper;
 
-        public StrengthTrainingsController(LifelogBbContext context)
+        public StrengthTrainingsController(LifelogBbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: StrengthTrainings
@@ -85,20 +90,21 @@ namespace LifelogBb.Controllers
                 return NotFound();
             }
 
-            var strengthTraining = await _context.StrengthTrainings.FindAsync(id);
-            if (strengthTraining == null)
+            var strengthTrainingDb = await _context.StrengthTrainings.FindAsync(id);
+            if (strengthTrainingDb == null)
             {
                 return NotFound();
             }
+            var strengthTraining = _mapper.Map<EditStrengthTrainingViewModel>(strengthTrainingDb);
             return View(strengthTraining);
         }
 
         // POST: StrengthTrainings/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Exercise,Reps,Weight,Notes,Rating,Id")] StrengthTraining strengthTraining)
+        public async Task<IActionResult> Edit(long id, [Bind("Exercise,Reps,Weight,Notes,Rating,Id")] EditStrengthTrainingViewModel strengthTrainingViewModel)
         {
-            if (id != strengthTraining.Id)
+            if (id != strengthTrainingViewModel.Id)
             {
                 return NotFound();
             }
@@ -108,18 +114,14 @@ namespace LifelogBb.Controllers
             {
                 try
                 {
-                    strengthTrainingDb.Exercise = strengthTraining.Exercise;
-                    strengthTrainingDb.Reps = strengthTraining.Reps;
-                    strengthTrainingDb.Weight = strengthTraining.Weight;
-                    strengthTrainingDb.Notes = strengthTraining.Notes;
-                    strengthTrainingDb.Rating = strengthTraining.Rating;
+                    strengthTrainingDb = _mapper.Map(strengthTrainingViewModel, strengthTrainingDb);
                     strengthTrainingDb.UpdatedAt = DateTime.Now;
                     _context.Update(strengthTrainingDb);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StrengthTrainingExists(strengthTraining.Id))
+                    if (!StrengthTrainingExists(strengthTrainingViewModel.Id))
                     {
                         return NotFound();
                     }
@@ -130,7 +132,7 @@ namespace LifelogBb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(strengthTraining);
+            return View(strengthTrainingViewModel);
         }
 
         // GET: StrengthTrainings/Delete/5
