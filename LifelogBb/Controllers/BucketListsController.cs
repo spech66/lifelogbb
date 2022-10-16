@@ -62,7 +62,13 @@ namespace LifelogBb.Controllers
 
             return File(bucketList.ImageData, type, bucketList.ImageName);
         }
-        
+
+        // GET: BucketLists/VisionBoard
+        public async Task<IActionResult> VisionBoard()
+        {
+            var items = await _context.BucketLists.ToListAsync();
+            return View(_mapper.Map<List<IndexBucketListViewModel>>(items));
+        }
 
         // GET: BucketLists/Details/5
         public async Task<IActionResult> Details(long? id)

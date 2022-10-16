@@ -4,7 +4,6 @@ ToDos and Features for LifelogBB.
 
 ### Todo
 
-- [ ] Vision board from bucket list
 - [ ] Settings (Units, Start of week, ...)
 - [ ] Goals (SMART)
 - [ ] [Journal date grid](https://github.com/usememos/memos)
@@ -23,6 +22,7 @@ ToDos and Features for LifelogBB.
 ### Done :heavy_check_mark:
 
 - [x] Bucket list (cards + images)
+- [x] Vision board from bucket list
 - [x] Strength training chart
 - [x] Endurance workout chart
 - [x] Journal (MD Editor)

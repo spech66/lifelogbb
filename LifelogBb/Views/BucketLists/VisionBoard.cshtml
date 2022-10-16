@@ -1,0 +1,128 @@
+﻿@model IEnumerable<LifelogBb.Models.BucketLists.IndexBucketListViewModel>
+
+@{
+    ViewData["Title"] = "Bucket list - Vision board";
+}
+
+<div class="container text-center">
+    <h1>@ViewData["Title"]</h1>
+
+    <canvas id="boardCanvas"></canvas>
+</div>
+
+
+@section Scripts
+    {
+    <script src="~/lib/fabricjs/fabric.min.js"></script>
+    <script type="text/javascript">
+        fitToContainer(document.getElementById('boardCanvas'));
+
+        var canvas = new fabric.Canvas('boardCanvas');
+
+        // http://fabricjs.com/fabric-intro-part-5#pan_zoom
+        canvas.on('mouse:wheel', function (opt) {
+            var delta = opt.e.deltaY;
+            var zoom = canvas.getZoom();
+            zoom *= 0.999 ** delta;
+            if (zoom > 20) zoom = 20;
+            if (zoom < 0.01) zoom = 0.01;
+            canvas.setZoom(zoom);
+            opt.e.preventDefault();
+            opt.e.stopPropagation();
+        });
+        canvas.on('mouse:down', function (opt) {
+            var evt = opt.e;
+            if (evt.altKey === true) {
+                this.isDragging = true;
+                this.selection = false;
+                this.lastPosX = evt.clientX;
+                this.lastPosY = evt.clientY;
+            }
+        });
+        canvas.on('mouse:move', function (opt) {
+            if (this.isDragging) {
+                var e = opt.e;
+                var vpt = this.viewportTransform;
+                vpt[4] += e.clientX - this.lastPosX;
+                vpt[5] += e.clientY - this.lastPosY;
+                this.requestRenderAll();
+                this.lastPosX = e.clientX;
+                this.lastPosY = e.clientY;
+            }
+        });
+        canvas.on('mouse:up', function (opt) {
+            this.setViewportTransform(this.viewportTransform);
+            this.isDragging = false;
+            this.selection = true;
+        });
+
+        var images = [];
+        var nonImages = [];
+        @foreach (var item in Model.Where(sel => sel.ImageName != null))
+        {
+            @:images.push({ url: '@Url.Action("GetImage", "BucketLists", new { id = item.Id })', status: '@item.Status' });
+        }
+        @foreach (var item in Model.Where(sel => sel.ImageName == null))
+        {
+            @:nonImages.push({ title: '@item.Title', status: '@item.Status' });
+        }
+
+            images.forEach(imgData => {
+                fabric.Image.fromURL(imgData.url, function (oImg) {
+                    oImg.scale(0.4);
+                    oImg.set({
+                        left: getRandomIntInclusive(40, 600),
+                        top: getRandomIntInclusive(40, 600),
+                        angle: getRandomIntInclusive(0, 60) - 30,
+                        strokeWidth: 4,
+                        stroke: statusToColor(imgData.status)
+                    });
+                    canvas.add(oImg);
+                });
+            });
+
+        nonImages.forEach(txtData => {
+            var text = new fabric.Text(txtData.title, {
+                left: getRandomIntInclusive(40, 600),
+                top: getRandomIntInclusive(40, 600),
+                angle: getRandomIntInclusive(0, 60) - 30,
+                fontSize: 40,
+                color: statusToColor(txtData.status)
+            });
+            canvas.add(text);
+        });
+
+        function statusToColor(status) {
+            console.log(status);
+            switch(status) {
+                case 'Wish':
+                    return '#6C757D';
+                case 'Reached':
+                    return '#198754';
+                case 'InProgress':
+                    return '#ffc107';
+                default:
+                    return '#000000';
+            }
+        }
+
+        // https://stackoverflow.com/questions/10214873/make-canvas-as-wide-and-as-high-as-parent
+        function fitToContainer(canvas) {
+            canvas.style.minWidth = '800px';
+            canvas.style.minHeight = '800px';
+            // Make it visually fill the positioned parent
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            // ...then set the internal size to match
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+        function getRandomIntInclusive(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1) + min); // The maximum is inclusive and the minimum is inclusive
+        }
+    </script>
+}

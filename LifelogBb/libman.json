@@ -94,6 +94,13 @@
       "files": [
         "jquery.validate.unobtrusive.min.js"
       ]
+    },
+    {
+      "library": "fabric.js@5.2.4",
+      "destination": "wwwroot/lib/fabricjs/",
+      "files": [
+        "fabric.min.js"
+      ]
     }
   ]
 }
