@@ -7,7 +7,7 @@ namespace LifelogBb.ApiDTOs.EnduranceTrainings
         public long Id { get; set; }
         public string? Exercise { get; set; }
 
-        public decimal Distance { get; set; }
+        public double Distance { get; set; }
 
         public TimeSpan? Duration { get; set; }
 

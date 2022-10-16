@@ -13,8 +13,7 @@ namespace LifelogBb.Models.Weights
         public int Height { get; set; }
 
         [DisplayName("Weight")]
-        [Range(40, 440)] // 200 Kg => 440 lbs...
-        [Column(TypeName = "decimal(18, 1)")]
-        public decimal BodyWeight { get; set; }
+        [Range(40.0, 440.0)] // 200 Kg => 440 lbs...
+        public double BodyWeight { get; set; }
     }
 }

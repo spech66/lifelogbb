@@ -7,19 +7,19 @@
 @functions {
     string GetBmiColorClass(LifelogBb.Models.Entities.Weight weight)
     {
-        if (weight.Bmi < 18.5M)
+        if (weight.Bmi < 18.5)
         { // < 18,49
             return "colunder";
         }
-        else if (weight.Bmi < 25.0M)
+        else if (weight.Bmi < 25.0)
         { // 18,50–24,99
             return "colnormal";
         }
-        else if (weight.Bmi < 30.0M)
+        else if (weight.Bmi < 30.0)
         { // 25,00–29,99
             return "colover1";
         }
-        else if (weight.Bmi < 35.0M)
+        else if (weight.Bmi < 35.0)
         { // 30,00–34,99
             return "colover2";
         }

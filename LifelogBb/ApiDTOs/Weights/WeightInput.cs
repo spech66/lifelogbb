@@ -9,9 +9,8 @@ namespace LifelogBb.ApiDTOs.Weights
         public int Height { get; set; }
 
         [Range(40, 440)] // 200 Kg => 440 lbs...
-        [Column(TypeName = "decimal(18, 1)")]
-        public decimal BodyWeight { get; set; }
+        public double BodyWeight { get; set; }
 
-        public decimal Bmi => ((BodyWeight * 1.0M) / (((Height * 0.01M) * Height) * 0.01M));
+        public double Bmi => ((BodyWeight * 1.0) / (((Height * 0.01) * Height) * 0.01));
     }
 }

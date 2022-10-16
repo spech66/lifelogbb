@@ -62,8 +62,8 @@ namespace LifelogBb.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("Distance")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<double>("Distance")
+                        .HasColumnType("REAL");
 
                     b.Property<TimeSpan?>("Duration")
                         .HasColumnType("TEXT");
@@ -129,8 +129,8 @@ namespace LifelogBb.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("Weight")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<double>("Weight")
+                        .HasColumnType("REAL");
 
                     b.HasKey("Id");
 
@@ -143,11 +143,11 @@ namespace LifelogBb.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("Bmi")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<double>("Bmi")
+                        .HasColumnType("REAL");
 
-                    b.Property<decimal>("BodyWeight")
-                        .HasColumnType("decimal(18, 1)");
+                    b.Property<double>("BodyWeight")
+                        .HasColumnType("REAL");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");

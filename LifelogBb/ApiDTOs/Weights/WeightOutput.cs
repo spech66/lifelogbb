@@ -8,16 +8,16 @@ namespace LifelogBb.ApiDTOs.Weights
 
         public int Height { get; set; }
 
-        public decimal BodyWeight { get; set; }
+        public double BodyWeight { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; }
 
-        public decimal Bmi { get; set; }
+        public double Bmi { get; set; }
 
-        public decimal BmiOverweight => 25.0M;
+        public double BmiOverweight => 25.0;
 
-        public decimal BmiUnderweight => 18.5M;
+        public double BmiUnderweight => 18.5;
     }
 }

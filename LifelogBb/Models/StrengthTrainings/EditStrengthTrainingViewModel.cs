@@ -11,8 +11,7 @@ namespace LifelogBb.Models.StrengthTrainings
 
         public int Reps { get; set; }
 
-        [Column(TypeName = "decimal(18, 2)")]
-        public decimal Weight { get; set; }
+        public double Weight { get; set; }
 
         public string? Notes { get; set; }
 

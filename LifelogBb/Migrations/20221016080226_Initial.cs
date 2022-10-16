@@ -36,7 +36,7 @@ namespace LifelogBb.Migrations
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Exercise = table.Column<string>(type: "TEXT", nullable: true),
-                    Distance = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
+                    Distance = table.Column<double>(type: "REAL", nullable: false),
                     Duration = table.Column<TimeSpan>(type: "TEXT", nullable: true),
                     Notes = table.Column<string>(type: "TEXT", nullable: true),
                     Rating = table.Column<int>(type: "INTEGER", nullable: false),
@@ -71,7 +71,7 @@ namespace LifelogBb.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Exercise = table.Column<string>(type: "TEXT", nullable: true),
                     Reps = table.Column<int>(type: "INTEGER", nullable: false),
-                    Weight = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
+                    Weight = table.Column<double>(type: "REAL", nullable: false),
                     Notes = table.Column<string>(type: "TEXT", nullable: true),
                     Rating = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -89,8 +89,8 @@ namespace LifelogBb.Migrations
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Height = table.Column<int>(type: "INTEGER", nullable: false),
-                    BodyWeight = table.Column<decimal>(type: "decimal(18, 1)", nullable: false),
-                    Bmi = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
+                    BodyWeight = table.Column<double>(type: "REAL", nullable: false),
+                    Bmi = table.Column<double>(type: "REAL", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },

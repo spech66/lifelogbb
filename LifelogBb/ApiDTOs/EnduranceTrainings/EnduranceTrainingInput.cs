@@ -7,8 +7,7 @@ namespace LifelogBb.ApiDTOs.EnduranceTrainings
     {
         public string? Exercise { get; set; }
 
-        [Column(TypeName = "decimal(18, 2)")]
-        public decimal Distance { get; set; }
+        public double Distance { get; set; }
 
         public TimeSpan? Duration { get; set; }
 

@@ -12,19 +12,15 @@ namespace LifelogBb.Models.Entities
 
         [DisplayName("Weight")]
         [Range(40, 440)] // 200 Kg => 440 lbs...
-        [Column(TypeName = "decimal(18, 1)")]
-        public decimal BodyWeight { get; set; }
+        public double BodyWeight { get; set; }
 
         [DisplayName("BMI")]
-        [Column(TypeName = "decimal(18, 2)")]
-        public decimal Bmi { get; set; }
+        public double Bmi { get; set; }
 
         [DisplayName("BMI Overweight")]
-        [Column(TypeName = "decimal(18, 2)")]
-        public decimal BmiOverweight => 25.0M;
+        public double BmiOverweight => 25.0;
 
         [DisplayName("BMI Underweight")]
-        [Column(TypeName = "decimal(18, 2)")]
-        public decimal BmiUnderweight => 18.5M;
+        public double BmiUnderweight => 18.5;
     }
 }

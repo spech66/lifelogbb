@@ -13,7 +13,7 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group mb-3">
                     <label asp-for="BodyWeight" class="control-label mb-1"></label>
-                    <input asp-for="BodyWeight" class="form-control form-control-lg" />
+                    <input asp-for="BodyWeight" class="form-control form-control-lg" type="number" step="0.1" />
                     <span asp-validation-for="BodyWeight" class="text-danger"></span>
                 </div>
                 <div class="form-group mb-3">
