@@ -10,7 +10,9 @@ namespace LifelogBb.Models.Entities
         Reached
     }
 
-    [Table("BucketLists")] // for table splitting https://learn.microsoft.com/en-us/ef/core/modeling/table-splitting
+    // for table splitting https://learn.microsoft.com/en-us/ef/core/modeling/table-splitting
+    // because of https://github.com/dotnet/efcore/issues/1387
+    [Table("BucketLists")]
     public class BucketList : BaseEntity
     {
         [Required]
