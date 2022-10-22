@@ -11,6 +11,7 @@ namespace LifelogBb.Models.Entities
 
         public int Reps { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:0.00}")]
         public double Weight { get; set; }
 
         public string? Notes { get; set; }

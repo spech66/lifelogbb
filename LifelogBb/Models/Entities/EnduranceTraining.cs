@@ -9,6 +9,7 @@ namespace LifelogBb.Models.Entities
     {
         public string? Exercise { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:0.00}")]
         public double Distance { get; set; }
 
         [DataType(DataType.Time)]

@@ -10,10 +10,12 @@ namespace LifelogBb.Models.Entities
         [Range(40, 220)] // 100 cm => 39,3701 inch...
         public int Height { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:0.0}")]
         [DisplayName("Weight")]
         [Range(40, 440)] // 200 Kg => 440 lbs...
         public double BodyWeight { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:0.00}")]
         [DisplayName("BMI")]
         public double Bmi { get; set; }
 
