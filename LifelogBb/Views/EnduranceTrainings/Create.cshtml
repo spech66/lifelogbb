@@ -27,9 +27,7 @@
                     <span asp-validation-for="Duration" class="text-danger"></span>
                 </div>
                 <div class="form-group mb-3">
-                    <label asp-for="Rating" class="control-label mb-1"></label>
-                    <input asp-for="Rating" class="form-control form-control-lg" />
-                    <span asp-validation-for="Rating" class="text-danger"></span>
+                    @Html.EditorFor(model => model.Rating, "Rating")
                 </div>
                 <div class="form-group mb-3">
                     <label asp-for="Notes" class="control-label mb-1"></label>

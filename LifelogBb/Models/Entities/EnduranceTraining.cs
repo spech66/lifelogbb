@@ -7,8 +7,11 @@ namespace LifelogBb.Models.Entities
 {
     public class EnduranceTraining : BaseEntity
     {
+        [Required]
+        [MinLength(1)]
         public string? Exercise { get; set; }
 
+        [Display(Name = "Distance (km)")]
         [DisplayFormat(DataFormatString = "{0:0.00}")]
         public double Distance { get; set; }
 

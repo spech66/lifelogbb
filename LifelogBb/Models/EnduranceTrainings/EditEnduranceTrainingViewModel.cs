@@ -9,6 +9,7 @@ namespace LifelogBb.Models.EnduranceTrainings
 
         public string? Exercise { get; set; }
 
+        [Display(Name = "Distance (km)")]
         public double Distance { get; set; }
 
         [DataType(DataType.Time)]

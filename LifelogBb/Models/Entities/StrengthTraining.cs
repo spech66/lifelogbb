@@ -7,6 +7,8 @@ namespace LifelogBb.Models.Entities
 {
     public class StrengthTraining : BaseEntity
     {
+        [Required]
+        [MinLength(1)]
         public string? Exercise { get; set; }
 
         public int Reps { get; set; }

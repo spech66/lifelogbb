@@ -1,0 +1,8 @@
+﻿@model int
+
+@{
+    string[] emojies = { "😠", "😦", "😑", "😀", "😍" };
+    var emoji = Model < 1 ? emojies[0] : Model > 5 ? emojies[4] : emojies[Model - 1];
+}
+
+@emoji

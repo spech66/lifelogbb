@@ -1,0 +1,15 @@
+﻿@model int
+
+@{
+    string[] emojies = { "😠", "😦", "😑", "😀", "😍" };
+    int checkedIndex = Model == 0 /*Create*/ ? 2 : Model - 1;
+}
+
+<div><label class="control-label mb-1">Rating</label></div>
+<div class="btn-group" role="group" aria-label="Rating">
+    @for (int i = 0; i < emojies.Length; i++)
+    {
+        <input type="radio" class="btn-check" name="Rating" id="Rating@(i)" value="@(i+1)" autocomplete="off" @(checkedIndex == i ? "checked" : "")>
+        <label class="btn btn-outline-primary btn-lg" for="Rating@(i)" style="min-width: unset">@emojies[i]</label>
+    }
+</div>
