@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LifelogBb.Models.Entities
 {
@@ -9,6 +10,7 @@ namespace LifelogBb.Models.Entities
         Reached
     }
 
+    [Table("BucketLists")] // for table splitting https://learn.microsoft.com/en-us/ef/core/modeling/table-splitting
     public class BucketList : BaseEntity
     {
         [Required]
@@ -22,6 +24,6 @@ namespace LifelogBb.Models.Entities
 
         public string? ImageName { get; set; }
 
-        public byte[]? ImageData { get; set; }
+        public BucketListImage? Image { get; set; }
     }
 }

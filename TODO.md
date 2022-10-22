@@ -7,7 +7,7 @@ ToDos and Features for LifelogBB.
 - [ ] Settings (Units, Start of week, ...)
 - [ ] Goals (SMART)
 - [ ] [Journal date grid](https://github.com/usememos/memos)
-- [ ] [Paginations](https://learn.microsoft.com/en-us/aspnet/core/tutorials/first-mvc-app/search?view=aspnetcore-6.0)
+- [ ] [Paginations](https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/sort-filter-page?view=aspnetcore-6.0)
 - [ ] [Secret management](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&tabs=windows)
 - [ ] Telegram bot
   - https://github.com/TelegramBots/Telegram.Bot

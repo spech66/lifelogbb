@@ -43,8 +43,8 @@ namespace LifelogBb.Controllers
                 return NotFound();
             }
 
-            var bucketList = await _context.BucketLists.FirstOrDefaultAsync(m => m.Id == id);
-            if (bucketList == null || bucketList.ImageData == null || bucketList.ImageName == null)
+            var bucketList = await _context.BucketLists.Include(inc => inc.Image).FirstOrDefaultAsync(m => m.Id == id);
+            if (bucketList == null || bucketList.Image  == null || bucketList.Image.ImageData == null || bucketList.ImageName == null)
             {
                 return NotFound();
             }
@@ -60,7 +60,7 @@ namespace LifelogBb.Controllers
                 default: type = "application/octet-stream"; break;
             }
 
-            return File(bucketList.ImageData, type, bucketList.ImageName);
+            return File(bucketList.Image.ImageData, type, bucketList.ImageName);
         }
 
         // GET: BucketLists/VisionBoard
@@ -105,7 +105,7 @@ namespace LifelogBb.Controllers
                 bucketListDb = _mapper.Map(bucketListViewModel, bucketListDb);
                 bucketListDb.CreatedAt = bucketListDb.UpdatedAt = DateTime.Now;
 
-                if(bucketListViewModel.ImageData != null)
+                if (bucketListViewModel.ImageData != null)
                 {
                     using (var memoryStream = new MemoryStream())
                     {
@@ -119,8 +119,11 @@ namespace LifelogBb.Controllers
                         // Check size for 10 MB
                         if (memoryStream.Length < 10 * 1024 * 1024)
                         {
-                            bucketListDb.ImageData = memoryStream.ToArray();
                             string untrustedFileName = Path.GetFileName(bucketListViewModel.ImageData.FileName);
+                            bucketListDb.Image = new BucketListImage()
+                            {
+                                ImageData = memoryStream.ToArray(),
+                            };
                             bucketListDb.ImageName = WebUtility.HtmlEncode(untrustedFileName);
                         }
                         else
@@ -187,8 +190,11 @@ namespace LifelogBb.Controllers
                             // Check size for 10 MB
                             if (memoryStream.Length < 10 * 1024 * 1024)
                             {
-                                bucketListDb.ImageData = memoryStream.ToArray();
                                 string untrustedFileName = Path.GetFileName(bucketListViewModel.ImageData.FileName);
+                                bucketListDb.Image = new BucketListImage()
+                                {
+                                    ImageData = memoryStream.ToArray(),                                    
+                                };
                                 bucketListDb.ImageName = WebUtility.HtmlEncode(untrustedFileName);
                             }
                             else
