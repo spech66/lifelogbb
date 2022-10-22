@@ -30,7 +30,6 @@ ToDos and Features for LifelogBB.
 - [x] Endurance workout
 - [x] Weight
 - [x] Weight chart
-- [x] SQLite
 - [x] Authentication
 - [x] Dockerfile
 - [x] SQLite

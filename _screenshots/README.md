@@ -8,4 +8,6 @@
 ![Endurance workout](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/004_enduranceworkout_01.png "Endurance workout")
 ![Journal](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/005_journal_01.png "Journal")-->
 
+![Bucket List Vision Board](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/006_bucketlist_02.png "Bucket List Vision Board")
+
 Taken on Chrome using the "Samsung Galaxy S8+" Profile.
