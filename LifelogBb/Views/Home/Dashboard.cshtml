@@ -1,9 +1,60 @@
-﻿@{
+﻿@model LifelogBb.Models.Home.IndexDashboardViewModel
+
+@{
     ViewData["Title"] = "Dashboard";
 }
 
 <div class="container text-center">
     <h1>@ViewData["Title"]</h1>
 
-    <p>Dashboard</p>
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        @if (Model.LastEnduranceTraining.HasValue || Model.LastStrengthTraining.HasValue)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Training</h5>
+                        <p class="card-text">Last endurance training: @(Model.LastEnduranceTraining.HasValue ? Model.LastEnduranceTraining.Value.ToString() : "-")</p>
+                        <p class="card-text">Last strength training: @(Model.LastStrengthTraining.HasValue ? Model.LastStrengthTraining.Value.ToString() : "-")</p>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (Model.RandomBucketList != null)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        @if (Model.RandomBucketList.ImageName != null)
+                        {
+                            <img src="@Url.Action("GetImage", "BucketLists", new { id = Model.RandomBucketList.Id })" class="card-img-top" alt="@Html.DisplayFor(modelItem => Model.RandomBucketList.Title)" />
+                        }
+                        <h5 class="card-title">@Model.RandomBucketList.Title</h5>
+                        <p class="card-text">@Model.RandomBucketList.Description</p>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header">
+                    Quote
+                </div>
+                <div class="card-body">
+                    <blockquote class="blockquote mb-0">
+                        <p>@Model.RandomQuote.Text</p>
+                        <footer class="blockquote-footer"><cite>@Model.RandomQuote.Cite</cite></footer>
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
