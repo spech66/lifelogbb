@@ -11,7 +11,13 @@ All **data** is stored in a single **SQLite database** for full control and port
 
 (This is the new work in progress version of the old [lifelogspd](https://github.com/spech66/lifelogspd) project).
 
-## Status
+## Features and status
+
+* Weight tracking
+* Journal
+* Bucket list and Vision board
+* Strength and endurance training tracker
+* Technical: Authentication, SQLite, Self hosting
 
 [TODO](https://github.com/spech66/lifelogbb/blob/main/TODO.md)
 
