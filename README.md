@@ -35,12 +35,15 @@ Clone the repository and run docker.
 
 ```sh
 git clone https://github.com/spech66/lifelogbb.git
+cd lifelogbb
 ```
 
 Set database path to `"/database"` in the `appsettings`.
 
 ```sh
-sudo docker run -v lifelogbbdatabase:/database -p 80:80 -p 443:443
+cd LifelogBb
+docker build . -t lifelogbb
+docker run -v lifelogbbdatabase:/database -p 80:80 -p 443:443 lifelogbb
 ```
 
 Hosting a [secure app](https://learn.microsoft.com/en-us/aspnet/core/security/docker-https?view=aspnetcore-6.0).
