@@ -24,5 +24,16 @@ namespace LifelogBb.Models.Entities
 
         [DisplayName("BMI Underweight")]
         public double BmiUnderweight => 18.5;
+
+        public Weight()
+        {
+            // Default constructor
+        }
+
+        public Weight(int height, double bodyWeight)
+        {
+            Height = height;
+            BodyWeight = bodyWeight;
+        }
     }
 }

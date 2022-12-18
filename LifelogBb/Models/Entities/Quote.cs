@@ -2,20 +2,23 @@
 
 namespace LifelogBb.Models.Entities
 {
-    public class Journal : BaseEntity
+    public class Quote : BaseEntity
     {
         [Required]
         [MinLength(1)]
         public string Text { get; set; } = string.Empty;
 
-        public Journal()
+        public string? Author { get; set; }
+
+        public Quote()
         {
             // Default constructor
         }
 
-        public Journal(string text)
+        public Quote(string text, string author)
         {
             Text = text;
+            Author = author;
         }
     }
 }

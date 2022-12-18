@@ -66,6 +66,10 @@ namespace LifelogBb
             services.AddScoped<JournalsService>();
             services.AddScoped<StrengthTrainingsService>();
             services.AddScoped<EnduranceTrainingsService>();
+            services.AddScoped<QuotesService>();
+            services.AddScoped<TodosService>();
+            services.AddScoped<HabitsService>();
+            services.AddScoped<GoalsService>();
 
             ConfigureCookieJwt(services, config);
 

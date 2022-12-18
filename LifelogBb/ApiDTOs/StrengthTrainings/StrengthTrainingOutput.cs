@@ -6,7 +6,7 @@ namespace LifelogBb.ApiDTOs.StrengthTrainings
     {
         public long Id { get; set; }
 
-        public string? Exercise { get; set; }
+        public string Exercise { get; set; } = string.Empty;
 
         public int Reps { get; set; }
 

@@ -5,9 +5,8 @@ ToDos and Features for LifelogBB.
 ### Todo
 
 - [ ] Settings (Units, Start of week, ...)
-- [ ] Goals ([SMART](https://en.wikipedia.org/wiki/SMART_criteria))
-- [ ] Habits (Time Boxing/Blocking)
 - [ ] [iCal](https://github.com/rianjs/ical.net) for Goals/Habits/BucketList/...
+  - Alarms
 - [ ] [Journal date grid](https://github.com/usememos/memos)
 - [ ] [Paginations](https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/sort-filter-page?view=aspnetcore-6.0)
 - [ ] [Secret management](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&tabs=windows)
@@ -20,6 +19,10 @@ ToDos and Features for LifelogBB.
 ### In Progress :construction:
 
 - [ ] Dashboard
+- [ ] Goals ([SMART](https://en.wikipedia.org/wiki/SMART_criteria))
+- [ ] Habits (Time Boxing/Blocking)
+- [ ] Todos
+- [ ] Quotes
 
 ### Done :heavy_check_mark:
 

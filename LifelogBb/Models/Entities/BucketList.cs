@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.VisualBasic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LifelogBb.Models.Entities
@@ -16,7 +17,8 @@ namespace LifelogBb.Models.Entities
     public class BucketList : BaseEntity
     {
         [Required]
-        public string? Title { get; set; }
+        [MinLength(1)]
+        public string Title { get; set; } = string.Empty;
 
         public string? Description { get; set; }
 
@@ -27,5 +29,18 @@ namespace LifelogBb.Models.Entities
         public string? ImageName { get; set; }
 
         public BucketListImage? Image { get; set; }
+
+        public BucketList()
+        {
+            // Default constructor
+        }
+
+        public BucketList(string title, string description, string category, BucketListStatus status)
+        {
+            Title = title;
+            Description = description;
+            Category = category;
+            Status = status;
+        }
     }
 }

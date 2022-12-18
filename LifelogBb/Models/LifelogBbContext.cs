@@ -6,11 +6,15 @@ namespace LifelogBb.Models
 {
     public class LifelogBbContext : DbContext
     {
-        public DbSet<Weight> Weights { get; set; }
-        public DbSet<StrengthTraining> StrengthTrainings { get; set; }
-        public DbSet<EnduranceTraining> EnduranceTrainings { get; set; }
-        public DbSet<Journal> Journals { get; set; }
-        public DbSet<BucketList> BucketLists { get; set; }
+        public DbSet<Weight> Weights { get; set; } = null!;
+        public DbSet<StrengthTraining> StrengthTrainings { get; set; } = null!;
+        public DbSet<EnduranceTraining> EnduranceTrainings { get; set; } = null!;
+        public DbSet<Journal> Journals { get; set; } = null!;
+        public DbSet<BucketList> BucketLists { get; set; } = null!;
+        public DbSet<Quote> Quotes { get; set; } = null!;
+        public DbSet<Todo> Todos { get; set; } = null!;
+        public DbSet<Habit> Habits { get; set; } = null!;
+        public DbSet<Goal> Goals { get; set; } = null!;
 
         private readonly IConfiguration Configuration;
 

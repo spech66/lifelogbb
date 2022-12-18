@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LifelogBb.ApiDTOs.Journals
+namespace LifelogBb.ApiDTOs.Quotes
 {
-    public class JournalInput
+    public class QuoteInput
     {
         [Required]
         [MinLength(1)]
         public string Text { get; set; } = string.Empty;
+
+        public string? Author { get; set; }
     }
 }

@@ -13,7 +13,6 @@ namespace LifelogBb.Models.Entities
 
         public byte[]? ImageData { get; set; }
 
-        public BucketList ImageOf { get; set; }
+        public BucketList ImageOf { get; set; } = null!;
     }
 }
-

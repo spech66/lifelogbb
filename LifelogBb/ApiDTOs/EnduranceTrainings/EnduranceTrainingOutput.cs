@@ -5,7 +5,8 @@ namespace LifelogBb.ApiDTOs.EnduranceTrainings
     public class EnduranceTrainingOutput : IBaseOutput
     {
         public long Id { get; set; }
-        public string? Exercise { get; set; }
+
+        public string Exercise { get; set; } = string.Empty;
 
         public double Distance { get; set; }
 
