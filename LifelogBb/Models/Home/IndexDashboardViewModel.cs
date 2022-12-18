@@ -2,13 +2,6 @@
 
 namespace LifelogBb.Models.Home
 {
-    public class Quote
-    {
-        public string Text { get; set; }
-
-        public string Cite { get; set; }
-    }
-
     public class IndexDashboardViewModel
     {
         public DateTime? LastStrengthTraining { get; set; }
@@ -17,6 +10,6 @@ namespace LifelogBb.Models.Home
 
         public BucketList? RandomBucketList { get; set; }
 
-        public Quote RandomQuote { get; set; }
+        public Quote? RandomQuote { get; set; }
     }
 }

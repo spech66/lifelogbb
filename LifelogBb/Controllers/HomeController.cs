@@ -50,9 +50,18 @@ namespace LifelogBb.Controllers
                 model.RandomBucketList = randomBucketList;
             }
 
-            model.RandomQuote = RandomQuote();
+            var randomQuote = await _context.Quotes.OrderBy(r => EF.Functions.Random()).Take(1).FirstOrDefaultAsync();
+            if (randomQuote != null)
+            {
+                model.RandomQuote = randomQuote;
+            }
 
             return View(model);
+        }
+
+        public IActionResult Config()
+        {
+            return View();
         }
 
         [AllowAnonymous]
@@ -62,7 +71,7 @@ namespace LifelogBb.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private Quote RandomQuote()
+        /*private Quote RandomQuote()
         {
             Quote[] quotes =
             {
@@ -80,6 +89,6 @@ namespace LifelogBb.Controllers
             var random = new Random();
             int index = random.Next(quotes.Count());
             return quotes[index];
-        }
+        }*/
     }
 }
