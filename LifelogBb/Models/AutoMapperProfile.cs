@@ -5,6 +5,10 @@ using LifelogBb.Models.Journals;
 using LifelogBb.Models.StrengthTrainings;
 using LifelogBb.Models.EnduranceTrainings;
 using LifelogBb.Models.BucketLists;
+using LifelogBb.Models.Habits;
+using LifelogBb.Models.Todos;
+using LifelogBb.Models.Quotes;
+using LifelogBb.Models.Goals;
 
 namespace LifelogBb.Models
 {
@@ -41,6 +45,22 @@ namespace LifelogBb.Models
             CreateMap<BucketList, EditBucketListViewModel>()
                 .ForSourceMember(source => source.Image, opt => opt.DoNotValidate())
                 .ForMember(dest => dest.ImageData, opt => opt.Ignore());
+
+            // Quotes
+            CreateMap<EditQuoteViewModel, Quote>();
+            CreateMap<Quote, EditQuoteViewModel>();
+
+            // Todos
+            CreateMap<EditTodoViewModel, Todo>();
+            CreateMap<Todo, EditTodoViewModel>();
+
+            // Habits
+            CreateMap<EditHabitViewModel, Habit>();
+            CreateMap<Habit, EditHabitViewModel>();
+
+            // Goals
+            CreateMap<EditGoalViewModel, Goal>();
+            CreateMap<Goal, EditGoalViewModel>();
         }
     }
 }
