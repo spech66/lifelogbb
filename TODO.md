@@ -19,10 +19,6 @@ ToDos and Features for LifelogBB.
 ### In Progress :construction:
 
 - [ ] Dashboard
-- [ ] Goals ([SMART](https://en.wikipedia.org/wiki/SMART_criteria))
-- [ ] Habits (Time Boxing/Blocking)
-- [ ] Todos
-- [ ] Quotes
 
 ### Done :heavy_check_mark:
 
@@ -35,6 +31,10 @@ ToDos and Features for LifelogBB.
 - [x] Endurance workout
 - [x] Weight
 - [x] Weight chart
+- [x] Goals ([SMART](https://en.wikipedia.org/wiki/SMART_criteria))
+- [x] Habits (Time Boxing/Blocking)
+- [x] Todos
+- [x] Quotes
 - [x] Authentication
 - [x] Dockerfile
 - [x] SQLite
