@@ -17,6 +17,8 @@ All **data** is stored in a single **SQLite database** for full control and port
 * Journal
 * Bucket list and Vision board
 * Strength and endurance training tracker
+* Todos, Goals and Habits
+* Quotes
 * Technical: Authentication, SQLite, Self hosting
 
 [TODO](https://github.com/spech66/lifelogbb/blob/main/TODO.md)
