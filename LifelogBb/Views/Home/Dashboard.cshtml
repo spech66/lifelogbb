@@ -43,18 +43,22 @@
                 </div>
             </div>
         </div>
-        <div class="col">
-            <div class="card h-100">
-                <div class="card-header">
-                    Quote
-                </div>
-                <div class="card-body">
-                    <blockquote class="blockquote mb-0">
-                        <p>@Model.RandomQuote.Text</p>
-                        <footer class="blockquote-footer"><cite>@Model.RandomQuote.Cite</cite></footer>
-                    </blockquote>
+        
+        @if (Model.RandomQuote != null)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        Quote
+                    </div>
+                    <div class="card-body">
+                        <blockquote class="blockquote mb-0">
+                            <p>@Model.RandomQuote.Text</p>
+                            <footer class="blockquote-footer"><cite>@Model.RandomQuote.Author</cite></footer>
+                        </blockquote>
+                    </div>
                 </div>
             </div>
-        </div>
+        }
     </div>
 </div>
