@@ -7,23 +7,28 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LifelogBb.Models;
 using LifelogBb.Models.Entities;
+using AutoMapper;
+using LifelogBb.Models.Journals;
+using LifelogBb.Models.Quotes;
 
 namespace LifelogBb.Controllers
 {
     public class QuotesController : Controller
     {
         private readonly LifelogBbContext _context;
+        protected readonly IMapper _mapper;
 
-        public QuotesController(LifelogBbContext context)
+        public QuotesController(LifelogBbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: Quotes
         public async Task<IActionResult> Index()
         {
               return _context.Quotes != null ? 
-                          View(await _context.Quotes.ToListAsync()) :
+                          View(await _context.Quotes.OrderByDescending(o => o.CreatedAt).ToListAsync()) :
                           Problem("Entity set 'LifelogBbContext.Quotes'  is null.");
         }
 
@@ -52,14 +57,13 @@ namespace LifelogBb.Controllers
         }
 
         // POST: Quotes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Text,Author,Id,CreatedAt,UpdatedAt")] Quote quote)
+        public async Task<IActionResult> Create([Bind("Text,Author")] Quote quote)
         {
             if (ModelState.IsValid)
             {
+                quote.SetCreateFields();
                 _context.Add(quote);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -75,36 +79,38 @@ namespace LifelogBb.Controllers
                 return NotFound();
             }
 
-            var quote = await _context.Quotes.FindAsync(id);
-            if (quote == null)
+            var quoteDb = await _context.Quotes.FindAsync(id);
+            if (quoteDb == null)
             {
                 return NotFound();
             }
+            var quote = _mapper.Map<EditQuoteViewModel>(quoteDb);
             return View(quote);
         }
 
         // POST: Quotes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Text,Author,Id,CreatedAt,UpdatedAt")] Quote quote)
+        public async Task<IActionResult> Edit(long id, [Bind("Text,Author,Id")] EditQuoteViewModel quoteViewModel)
         {
-            if (id != quote.Id)
+            if (id != quoteViewModel.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var quoteDb = await _context.Quotes.FindAsync(id);
+            if (ModelState.IsValid && quoteDb != null)
             {
                 try
                 {
-                    _context.Update(quote);
+                    quoteDb = _mapper.Map(quoteViewModel, quoteDb);
+                    quoteDb.SetUpdateFields();
+                    _context.Update(quoteDb);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!QuoteExists(quote.Id))
+                    if (!QuoteExists(quoteViewModel.Id))
                     {
                         return NotFound();
                     }
@@ -115,7 +121,7 @@ namespace LifelogBb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(quote);
+            return View(quoteViewModel);
         }
 
         // GET: Quotes/Delete/5

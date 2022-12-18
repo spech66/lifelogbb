@@ -61,7 +61,7 @@ namespace LifelogBb.Controllers
         {
             if (ModelState.IsValid)
             {
-                journal.CreatedAt = journal.UpdatedAt = DateTime.Now;
+                journal.SetCreateFields();
                 _context.Add(journal);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -102,7 +102,7 @@ namespace LifelogBb.Controllers
                 try
                 {
                     journalDb = _mapper.Map(journalViewModel, journalDb);
-                    journalDb.UpdatedAt = DateTime.Now;
+                    journalDb.SetUpdateFields();
                     _context.Update(journalDb);
                     await _context.SaveChangesAsync();
                 }

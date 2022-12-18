@@ -7,23 +7,28 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LifelogBb.Models;
 using LifelogBb.Models.Entities;
+using AutoMapper;
+using LifelogBb.Models.Quotes;
+using LifelogBb.Models.Todos;
 
 namespace LifelogBb.Controllers
 {
     public class TodosController : Controller
     {
         private readonly LifelogBbContext _context;
+        protected readonly IMapper _mapper;
 
-        public TodosController(LifelogBbContext context)
+        public TodosController(LifelogBbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: Todos
         public async Task<IActionResult> Index()
         {
               return _context.Todos != null ? 
-                          View(await _context.Todos.ToListAsync()) :
+                          View(await _context.Todos.OrderByDescending(o => o.CreatedAt).ToListAsync()) :
                           Problem("Entity set 'LifelogBbContext.Todos'  is null.");
         }
 
@@ -52,14 +57,13 @@ namespace LifelogBb.Controllers
         }
 
         // POST: Todos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,Description,DueDate,IsCompleted,IsImportant,Id,CreatedAt,UpdatedAt")] Todo todo)
+        public async Task<IActionResult> Create([Bind("Title,Description,DueDate,IsCompleted,IsImportant")] Todo todo)
         {
             if (ModelState.IsValid)
             {
+                todo.SetCreateFields();
                 _context.Add(todo);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -75,36 +79,38 @@ namespace LifelogBb.Controllers
                 return NotFound();
             }
 
-            var todo = await _context.Todos.FindAsync(id);
-            if (todo == null)
+            var todoDb = await _context.Todos.FindAsync(id);
+            if (todoDb == null)
             {
                 return NotFound();
             }
+            var todo = _mapper.Map<EditTodoViewModel>(todoDb);
             return View(todo);
         }
 
         // POST: Todos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Title,Description,DueDate,IsCompleted,IsImportant,Id,CreatedAt,UpdatedAt")] Todo todo)
+        public async Task<IActionResult> Edit(long id, [Bind("Title,Description,DueDate,IsCompleted,IsImportant,Id")] EditTodoViewModel todoViewModel)
         {
-            if (id != todo.Id)
+            if (id != todoViewModel.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var todoDb = await _context.Todos.FindAsync(id);
+            if (ModelState.IsValid && todoDb != null)
             {
                 try
                 {
-                    _context.Update(todo);
+                    todoDb = _mapper.Map(todoViewModel, todoDb);
+                    todoDb.SetUpdateFields();
+                    _context.Update(todoDb);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TodoExists(todo.Id))
+                    if (!TodoExists(todoViewModel.Id))
                     {
                         return NotFound();
                     }
@@ -115,7 +121,7 @@ namespace LifelogBb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(todo);
+            return View(todoViewModel);
         }
 
         // GET: Todos/Delete/5

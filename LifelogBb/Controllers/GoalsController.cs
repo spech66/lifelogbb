@@ -7,23 +7,28 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LifelogBb.Models;
 using LifelogBb.Models.Entities;
+using AutoMapper;
+using LifelogBb.Models.Quotes;
+using LifelogBb.Models.Goals;
 
 namespace LifelogBb.Controllers
 {
     public class GoalsController : Controller
     {
         private readonly LifelogBbContext _context;
+        protected readonly IMapper _mapper;
 
-        public GoalsController(LifelogBbContext context)
+        public GoalsController(LifelogBbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: Goals
         public async Task<IActionResult> Index()
         {
               return _context.Goals != null ? 
-                          View(await _context.Goals.ToListAsync()) :
+                          View(await _context.Goals.OrderByDescending(o => o.CreatedAt).ToListAsync()) :
                           Problem("Entity set 'LifelogBbContext.Goals'  is null.");
         }
 
@@ -52,14 +57,13 @@ namespace LifelogBb.Controllers
         }
 
         // POST: Goals/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,TargetValue,CurrentValue,StartDate,EndDate,IsCompleted,Id,CreatedAt,UpdatedAt")] Goal goal)
+        public async Task<IActionResult> Create([Bind("Name,Description,TargetValue,CurrentValue,StartDate,EndDate,IsCompleted")] Goal goal)
         {
             if (ModelState.IsValid)
             {
+                goal.SetCreateFields();
                 _context.Add(goal);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -75,36 +79,38 @@ namespace LifelogBb.Controllers
                 return NotFound();
             }
 
-            var goal = await _context.Goals.FindAsync(id);
-            if (goal == null)
+            var goalDb = await _context.Goals.FindAsync(id);
+            if (goalDb == null)
             {
                 return NotFound();
             }
+            var goal = _mapper.Map<EditGoalViewModel>(goalDb);
             return View(goal);
         }
 
         // POST: Goals/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Name,Description,TargetValue,CurrentValue,StartDate,EndDate,IsCompleted,Id,CreatedAt,UpdatedAt")] Goal goal)
+        public async Task<IActionResult> Edit(long id, [Bind("Name,Description,TargetValue,CurrentValue,StartDate,EndDate,IsCompleted,Id")] EditGoalViewModel goalViewModel)
         {
-            if (id != goal.Id)
+            if (id != goalViewModel.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var goalDb = await _context.Goals.FindAsync(id);
+            if (ModelState.IsValid && goalDb != null)
             {
                 try
                 {
-                    _context.Update(goal);
+                    goalDb = _mapper.Map(goalViewModel, goalDb);
+                    goalDb.SetUpdateFields();
+                    _context.Update(goalDb);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!GoalExists(goal.Id))
+                    if (!GoalExists(goalViewModel.Id))
                     {
                         return NotFound();
                     }
@@ -115,7 +121,7 @@ namespace LifelogBb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(goal);
+            return View(goalViewModel);
         }
 
         // GET: Goals/Delete/5

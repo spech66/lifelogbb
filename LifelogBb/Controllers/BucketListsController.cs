@@ -103,7 +103,7 @@ namespace LifelogBb.Controllers
             {
                 var bucketListDb = new BucketList();
                 bucketListDb = _mapper.Map(bucketListViewModel, bucketListDb);
-                bucketListDb.CreatedAt = bucketListDb.UpdatedAt = DateTime.Now;
+                bucketListDb.SetCreateFields();
 
                 if (bucketListViewModel.ImageData != null)
                 {
@@ -174,7 +174,7 @@ namespace LifelogBb.Controllers
                 try
                 {
                     bucketListDb = _mapper.Map(bucketListViewModel, bucketListDb);
-                    bucketListDb.UpdatedAt = DateTime.Now;
+                    bucketListDb.SetUpdateFields();
 
                     if (bucketListViewModel.ImageData != null)
                     {

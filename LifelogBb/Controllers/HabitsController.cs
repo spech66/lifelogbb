@@ -7,23 +7,28 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LifelogBb.Models;
 using LifelogBb.Models.Entities;
+using AutoMapper;
+using LifelogBb.Models.Quotes;
+using LifelogBb.Models.Habits;
 
 namespace LifelogBb.Controllers
 {
     public class HabitsController : Controller
     {
         private readonly LifelogBbContext _context;
+        protected readonly IMapper _mapper;
 
-        public HabitsController(LifelogBbContext context)
+        public HabitsController(LifelogBbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: Habits
         public async Task<IActionResult> Index()
         {
               return _context.Habits != null ? 
-                          View(await _context.Habits.ToListAsync()) :
+                          View(await _context.Habits.OrderByDescending(o => o.CreatedAt).ToListAsync()) :
                           Problem("Entity set 'LifelogBbContext.Habits'  is null.");
         }
 
@@ -52,14 +57,13 @@ namespace LifelogBb.Controllers
         }
 
         // POST: Habits/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,Frequency,FrequencyUnit,StartDate,EndDate,ExtraRules,IsCompleted,Id,CreatedAt,UpdatedAt")] Habit habit)
+        public async Task<IActionResult> Create([Bind("Name,Description,Frequency,FrequencyUnit,StartDate,EndDate,ExtraRules,IsCompleted")] Habit habit)
         {
             if (ModelState.IsValid)
             {
+                habit.SetCreateFields();
                 _context.Add(habit);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -75,36 +79,38 @@ namespace LifelogBb.Controllers
                 return NotFound();
             }
 
-            var habit = await _context.Habits.FindAsync(id);
-            if (habit == null)
+            var habitDb = await _context.Habits.FindAsync(id);
+            if (habitDb == null)
             {
                 return NotFound();
             }
+            var habit = _mapper.Map<EditHabitViewModel>(habitDb);
             return View(habit);
         }
 
         // POST: Habits/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Name,Description,Frequency,FrequencyUnit,StartDate,EndDate,ExtraRules,IsCompleted,Id,CreatedAt,UpdatedAt")] Habit habit)
+        public async Task<IActionResult> Edit(long id, [Bind("Name,Description,Frequency,FrequencyUnit,StartDate,EndDate,ExtraRules,IsCompleted,Id")] EditHabitViewModel habitViewModel)
         {
-            if (id != habit.Id)
+            if (id != habitViewModel.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var habitDb = await _context.Habits.FindAsync(id);
+            if (ModelState.IsValid && habitDb != null)
             {
                 try
                 {
-                    _context.Update(habit);
+                    habitDb = _mapper.Map(habitViewModel, habitDb);
+                    habitDb.SetUpdateFields();
+                    _context.Update(habitDb);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!HabitExists(habit.Id))
+                    if (!HabitExists(habitViewModel.Id))
                     {
                         return NotFound();
                     }
@@ -115,7 +121,7 @@ namespace LifelogBb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(habit);
+            return View(habitViewModel);
         }
 
         // GET: Habits/Delete/5

@@ -74,7 +74,7 @@ namespace LifelogBb.Controllers
             if (ModelState.IsValid)
             {
                 weight.Bmi = ((weight.BodyWeight * 1.0) / (((weight.Height * 0.01) * weight.Height) * 0.01));
-                weight.CreatedAt = weight.UpdatedAt = DateTime.Now;
+                weight.SetCreateFields();
                 _context.Add(weight);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -116,7 +116,7 @@ namespace LifelogBb.Controllers
                 {
                     weightDb = _mapper.Map(weightViewModel, weightDb);
                     weightDb.Bmi = ((weightViewModel.BodyWeight * 1.0) / (((weightViewModel.Height * 0.01) * weightViewModel.Height) * 0.01));
-                    weightDb.UpdatedAt = DateTime.Now;
+                    weightDb.SetUpdateFields();
                     _context.Update(weightDb);
                     await _context.SaveChangesAsync();
                 }

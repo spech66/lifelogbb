@@ -79,7 +79,7 @@ namespace LifelogBb.Controllers
         {
             if (ModelState.IsValid)
             {
-                strengthTraining.CreatedAt = strengthTraining.UpdatedAt = DateTime.Now;
+                strengthTraining.SetCreateFields();
                 _context.Add(strengthTraining);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -120,7 +120,7 @@ namespace LifelogBb.Controllers
                 try
                 {
                     strengthTrainingDb = _mapper.Map(strengthTrainingViewModel, strengthTrainingDb);
-                    strengthTrainingDb.UpdatedAt = DateTime.Now;
+                    strengthTrainingDb.SetUpdateFields();
                     _context.Update(strengthTrainingDb);
                     await _context.SaveChangesAsync();
                 }
