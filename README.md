@@ -1,4 +1,4 @@
-# LifelogBB
+﻿# LifelogBB
 
 ![Dotnet Workflow](https://github.com/spech66/lifelogbb/actions/workflows/dotnet.yml/badge.svg)
 ![CodeQL Workflow](https://github.com/spech66/lifelogbb/actions/workflows/codeql.yml/badge.svg)
@@ -9,19 +9,28 @@ This service is build for a **single user**. **Password authentication** is incl
 
 All **data** is stored in a single **SQLite database** for full control and portability over the data.
 
-(This is the new work in progress version of the old [lifelogspd](https://github.com/spech66/lifelogspd) project).
+## Features
 
-## Features and status
-
-* Weight tracking
-* Journal
-* Bucket list and Vision board
-* Strength and endurance training tracker
-* Todos, Goals and Habits
-* Quotes
-* Technical: Authentication, SQLite, Self hosting
+* 🦄 Free open source software
+* ⚖️ Weight tracking
+* 📔 Journal
+* 🏋️ Strength training tracker
+* 🏃 Endurance training tracker
+* ✅ Todos
+* 🎯 Goals
+* 🚀 Habits
+* 🌄 Bucket list and Vision board
+* 📜 Quotes
+* 🛠️ RESTful API for all routes
+* ⚙️ Settings
 
 [TODO](https://github.com/spech66/lifelogbb/blob/main/TODO.md)
+
+## Technical
+
+* 📦 Self hosting
+* 🔐 Authentication
+* 📂 SQLite database
 
 ## Screenshots
 

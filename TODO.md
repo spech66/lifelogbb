@@ -19,6 +19,7 @@ ToDos and Features for LifelogBB.
 ### In Progress :construction:
 
 - [ ] Dashboard
+- [x] Habits (Time Boxing/Blocking)
 
 ### Done :heavy_check_mark:
 
@@ -32,7 +33,6 @@ ToDos and Features for LifelogBB.
 - [x] Weight
 - [x] Weight chart
 - [x] Goals ([SMART](https://en.wikipedia.org/wiki/SMART_criteria))
-- [x] Habits (Time Boxing/Blocking)
 - [x] Todos
 - [x] Quotes
 - [x] Authentication
