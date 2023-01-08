@@ -37,3 +37,26 @@ select {
 td {
     vertical-align: middle;
 }
+
+
+
+
+.colblue {
+    background-color: #4c79b3 !important;
+    color: #ffffff !important;
+}
+
+.colgreen {
+    background-color: #69B34C !important;
+    color: #ffffff !important;
+}
+
+.colorange {
+    background-color: #d19a2b !important;
+    color: #ffffff !important;
+}
+
+.colred {
+    background-color: #b40000 !important;
+    color: #ffffff !important;
+}

@@ -4,6 +4,10 @@ ToDos and Features for LifelogBB.
 
 ### Todo
 
+- [ ] Dedicated views and filters
+ - Tasks: Progress
+ - Todos: Upcoming today, next 7 days, ...
+ - Habits: Timeline
 - [ ] Settings (Units, Start of week, ...)
 - [ ] [iCal](https://github.com/rianjs/ical.net) for Goals/Habits/BucketList/...
   - Alarms

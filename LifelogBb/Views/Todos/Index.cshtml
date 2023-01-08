@@ -4,6 +4,28 @@
     ViewData["Title"] = "ToDos";
 }
 
+@functions {
+    string DateToColor(LifelogBb.Models.Entities.Todo item)
+    {
+        if(!item.DueDate.HasValue)
+        {
+            return "colgreen";
+        }
+
+        DateTime now = DateTime.Now;
+        DateTime days7 = item.DueDate.Value.AddDays(-7);
+        if (item.DueDate < now)
+        {
+            return "colred";
+        } else if (days7 < now)
+        {
+            return "colorange";
+        }
+
+        return "colgreen";
+    }
+}
+
 <div class="container text-center">
     <h1>@ViewData["Title"]</h1>
 
@@ -49,7 +71,7 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Description)
                     </td>
-                    <td>
+                    <td class="@DateToColor(item)">
                         @Html.DisplayFor(modelItem => item.DueDate)
                     </td>
                     <td>
