@@ -32,6 +32,9 @@
                     @Html.DisplayNameFor(model => model.Weight)
                 </th>
                 <th>
+                    Total
+                </th>
+                <th>
                     @Html.DisplayNameFor(model => model.Rating)
                 </th>
                 <th>
@@ -54,6 +57,9 @@
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Weight)
+                    </td>
+                    <td>
+                        @(string.Format("{0:0.00}", item.Reps * item.Weight))
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Rating, "Rating")
