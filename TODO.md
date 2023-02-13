@@ -14,6 +14,7 @@ ToDos and Features for LifelogBB.
 - [ ] [Journal date grid](https://github.com/usememos/memos)
 - [ ] [Paginations](https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/sort-filter-page?view=aspnetcore-6.0)
 - [ ] [Secret management](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&tabs=windows)
+- [ ] [Tabler](https://github.com/tabler) or https://www.syncfusion.com/sales/communitylicense ?
 - [ ] Telegram bot
   - https://github.com/TelegramBots/Telegram.Bot
   - https://telegrambots.github.io/book/2/send-msg/index.html
