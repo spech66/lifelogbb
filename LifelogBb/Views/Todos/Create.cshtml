@@ -6,45 +6,44 @@
 }
 
 <div class="container-xl">
-    <div class="row">
-        <div>
-            <form asp-action="Create">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group mb-3">
-                    <label asp-for="Title" class="control-label mb-1"></label>
-                    <input asp-for="Title" class="form-control form-control-lg" />
-                    <span asp-validation-for="Title" class="text-danger"></span>
+    <div class="row row-cards">
+        <div class="col-12">
+            <form asp-action="Create" class="card">
+                <div class="card-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group mb-3">
+                        <label asp-for="Title" class="control-label mb-1"></label>
+                        <input asp-for="Title" class="form-control form-control-lg" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="Description" class="control-label mb-1"></label>
+                        <input asp-for="Description" class="form-control form-control-lg" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="DueDate" class="control-label mb-1"></label>
+                        <input asp-for="DueDate" class="form-control form-control-lg" />
+                        <span asp-validation-for="DueDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-3 form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" asp-for="IsCompleted" /> @Html.DisplayNameFor(model => model.IsCompleted)
+                        </label>
+                    </div>
+                    <div class="form-group mb-3 form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" asp-for="IsImportant" /> @Html.DisplayNameFor(model => model.IsImportant)
+                        </label>
+                    </div>
                 </div>
-                <div class="form-group mb-3">
-                    <label asp-for="Description" class="control-label mb-1"></label>
-                    <input asp-for="Description" class="form-control form-control-lg" />
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
-                <div class="form-group mb-3">
-                    <label asp-for="DueDate" class="control-label mb-1"></label>
-                    <input asp-for="DueDate" class="form-control form-control-lg" />
-                    <span asp-validation-for="DueDate" class="text-danger"></span>
-                </div>
-                <div class="form-group mb-3 form-check">
-                    <label class="form-check-label">
-                        <input class="form-check-input" asp-for="IsCompleted" /> @Html.DisplayNameFor(model => model.IsCompleted)
-                    </label>
-                </div>
-                <div class="form-group mb-3 form-check">
-                    <label class="form-check-label">
-                        <input class="form-check-input" asp-for="IsImportant" /> @Html.DisplayNameFor(model => model.IsImportant)
-                    </label>
-                </div>
-                <div class="form-group">
-                    <button type="submit" value="Create" class="btn btn-primary btn-lg"><i class="fas fa-plus-square fa-4x"></i><br />Submit</button>
+                <div class="card-footer text-end">
+                    <div class="d-flex">
+                        <a class="btn btn-link" asp-action="Index">Back</a>
+                        <button type="submit" value="Create" class="btn btn-primary ms-auto"><i class="fas fa-plus-square icon"></i>Submit</button>
+                    </div>
                 </div>
             </form>
-        </div>
-    </div>
-
-    <div class="row">
-        <div>
-            <a class="btn btn-secondary btn-lg" asp-action="Index" role="button"><i class="fa-solid fa-arrow-circle-left fa-2x"></i><br />Back</a>
         </div>
     </div>
 </div>
