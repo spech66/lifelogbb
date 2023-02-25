@@ -37,13 +37,10 @@ namespace LifelogBb.Models
             CreateMap<BucketList, EditBucketListViewModel>();
             CreateMap<BucketList, IndexBucketListViewModel>();            
             CreateMap<CreateBucketListViewModel, BucketList>()
-                .ForSourceMember(source => source.ImageData, opt => opt.DoNotValidate())
-                .ForMember(dest => dest.Image, opt => opt.Ignore());
+                .ForSourceMember(source => source.ImageData, opt => opt.DoNotValidate());
             CreateMap<EditBucketListViewModel, BucketList>()
-                .ForSourceMember(source => source.ImageData, opt => opt.DoNotValidate())
-                .ForMember(dest => dest.Image, opt => opt.Ignore());
+                .ForSourceMember(source => source.ImageData, opt => opt.DoNotValidate());
             CreateMap<BucketList, EditBucketListViewModel>()
-                .ForSourceMember(source => source.Image, opt => opt.DoNotValidate())
                 .ForMember(dest => dest.ImageData, opt => opt.Ignore());
 
             // Quotes

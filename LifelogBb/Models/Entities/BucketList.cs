@@ -11,9 +11,6 @@ namespace LifelogBb.Models.Entities
         Reached
     }
 
-    // for table splitting https://learn.microsoft.com/en-us/ef/core/modeling/table-splitting
-    // because of https://github.com/dotnet/efcore/issues/1387
-    [Table("BucketLists")]
     public class BucketList : BaseEntity
     {
         [Required]
@@ -28,7 +25,7 @@ namespace LifelogBb.Models.Entities
 
         public string? ImageName { get; set; }
 
-        public BucketListImage? Image { get; set; }
+        public string? ImageFileName { get; set; }
 
         public BucketList()
         {

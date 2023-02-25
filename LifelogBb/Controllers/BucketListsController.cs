@@ -14,16 +14,21 @@ using System.IO.Compression;
 using System.Net;
 using static System.Net.Mime.MediaTypeNames;
 using NuGet.Packaging.Signing;
+using Microsoft.EntityFrameworkCore.ValueGeneration;
 
 namespace LifelogBb.Controllers
 {
     public class BucketListsController : Controller
     {
         private readonly LifelogBbContext _context;
+
+        private readonly IConfiguration _configuration;
+
         protected readonly IMapper _mapper;
 
-        public BucketListsController(LifelogBbContext context, IMapper mapper)
+        public BucketListsController(LifelogBbContext context, IConfiguration configuration, IMapper mapper)
         {
+            _configuration = configuration;
             _context = context;
             _mapper = mapper;
         }
@@ -43,8 +48,8 @@ namespace LifelogBb.Controllers
                 return NotFound();
             }
 
-            var bucketList = await _context.BucketLists.Include(inc => inc.Image).FirstOrDefaultAsync(m => m.Id == id);
-            if (bucketList == null || bucketList.Image  == null || bucketList.Image.ImageData == null || bucketList.ImageName == null)
+            var bucketList = await _context.BucketLists.FirstOrDefaultAsync(m => m.Id == id);
+            if (bucketList == null || bucketList.ImageName == null || bucketList.ImageFileName == null)
             {
                 return NotFound();
             }
@@ -53,14 +58,20 @@ namespace LifelogBb.Controllers
             var type = "";
             switch (Path.GetExtension(bucketList.ImageName).ToLower())
             {
-                case "gif": type = "image/gif"; break;
-                case "jpeg": type = "image/jpeg"; break;
-                case "jpg": type = "image/jpeg"; break;
-                case "png": type = "image/png"; break;
+                case ".gif": type = "image/gif"; break;
+                case ".jpeg": type = "image/jpeg"; break;
+                case ".jpg": type = "image/jpeg"; break;
+                case ".png": type = "image/png"; break;
                 default: type = "application/octet-stream"; break;
             }
 
-            return File(bucketList.Image.ImageData, type, bucketList.ImageName);
+            var file = Path.Join(GetAndCreateBaseDir(), bucketList.ImageFileName);
+            if (!System.IO.File.Exists(file))
+            {
+                return NotFound();
+            }
+
+            return PhysicalFile(file, type, bucketList.ImageName);
         }
 
         // GET: BucketLists/VisionBoard
@@ -107,24 +118,20 @@ namespace LifelogBb.Controllers
 
                 if (bucketListViewModel.ImageData != null)
                 {
+                    if (!ValidateFileExtions(bucketListViewModel.ImageData.FileName))
+                    {
+                        ModelState.AddModelError("ImageData", "Invalid file extension.");
+                        return View(bucketListViewModel);
+                    }
+
                     using (var memoryStream = new MemoryStream())
                     {
                         await bucketListViewModel.ImageData.CopyToAsync(memoryStream);
 
-                        if(!ValidateFileExtions(bucketListViewModel.ImageData.FileName))
-                        {
-                            return View(bucketListViewModel);
-                        }
-
                         // Check size for 10 MB
                         if (memoryStream.Length < 10 * 1024 * 1024)
                         {
-                            string untrustedFileName = Path.GetFileName(bucketListViewModel.ImageData.FileName);
-                            bucketListDb.Image = new BucketListImage()
-                            {
-                                ImageData = memoryStream.ToArray(),
-                            };
-                            bucketListDb.ImageName = WebUtility.HtmlEncode(untrustedFileName);
+                            await SaveImageFileAsync(bucketListDb, bucketListViewModel.ImageData, memoryStream);
                         }
                         else
                         {
@@ -178,30 +185,40 @@ namespace LifelogBb.Controllers
 
                     if (bucketListViewModel.ImageData != null)
                     {
+                        if (!ValidateFileExtions(bucketListViewModel.ImageData.FileName))
+                        {
+                            ModelState.AddModelError("ImageData", "Invalid file extension.");
+                            return View(bucketListViewModel);
+                        }
+
                         using (var memoryStream = new MemoryStream())
                         {
                             await bucketListViewModel.ImageData.CopyToAsync(memoryStream);
 
-                            if (!ValidateFileExtions(bucketListViewModel.ImageData.FileName))
-                            {
-                                return View(bucketListViewModel);
-                            }
-
                             // Check size for 10 MB
                             if (memoryStream.Length < 10 * 1024 * 1024)
                             {
-                                string untrustedFileName = Path.GetFileName(bucketListViewModel.ImageData.FileName);
-                                bucketListDb.Image = new BucketListImage()
-                                {
-                                    ImageData = memoryStream.ToArray(),                                    
-                                };
-                                bucketListDb.ImageName = WebUtility.HtmlEncode(untrustedFileName);
+                                await SaveImageFileAsync(bucketListDb, bucketListViewModel.ImageData, memoryStream);
                             }
                             else
                             {
                                 ModelState.AddModelError("ImageData", "The file is too large.");
                                 return View(bucketListViewModel);
                             }
+                        }
+                    } else
+                    {
+                        // Delete existing file
+                        if (bucketListDb.ImageFileName != null)
+                        {
+                            var file = Path.Join(GetAndCreateBaseDir(), bucketListDb.ImageFileName);
+                            if(System.IO.File.Exists(file))
+                            {
+                                System.IO.File.Delete(file);
+                            }
+
+                            bucketListDb.ImageName = null;
+                            bucketListDb.ImageFileName = null;
                         }
                     }
 
@@ -277,6 +294,40 @@ namespace LifelogBb.Controllers
             }
 
             return true;
+        }
+
+        private async Task SaveImageFileAsync(BucketList bucketListDb, IFormFile imageData, MemoryStream memoryStream)
+        {
+            string untrustedFileName = Path.GetFileName(imageData.FileName);
+            bucketListDb.ImageName = WebUtility.HtmlEncode(untrustedFileName);
+            // Reuse existing filename
+            if (bucketListDb.ImageFileName != null)
+            {
+                bucketListDb.ImageFileName = Guid.NewGuid().ToString();
+            }
+
+            var file = Path.Join(GetAndCreateBaseDir(), bucketListDb.ImageFileName);
+
+            using Stream fileStream = System.IO.File.Open(file, FileMode.Create);
+            memoryStream.Position = 0;
+            await memoryStream.CopyToAsync(fileStream);
+        }
+
+        private string GetAndCreateBaseDir()
+        {
+            var path = _configuration["Uploads:Path"];
+            if (string.IsNullOrEmpty(path))
+            {
+                var folder = Environment.SpecialFolder.LocalApplicationData;
+                path = Environment.GetFolderPath(folder);
+                path = Path.Join(path, "lifelogbb", "uploads", "bucketlist");
+            }
+            if (!Path.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            return path;
         }
     }
 }

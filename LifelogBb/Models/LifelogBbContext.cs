@@ -16,21 +16,26 @@ namespace LifelogBb.Models
         public DbSet<Habit> Habits { get; set; } = null!;
         public DbSet<Goal> Goals { get; set; } = null!;
 
-        private readonly IConfiguration Configuration;
+        private readonly IConfiguration _configuration;
 
-        private IDbContextTransaction _transaction;
+        private IDbContextTransaction? _transaction = null;
 
         public string DbPath { get; }
 
         public LifelogBbContext(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
 
-            var path = Configuration["Database:Path"];
-            if(string.IsNullOrEmpty(path))
+            var path = _configuration["Database:Path"];
+            if (string.IsNullOrEmpty(path))
             {
                 var folder = Environment.SpecialFolder.LocalApplicationData;
                 path = Environment.GetFolderPath(folder);
+                path = Path.Join(path, "lifelogbb");
+            }
+            if (!Path.Exists(path))
+            {
+                Directory.CreateDirectory(path);
             }
             DbPath = Path.Join(path, "liefelogbb.db");
         }
@@ -49,18 +54,27 @@ namespace LifelogBb.Models
             try
             {
                 SaveChanges();
-                _transaction.Commit();
+                if (_transaction != null)
+                {
+                    _transaction.Commit();
+                }
             }
             finally
             {
-                _transaction.Dispose();
+                if (_transaction != null)
+                {
+                    _transaction.Dispose();
+                }
             }
         }
 
         public void Rollback()
         {
-            _transaction.Rollback();
-            _transaction.Dispose();
+            if (_transaction != null)
+            {
+                _transaction.Rollback();
+                _transaction.Dispose();
+            }
         }
     }
 }

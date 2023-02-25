@@ -15,8 +15,5 @@ namespace LifelogBb.Models.BucketLists
         public BucketListStatus Status { get; set; }
 
         public string? ImageName { get; set; }
-
-        // Don't include => Call GetImage endpoint from img tag if ImageName is set
-        // public byte[]? ImageData { get; set; }
     }
 }
