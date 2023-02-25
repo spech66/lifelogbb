@@ -1,31 +1,39 @@
 ﻿@model LifelogBb.Models.Account.LoginModel
 
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "";
 }
 
-<div class="container-xl">
-    <p class="lead">Access LifelogBB using the password provided in the configuration.</p>
-
-    <div class="row">
-        <div>
-            <form asp-action="Login">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group mb-3">
-                    <label asp-for="Password" class="control-label mb-1"></label>
-                    <input asp-for="Password" class="form-control form-control-lg" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
-                <div class="form-group mb-3">
-                    <button type="submit" value="Create" class="btn btn-primary btn-lg"><i class="fa-solid fa-right-to-bracket fa-4x"></i><br />Login</button>
-                </div>
-            </form>
-
-            <p class="mt-5 mb-3"><a href="/Account/GeneratePassword">Generate password hash</a></p>
+<div class="page page-center">
+    <div class="container container-tight py-4">
+        <div class="card card-md">
+            <div class="card-body">
+                <h2 class="h2 text-center mb-4">Login to your account</h2>
+                <form asp-action="Login">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="mb-2">
+                        <label class="form-label">
+                            Password
+                            <span class="form-label-description">
+                                <a href="/Account/GeneratePassword">Generate hash</a>
+                            </span>
+                        </label>
+                        <div class="input-group input-group-flat">
+                            <input asp-for="Password" class="form-control" placeholder="Password" />
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-footer">
+                        <button type="submit" value="Create" class="btn btn-primary w-100">Sign in</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
