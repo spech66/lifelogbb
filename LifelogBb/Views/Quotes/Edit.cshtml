@@ -6,31 +6,30 @@
 }
 
 <div class="container-xl">
-    <div class="row">
-        <div>
-            <form asp-action="Edit">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="Text" class="control-label mb-1"></label>
-                    <input asp-for="Text" class="form-control form-control-lg" />
-                    <span asp-validation-for="Text" class="text-danger"></span>
+    <div class="row row-cards">
+        <div class="col-12">
+            <form asp-action="Edit" class="card">
+                <div class="card-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Text" class="control-label mb-1"></label>
+                        <input asp-for="Text" class="form-control form-control-lg" />
+                        <span asp-validation-for="Text" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Author" class="control-label mb-1"></label>
+                        <input asp-for="Author" class="form-control form-control-lg" />
+                        <span asp-validation-for="Author" class="text-danger"></span>
+                    </div>
+                    <input type="hidden" asp-for="Id" />
                 </div>
-                <div class="form-group">
-                    <label asp-for="Author" class="control-label mb-1"></label>
-                    <input asp-for="Author" class="form-control form-control-lg" />
-                    <span asp-validation-for="Author" class="text-danger"></span>
-                </div>
-                <input type="hidden" asp-for="Id" />
-                <div class="form-group">
-                    <button type="submit" value="Save" class="btn btn-primary btn-lg"><i class="fas fa-pen fa-4x"></i><br />Submit</button>
+                <div class="card-footer text-end">
+                    <div class="d-flex">
+                        <a class="btn btn-link" asp-action="Index">Back</a>
+                        <button type="submit" value="Save" class="btn btn-primary ms-auto"><i class="fas fa-pen icon"></i>Submit</button>
+                    </div>
                 </div>
             </form>
-        </div>
-    </div>
-
-    <div class="row">
-        <div>
-            <a class="btn btn-secondary btn-lg" asp-action="Index" role="button"><i class="fa-solid fa-arrow-circle-left fa-2x"></i><br />Back</a>
         </div>
     </div>
 </div>
