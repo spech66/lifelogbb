@@ -26,14 +26,16 @@
                         <input asp-for="DueDate" class="form-control form-control-lg" />
                         <span asp-validation-for="DueDate" class="text-danger"></span>
                     </div>
-                    <div class="form-group form-check">
-                        <label class="form-check-label">
-                            <input class="form-check-input" asp-for="IsCompleted" /> @Html.DisplayNameFor(model => model.IsCompleted)
+                    <div class="mt-3">
+                        <label class="form-group form-check form-switch">
+                            <input class="form-check-input" asp-for="IsCompleted" type="checkbox">
+                            <span class="form-check-label">@Html.DisplayNameFor(model => model.IsCompleted)</span>
                         </label>
                     </div>
-                    <div class="form-group form-check">
-                        <label class="form-check-label">
-                            <input class="form-check-input" asp-for="IsImportant" /> @Html.DisplayNameFor(model => model.IsImportant)
+                    <div class="mt-3">
+                        <label class="form-group form-check form-switch">
+                            <input class="form-check-input" asp-for="IsImportant" type="checkbox">
+                            <span class="form-check-label">@Html.DisplayNameFor(model => model.IsImportant)</span>
                         </label>
                     </div>
                     <input type="hidden" asp-for="Id" />
