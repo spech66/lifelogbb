@@ -3,14 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    @if (ViewData.ContainsKey("Pretitle"))
-    {
-        <title>@ViewData["Title"] - LifelogBB</title>
-    }
-    else
-    {
-        <title>@ViewData["Title"] @ViewData["Pretitle"] - LifelogBB</title>
-    }
+    <title>@ViewData["Title"] @ViewData["Pretitle"] - LifelogBB</title>
     <link rel="stylesheet" href="~/lib/tabler/core/dist/css/tabler.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
     @await RenderSectionAsync("Styles", required: false)
