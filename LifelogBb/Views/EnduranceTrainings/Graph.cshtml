@@ -1,16 +1,15 @@
 ﻿@model string?
 
 @{
-    ViewData["Title"] = "Endurance Training - Graph";
+    ViewData["Title"] = "Endurance Training";
+    ViewData["Pretitle"] = "Graph";
     @if (!string.IsNullOrEmpty(@Model))
     {
-        ViewData["Title"] = $"Endurance Training - {Model} - Graph";
+        ViewData["Pretitle"] = $"{Model} - Graph";
     }
 }
 
 <div class="container text-center">
-    <h1>@ViewData["Title"]</h1>
-
     <div class="row">
         <canvas id="enduranceworkoutDistance"></canvas>
     </div>

@@ -2,77 +2,156 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - LifelogBB</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    @if (ViewData.ContainsKey("Pretitle"))
+    {
+        <title>@ViewData["Title"] - LifelogBB</title>
+    }
+    else
+    {
+        <title>@ViewData["Title"] @ViewData["Pretitle"] - LifelogBB</title>
+    }
+    <link rel="stylesheet" href="~/lib/tabler/core/dist/css/tabler.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
     @await RenderSectionAsync("Styles", required: false)
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LifelogBb.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">LifelogBB</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+    <div class="page">
+        <aside class="navbar navbar-vertical navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu" aria-controls="sidebar-menu" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <h1 class="navbar-brand navbar-brand-autodark">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">LifelogBB</a>
+                </h1>
+                <div class="collapse navbar-collapse" id="sidebar-menu">
+                    <ul class="navbar-nav pt-lg-3">
                         @if (User.Identity is not null && User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Dashboard">Dashboard</a>
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-home"></i></span><span class="nav-link-title">Home</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Weights" asp-action="Index">Weight</a>
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Dashboard"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fa-solid fa-chalkboard"></i></span><span class="nav-link-title">Dashboard</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Journals" asp-action="Index">Journal</a>
+                                <a class="nav-link" asp-area="" asp-controller="Weights" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-weight-scale"></i></span><span class="nav-link-title">Weight</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="StrengthTrainings" asp-action="Index">Strength training</a>
+                                <a class="nav-link" asp-area="" asp-controller="Journals" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-pencil"></i></span><span class="nav-link-title">Journal</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="EnduranceTrainings" asp-action="Index">Endurance training</a>
+                                <a class="nav-link" asp-area="" asp-controller="StrengthTrainings" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-dumbbell"></i></span><span class="nav-link-title">Strength training</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Todos" asp-action="Index">Todos</a>
+                                <a class="nav-link" asp-area="" asp-controller="EnduranceTrainings" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-running"></i></span><span class="nav-link-title">Endurance training</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Goals" asp-action="Index">Goals</a>
+                                <a class="nav-link" asp-area="" asp-controller="Todos" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-check"></i></span><span class="nav-link-title">Todos</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Habits" asp-action="Index">Habits</a>
+                                <a class="nav-link" asp-area="" asp-controller="Goals" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-bullseye"></i></span><span class="nav-link-title">Goals</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="BucketLists" asp-action="Index">Bucket list</a>
+                                <a class="nav-link" asp-area="" asp-controller="Habits" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-arrows-spin"></i></span><span class="nav-link-title">Habits</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Quotes" asp-action="Index">Quotes</a>
+                                <a class="nav-link" asp-area="" asp-controller="BucketLists" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-tent"></i></span><span class="nav-link-title">Bucket list</span></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Quotes" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-quote-right"></i></span><span class="nav-link-title">Quotes</span></a>
+                            </li>
+                            <li class="nav-item">&nbsp;</li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Config"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-gear"></i></span><span class="nav-link-title">Config</span></a>
+                            </li>
+                            <li class="nav-item">&nbsp;</li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Logout"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-right-from-bracket"></i></span><span class="nav-link-title">Logout</span></a>
                             </li>
                         }
                     </ul>
                 </div>
             </div>
-        </nav>
-    </header>
+        </aside>
+        <div class="page-wrapper">
+            <div class="page-header d-print-none">
+                <div class="container-xl">
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <div class="page-pretitle">
+                                @ViewData["Pretitle"]
+                            </div>
+                            <h2 class="page-title">
+                                @ViewData["Title"]
+                            </h2>
+                        </div>
+                        <div class="col-auto ms-auto d-print-none">
+                            <div class="btn-list">
+                                @if (ViewData.ContainsKey("SecondaryAction"))
+                                {
+                                    object? action = "";
+                                    if (ViewData.TryGetValue("SecondaryAction", out action) && action is string && (string)action == "graph")
+                                    {
+                                        <span class="d-none d-sm-inline">
+                                            <a class="btn btn-success" asp-action="Graph" role="button"><i class="fas fa-chart-bar icon"></i>Graph</a>
+                                        </span>
+                                    }
+                                }
+                                @if (ViewData.ContainsKey("PrimaryAction"))
+                                {
+                                    <a class="btn btn-primary d-none d-sm-inline-block" asp-action="Create" role="button"><i class="fas fa-plus-square icon"></i> New</a>
+                                    <a class="btn btn-primary d-sm-none btn-icon" asp-action="Create" role="button"><i class="fas fa-plus-square icon"></i></a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+            <div class="page-body">
+                @RenderBody()
+            </div>
+
+            <footer class="footer footer-transparent d-print-none">
+                <div class="container-xl">
+                    <div class="row text-center align-items-center flex-row-reverse">
+                        <div class="col-lg-auto ms-lg-auto">
+                            <ul class="list-inline list-inline-dots mb-0">
+                                <li class="list-inline-item"><a href="https://github.com/spech66/lifelogbb/blob/main/LICENSE" class="link-secondary">License</a></li>
+                                <li class="list-inline-item"><a href="https://github.com/spech66/lifelogbb" target="_blank" class="link-secondary" rel="noopener">Source code</a></li>
+                                <li class="list-inline-item">
+                                    <a href="https://github.com/spech66/lifelogbb" target="_blank" class="link-secondary" rel="noopener">
+                                        <!-- Download SVG icon from http://tabler-icons.io/i/heart -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon text-pink icon-filled icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" /></svg>
+                                        Sponsor
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-12 col-lg-auto mt-3 mt-lg-0">
+                            <ul class="list-inline list-inline-dots mb-0">
+                                <li class="list-inline-item">
+                                    Copyright &copy; 2023
+                                    <a href="https://www.sebastianpech.com/" target="_blank">Sebastian Pech</a>.
+                                    All rights reserved.
+                                </li>
+                                <li class="list-inline-item">
+                                    <a href="/Swagger" target="_blank">Swagger API</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted text-center">
-        <div class="container">
-            &copy; 2022 - <a href="https://www.sebastianpech.com/" target="_blank">Sebastian Pech</a> - <a href="/Swagger" target="_blank">Swagger API</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/tabler/core/dist/js/tabler.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
