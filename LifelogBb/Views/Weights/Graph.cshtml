@@ -11,7 +11,7 @@
                     <h3 class="card-title">2 Months</h3>
                 </div>
                 <div class="card-body">
-                    <canvas id="weightChartShort"></canvas>
+                    <div id="weightChartShort"></div>
                 </div>
             </div>
         </div>
@@ -21,7 +21,7 @@
                     <h3 class="card-title">Year</h3>
                 </div>
                 <div class="card-body">
-                    <canvas id="weightChartYear"></canvas>
+                    <div id="weightChartYear"></div>
                 </div>
             </div>
         </div>
@@ -31,7 +31,7 @@
                     <h3 class="card-title">Year - BMI</h3>
                 </div>
                 <div class="card-body">
-                    <canvas id="weightChartYearBmi"></canvas>
+                    <div id="weightChartYearBmi"></div>
                 </div>
             </div>
         </div>
@@ -41,7 +41,7 @@
                     <h3 class="card-title">All</h3>
                 </div>
                 <div class="card-body">
-                    <canvas id="weightChartAll"></canvas>
+                    <div id="weightChartAll"></div>
                 </div>
             </div>
         </div>
@@ -51,7 +51,7 @@
                     <h3 class="card-title">All - BMI</h3>
                 </div>
                 <div class="card-body">
-                    <canvas id="weightChartAllBmi"></canvas>
+                    <div id="weightChartAllBmi"></div>
                 </div>
             </div>
         </div>
@@ -61,14 +61,10 @@
 @section Scripts
     {
     <script src="~/lib/regression/regression.min.js"></script>
-    <script src="~/lib/luxon/luxon.min.js"></script>
-    <script src="~/lib/chartjs/chart.min.js"></script>
-    <script src="~/lib/chartjs-adapter-luxon/chartjs-adapter-luxon.min.js"></script>
+    <script src="~/lib/tabler/core/dist/libs/apexcharts/dist/apexcharts.min.js"></script>
     <script type="text/javascript">
-        var DateTime = luxon.DateTime;
-
         function Measurement(data) {
-            this.date = DateTime.fromISO(data.createdAt);
+            this.date = data.createdAt;
             this.weight = data.bodyWeight;
             this.height = data.height;
             this.bmi = (parseFloat(data.bmi).toFixed(1));
@@ -76,16 +72,13 @@
             this.bmiunderweight = data.bmiUnderweight;
         }
 
-        function generateChart(selDiv, chartTitle, chartColor, chartColor2, chartData, chartDataTrend = null, bmiThresholds = null) {
-            var ctx = document.getElementById(selDiv);
-
-            datasets = [];
+        function generateChart(selDiv, chartTitle, chartData, chartDataTrend = null, bmiThresholds = null) {
+            let datasets = [];
+            let colors = ["#4c79b3", "#7EB26D"];
 
             // Main dataset
             datasets.push({
-                label: chartTitle,
-                borderColor: chartColor,
-                backgroundColor: chartColor2,
+                name: chartTitle,
                 data: chartData
             });
 
@@ -94,40 +87,35 @@
                 for (let bmit of bmiThresholds) {
                     datasets.push(bmit);
                 }
+                colors = ["#4c79b3", /*bmi-*/"#4c79b3", "#69B34C", "#d19a2b", "#ce3a09", "#b40000", "#b40000", /*-bmi*/];
             }
 
             if (chartDataTrend != null) {
-                chartDataTrend.label = `${chartTitle} ${chartDataTrend.label}`;
+                chartDataTrend.name = `${chartTitle} ${chartDataTrend.name}`;
                 datasets.push(chartDataTrend);
             }
 
-            var myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    datasets
+            var options = {
+                chart: {
+                    type: 'line'
                 },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: {
-                            type: 'time',
-                            time: {
-                                // Luxon format string
-                                tooltipFormat: 'DD T',
-                                unit: 'day'
-                            },
-                            title: {
-                                display: true,
-                                text: 'Date'
-                            }
-                        }
-                    }
+                stroke: {
+                    curve: 'smooth'
+                },
+                colors,
+                series: datasets,
+                xaxis: {
+                    type: "datetime"
                 }
-            });
+            };
+
+            var chart = new ApexCharts(document.querySelector(`#${selDiv}`), options);
+            chart.render();
         }
 
         function generateXYArray(data, maxRange, property) {
-            return data.filter(dat => dat.date > maxRange).map(sel => {
+            const maxDate = new Date(maxRange);
+            return data.filter(dat => new Date(dat.date) > maxDate).map(sel => {
                 return {
                     x: sel.date,
                     y: sel[property]
@@ -149,16 +137,14 @@
             const trend = [
                 {
                     x: data[0].x,
-                    y: [arrayData[0][0] * result.equation[0] + result.equation[1]]
+                    y: Math.round([arrayData[0][0] * result.equation[0] + result.equation[1]]),
                 }, {
                     x: data[arrayData.length - 1].x,
-                    y: [arrayData[arrayData.length - 1][0] * result.equation[0] + result.equation[1]]
+                    y: Math.round([arrayData[arrayData.length - 1][0] * result.equation[0] + result.equation[1]])
                 }
             ];
             return {
-                label: "Trend",
-                borderColor: '#335d99',
-                backgroundColor: '#00000000',
+                name: "Trend",
                 data: trend
             };
         }
@@ -170,7 +156,7 @@
             let xStart = data[0].x;
             let xEnd = data[data.length - 1].x;
             let steps = [15.0, 18.5, 25.0, 30.0, 35.0, 40.0]; // < is name
-            let colors = ["#4c79b3", "#69B34C", "#d19a2b", "#ce3a09", "#b40000", "#b40000"]
+            // let colors = ["#4c79b3", "#69B34C", "#d19a2b", "#ce3a09", "#b40000", "#b40000"]
             let names = ["Underweight", "Normal", "Overweight", "Moderately obese", "Severely obese", "Very severely obese"]
 
             let trends = [];
@@ -185,10 +171,7 @@
                     }
                 ];
                 trends.push({
-                    label: names[i],
-                    borderColor: colors[i],
-                    backgroundColor: colors[i],
-                    fill: true,
+                    name: names[i],
                     data: trend
                 });
             }
@@ -201,11 +184,12 @@
                 data = data.sort((a, b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0)); // Ascending!
                 var mappedMeasurements = $.map(data, function (item) { return new Measurement(item) });
 
-                var twoMonth = DateTime.now().startOf('day').minus({ months: 2 });
+                var twoMonth = (new Date()).setMonth((new Date()).getMonth() - 2); // 2 months ago
                 const result2Month = generateXYArray(mappedMeasurements, twoMonth, "weight");
                 const result2MonthTrend = generateTrend(result2Month);
 
-                var oneYear = DateTime.now().startOf('day').minus({ years: 1 });
+                var oneYear = (new Date()).setFullYear(new Date().getFullYear() - 1); // 1 year ago
+                console.log(new Date(oneYear));
                 const result1Year = generateXYArray(mappedMeasurements, oneYear, "weight");
                 const result1YearTrend = generateTrend(result1Year);
                 const result1YearBmi = generateXYArray(mappedMeasurements, oneYear, "bmi");
@@ -226,13 +210,13 @@
                 });
                 const resultAllBmiThresholds = generateBmiThresholds(resultAllBmi);
 
-                generateChart("weightChartShort", "2 Month", '#7EB26D', '#7EB26D88', result2Month, result2MonthTrend);
+                generateChart("weightChartShort", "2 Month", result2Month, result2MonthTrend);
 
-                generateChart("weightChartYear", "1 Year Weight", '#7EB26D', '#7EB26D88', result1Year, result1YearTrend);
-                generateChart("weightChartYearBmi", "1 Year BMI", '#335d99', '#335d9988', result1YearBmi, null, result1YearBmiThresholds);
+                generateChart("weightChartYear", "1 Year Weight", result1Year, result1YearTrend);
+                generateChart("weightChartYearBmi", "1 Year BMI", result1YearBmi, null, result1YearBmiThresholds);
 
-                generateChart("weightChartAll", "All", '#7EB26D', '#7EB26D88', resultAll, resultAllTrend);
-                generateChart("weightChartAllBmi", "All BMI", '#335d99', '#335d9988', resultAllBmi, null, resultAllBmiThresholds);
+                generateChart("weightChartAll", "All", resultAll, resultAllTrend);
+                generateChart("weightChartAllBmi", "All BMI", resultAllBmi, null, resultAllBmiThresholds);
             });
         });
     </script>
