@@ -27,29 +27,8 @@
       ]
     },
     {
-      "library": "Chart.js@3.9.1",
-      "destination": "wwwroot/lib/chartjs/",
-      "files": [
-        "chart.min.js"
-      ]
-    },
-    {
       "library": "regression@1.4.0",
       "destination": "wwwroot/lib/regression/"
-    },
-    {
-      "library": "chartjs-adapter-luxon@1.2.0",
-      "destination": "wwwroot/lib/chartjs-adapter-luxon/",
-      "files": [
-        "chartjs-adapter-luxon.min.js"
-      ]
-    },
-    {
-      "library": "luxon@3.0.4",
-      "destination": "wwwroot/lib/luxon/",
-      "files": [
-        "luxon.min.js"
-      ]
     },
     {
       "provider": "unpkg",
