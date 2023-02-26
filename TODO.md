@@ -22,12 +22,13 @@ ToDos and Features for LifelogBB.
 
 ### In Progress :construction:
 
-- [ ] [Tabler](https://github.com/tabler) and [ApexCharts](https://apexcharts.com/) lib
 - [ ] Dashboard
 - [x] Habits (Time Boxing/Blocking)
 
 ### Done :heavy_check_mark:
 
+- [x] [Tabler](https://github.com/tabler)
+- [x] [ApexCharts](https://apexcharts.com/) from Tabler libs
 - [x] Bucket list (cards + images)
 - [x] Vision board from bucket list
 - [x] Strength training chart
