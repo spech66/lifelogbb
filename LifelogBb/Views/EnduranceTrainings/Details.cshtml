@@ -7,56 +7,64 @@
     ViewData["SecondaryAction"] = "graph";
 }
 
-<div class="container">
-    <div>
-        <dl class="row">
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Exercise)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Exercise)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Distance)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Distance)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Duration)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Duration)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Notes)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Notes)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Rating)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Rating, "Rating")
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.CreatedAt)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.UpdatedAt)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.UpdatedAt)
-            </dd>
-        </dl>
-    </div>
-    <div class="row">
-        <div class="col-4"><a class="btn btn-secondary btn-lg" asp-action="Index"><i class="fa-solid fa-arrow-circle-left fa-2x"></i><br />Back</a></div>
-        <div class="col-4"><a class="col-3 btn btn-dark btn-lg" asp-action="Edit" asp-route-id="@Model?.Id"><i class="fa-solid fa-pen fa-2x"></i><br />Edit</a></div>
-        <div class="col-4"><a class="col-3 btn btn-danger btn-lg" asp-action="Delete" asp-route-id="@Model?.Id"><i class="fa-solid fa-trash fa-2x"></i><br />Delete</a></div>
+<div class="container-xl">
+    <div class="row row-cards">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Exercise)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Exercise)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Distance)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Distance)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Duration)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Duration)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Notes)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Notes)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Rating)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Rating, "Rating")
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.CreatedAt)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.CreatedAt)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.UpdatedAt)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.UpdatedAt)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="card-footer text-end">
+                    <div class="d-flex">
+                        <a class="btn btn-link" asp-action="Index">Back</a>
+                        <a class="btn btn-danger ms-auto" asp-action="Delete" asp-route-id="@Model?.Id" role="button"><i class="fas fa-trash icon"></i> Delete</a>
+                        <a class="btn btn-dark ms-auto" asp-action="Edit" asp-route-id="@Model?.Id" role="button"><i class="fas fa-pen icon"></i> Edit</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
