@@ -10,19 +10,36 @@
 }
 
 <div class="container-xl">
-    <div class="row">
-        <canvas id="enduranceworkoutDistance"></canvas>
-    </div>
-    <div class="row">
-        <canvas id="enduranceworkoutDuration"></canvas>
-    </div>
-    <div class="row">
-        <canvas id="enduranceworkoutRating"></canvas>
-    </div>
-
-    <div class="row">
-        <div>
-            <a class="btn btn-secondary btn-lg" asp-action="Index" role="button"><i class="fa-solid fa-arrow-circle-left fa-2x"></i><br />Back</a>
+    <div class="row row-deck row-cards">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header border-0">
+                    <h3 class="card-title">Distance</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="enduranceworkoutDistance"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header border-0">
+                    <h3 class="card-title">Duration</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="enduranceworkoutDuration"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header border-0">
+                    <h3 class="card-title">Rating</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="enduranceworkoutRating"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 </div>
