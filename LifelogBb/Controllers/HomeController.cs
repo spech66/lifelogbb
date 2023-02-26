@@ -32,29 +32,20 @@ namespace LifelogBb.Controllers
         {
             var model = new IndexDashboardViewModel();
 
+            var weight = await _context.Weights.OrderByDescending(o => o.CreatedAt).Take(1).FirstOrDefaultAsync();
+            model.LastWeight = weight;
+
             var enduranceTraining = await _context.EnduranceTrainings.OrderByDescending(o => o.CreatedAt).Take(1).FirstOrDefaultAsync();
-            if (enduranceTraining != null)
-            {
-                model.LastEnduranceTraining = enduranceTraining.CreatedAt;
-            }
+            model.LastEnduranceTraining = enduranceTraining;
 
             var strengthTraining = await _context.StrengthTrainings.OrderByDescending(o => o.CreatedAt).Take(1).FirstOrDefaultAsync();
-            if (strengthTraining != null)
-            {
-                model.LastStrengthTraining = strengthTraining.CreatedAt;
-            }
+            model.LastStrengthTraining = strengthTraining;
 
             var randomBucketList = await _context.BucketLists.OrderBy(r => EF.Functions.Random()).Take(1).FirstOrDefaultAsync();
-            if (randomBucketList != null)
-            {
-                model.RandomBucketList = randomBucketList;
-            }
+            model.RandomBucketList = randomBucketList;
 
             var randomQuote = await _context.Quotes.OrderBy(r => EF.Functions.Random()).Take(1).FirstOrDefaultAsync();
-            if (randomQuote != null)
-            {
-                model.RandomQuote = randomQuote;
-            }
+            model.RandomQuote = randomQuote;
 
             return View(model);
         }

@@ -4,9 +4,11 @@ namespace LifelogBb.Models.Home
 {
     public class IndexDashboardViewModel
     {
-        public DateTime? LastStrengthTraining { get; set; }
+        public Weight? LastWeight { get; set; }
 
-        public DateTime? LastEnduranceTraining { get; set; }
+        public StrengthTraining? LastStrengthTraining { get; set; }
+
+        public EnduranceTraining? LastEnduranceTraining { get; set; }
 
         public BucketList? RandomBucketList { get; set; }
 
