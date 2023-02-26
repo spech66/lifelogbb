@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>@ViewData["Title"] @ViewData["Pretitle"] - LifelogBB</title>
-    <link rel="stylesheet" href="~/lib/tabler/core/dist/css/tabler.css" />
+    <link rel="stylesheet" href="~/lib/tabler/core/dist/css/tabler.min.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
     @await RenderSectionAsync("Styles", required: false)
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -150,7 +150,7 @@
     </div>
 
     <script src="~/lib/jquery/jquery.min.js"></script>
-    <script src="~/lib/tabler/core/dist/js/tabler.js"></script>
+    <script src="~/lib/tabler/core/dist/js/tabler.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
