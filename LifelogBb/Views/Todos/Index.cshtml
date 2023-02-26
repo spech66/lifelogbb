@@ -10,21 +10,21 @@
     {
         if (!item.DueDate.HasValue)
         {
-            return "colgreen";
+            return "text-lime";
         }
 
         DateTime now = DateTime.Now;
         DateTime days7 = item.DueDate.Value.AddDays(-7);
         if (item.DueDate < now)
         {
-            return "colred";
+            return "text-red";
         }
         else if (days7 < now)
         {
-            return "colorange";
+            return "text-yellow";
         }
 
-        return "colgreen";
+        return "text-lime";
     }
 }
 

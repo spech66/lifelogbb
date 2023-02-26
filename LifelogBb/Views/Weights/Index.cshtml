@@ -11,23 +11,23 @@
     {
         if (weight.Bmi < 18.5)
         { // < 18,49
-            return "colunder";
+            return "text-azure";
         }
         else if (weight.Bmi < 25.0)
         { // 18,50–24,99
-            return "colnormal";
+            return "text-lime";
         }
         else if (weight.Bmi < 30.0)
         { // 25,00–29,99
-            return "colover1";
+            return "text-yellow";
         }
         else if (weight.Bmi < 35.0)
         { // 30,00–34,99
-            return "colover2";
+            return "text-orange";
         }
         else
         { // ≥ 35,00
-            return "colover3";
+            return "text-red";
         }
     }
 }
