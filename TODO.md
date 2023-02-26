@@ -10,7 +10,7 @@ ToDos and Features for LifelogBB.
  - Habits: Timeline
 - [ ] [Paginations](https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/sort-filter-page?view=aspnetcore-6.0) - Styles prepared in weight/index
 - [ ] Settings (Units, Start of week, ...)
-- [ ] [iCal](https://github.com/rianjs/ical.net) for Goals/Habits/BucketList/...
+- [ ] [iCal](https://github.com/rianjs/ical.net) for Goals/Habits (Time Boxing/Blocking)/BucketList/...
   - Alarms
 - [ ] [Journal date grid](https://github.com/usememos/memos)
 - [ ] [Secret management](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&tabs=windows)
@@ -23,7 +23,6 @@ ToDos and Features for LifelogBB.
 ### In Progress :construction:
 
 - [ ] Dashboard
-- [x] Habits (Time Boxing/Blocking)
 
 ### Done :heavy_check_mark:
 
@@ -38,8 +37,9 @@ ToDos and Features for LifelogBB.
 - [x] Endurance workout
 - [x] Weight
 - [x] Weight chart
-- [x] Goals ([SMART](https://en.wikipedia.org/wiki/SMART_criteria))
+- [x] Goals
 - [x] Todos
+- [x] Habits
 - [x] Quotes
 - [x] Authentication
 - [x] Dockerfile
