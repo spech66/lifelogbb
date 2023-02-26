@@ -6,60 +6,79 @@
     ViewData["SecondaryAction"] = "graph";
 }
 
+
 <div class="container-xl">
-    <table class="table table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.CreatedAt)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Exercise)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Reps)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Weight)
-                </th>
-                <th>
-                    Total
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Rating)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Notes)
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <th scope="row">
-                        <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
-                    </th>
-                    <td>
-                        <a asp-action="Graph" asp-route-exercise="@item.Exercise">@Html.DisplayFor(modelItem => item.Exercise)</a>
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Reps)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Weight)
-                    </td>
-                    <td>
-                        @(string.Format("{0:0.00}", item.Reps * item.Weight))
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Rating, "Rating")
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Notes)
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="row row-cards">
+        <div class="col-12">
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter text-nowrap datatable">
+                        <thead>
+                            <tr>
+                                <th class="w-1">
+                                    @Html.DisplayNameFor(model => model.CreatedAt)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Exercise)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Reps)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Weight)
+                                </th>
+                                <th>
+                                    Total
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Rating)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Notes)
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <th scope="row">
+                                        <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
+                                    </th>
+                                    <td>
+                                        <a asp-action="Graph" asp-route-exercise="@item.Exercise">@Html.DisplayFor(modelItem => item.Exercise)</a>
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Reps)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Weight)
+                                    </td>
+                                    <td>
+                                        @(string.Format("{0:0.00}", item.Reps * item.Weight))
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Rating, "Rating")
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Notes)
+                                    </td>
+                                    <td class="text-end">
+                                        <span class="dropdown">
+                                            <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                                <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                            </div>
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -8,11 +8,11 @@ ToDos and Features for LifelogBB.
  - Tasks: Progress
  - Todos: Upcoming today, next 7 days, ...
  - Habits: Timeline
+- [ ] [Paginations](https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/sort-filter-page?view=aspnetcore-6.0) - Styles prepared in weight/index
 - [ ] Settings (Units, Start of week, ...)
 - [ ] [iCal](https://github.com/rianjs/ical.net) for Goals/Habits/BucketList/...
   - Alarms
 - [ ] [Journal date grid](https://github.com/usememos/memos)
-- [ ] [Paginations](https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/sort-filter-page?view=aspnetcore-6.0)
 - [ ] [Secret management](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&tabs=windows)
 - [ ] Telegram bot
   - https://github.com/TelegramBots/Telegram.Bot

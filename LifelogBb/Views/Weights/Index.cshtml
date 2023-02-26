@@ -33,41 +33,98 @@
 }
 
 <div class="container-xl">
-    <table class="table table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.CreatedAt)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.BodyWeight)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Height)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Bmi)
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <th scope="row">
-                        <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
-                    </th>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.BodyWeight) kg
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Height) cm
-                    </td>
-                    <td class="@GetBmiColorClass(item)">
-                        @Html.DisplayFor(modelItem => item.Bmi)
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="row row-cards">
+        <div class="col-12">
+            <div class="card">
+                <!--<div class="card-body border-bottom py-3">
+                    <div class="d-flex">
+                        <div class="text-muted">
+                            Show
+                            <div class="mx-2 d-inline-block">
+                                <input type="text" class="form-control form-control-sm" value="8" size="3" aria-label="Count">
+                            </div>
+                            entries
+                        </div>
+                        <div class="ms-auto text-muted">
+                            Search:
+                            <div class="ms-2 d-inline-block">
+                                <input type="text" class="form-control form-control-sm" aria-label="Search">
+                            </div>
+                        </div>
+                    </div>
+                </div>-->
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter text-nowrap datatable">
+                        <thead>
+                            <tr>
+                                <th class="w-1">
+                                    @Html.DisplayNameFor(model => model.CreatedAt)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.BodyWeight)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Height)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Bmi)
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <th scope="row">
+                                        <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
+                                    </th>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.BodyWeight) kg
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Height) cm
+                                    </td>
+                                    <td class="@GetBmiColorClass(item)">
+                                        @Html.DisplayFor(modelItem => item.Bmi)
+                                    </td>
+                                    <td class="text-end">
+                                        <span class="dropdown">
+                                            <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                                <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                            </div>
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <!--<div class="card-footer d-flex align-items-center">
+                    <p class="m-0 text-muted">Showing <span>1</span> to <span>8</span> of <span>16</span> entries</p>
+                    <ul class="pagination m-0 ms-auto">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M15 6l-6 6l6 6"></path></svg>
+                                prev
+                            </a>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item active"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">4</a></li>
+                        <li class="page-item"><a class="page-link" href="#">5</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">
+                                next
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M9 6l6 6l-6 6"></path></svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>-->
+            </div>
+        </div>
+    </div>
 </div>
