@@ -5,61 +5,67 @@
     ViewData["Pretitle"] = "Delete";
 }
 
-<div class="container">
-    <h3>Are you sure you want to delete this?</h3>
-    <div>
-        <h4>StrengthTraining</h4>
-        <hr />
-        <dl class="row">
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Exercise)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Exercise)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Reps)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Reps)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Weight)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Weight)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Notes)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Notes)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Rating)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Rating, "Rating")
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.CreatedAt)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.UpdatedAt)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.UpdatedAt)
-            </dd>
-        </dl>
-    </div>
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <div class="row">
-            <div class="col-6"><a class="btn btn-secondary btn-lg" asp-action="Index"><i class="fa-solid fa-arrow-circle-left fa-2x"></i><br />Back</a></div>
-            <div class="col-6"><button type="submit" value="Delete" class="btn btn-danger btn-lg"><i class="fa-solid fa-trash fa-2x"></i><br />Delete</button></div>
+<div class="container-xl">
+    <div class="row row-cards">
+        <div class="col-12">
+            <form asp-action="Delete" class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Are you sure you want to delete this?</h3>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Exercise)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Exercise)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Reps)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Reps)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Weight)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Weight)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Notes)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Notes)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Rating)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Rating, "Rating")
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.CreatedAt)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.CreatedAt)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.UpdatedAt)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.UpdatedAt)
+                        </dd>
+                    </dl>
+                </div>
+                <input type="hidden" asp-for="Id" />
+                <div class="card-footer text-end">
+                    <div class="d-flex">
+                        <a class="btn btn-link" asp-action="Index">Back</a>
+                        <button type="submit" value="Delete" class="btn btn-danger ms-auto"><i class="fas fa-trash icon"></i>Delete</button>
+                    </div>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
