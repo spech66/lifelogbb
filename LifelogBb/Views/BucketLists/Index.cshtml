@@ -7,32 +7,39 @@
 }
 
 <div class="container-xl">
-    <div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="row row-cards">
         @foreach (var item in Model)
         {
-            <div class="col">
-                <div class="card text-bg-dark h-100">
+            <div class="col-sm-6 col-lg-4">
+                <div class="card card-sm text-bg-dark h-100">
                     @if (item.ImageName != null)
                     {
-                        <img src="@Url.Action("GetImage", "BucketLists", new { id = item.Id })" class="card-img-top" alt="@Html.DisplayFor(modelItem => item.Title)" />
+                        <a asp-action="Details" asp-route-id="@item.Id" class="d-block"><img src="@Url.Action("GetImage", "BucketLists", new { id = item.Id })" class="card-img-top" alt="@Html.DisplayFor(modelItem => item.Title)" /></a>
+                    } else
+                    {
+                        <a asp-action="Details" asp-route-id="@item.Id" class="d-block"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="card-img-top"></svg></a>
                     }
                     <div class="card-body">
                         <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
-                        <p class="card-text">
-                            @if(item.Status == LifelogBb.Models.Entities.BucketListStatus.Reached)
-                            {
-                                <span class="badge text-bg-success">@Html.DisplayFor(modelItem => item.Status)</span>
-                            }
-                            else if (item.Status == LifelogBb.Models.Entities.BucketListStatus.InProgress)
-                            {
-                                <span class="badge text-bg-warning">@Html.DisplayFor(modelItem => item.Status)</span>
-                            }
-                            else
-                            {
-                                <span class="badge text-bg-secondary">@Html.DisplayFor(modelItem => item.Status)</span>
-                            }
-                            <span class="badge text-bg-info">@Html.DisplayFor(modelItem => item.Category)</span>
-                        </p>
+                        <div class="d-flex align-items-center">
+                            <div>
+                                @if (item.Status == LifelogBb.Models.Entities.BucketListStatus.Reached)
+                                {
+                                    <span class="badge text-bg-success">@Html.DisplayFor(modelItem => item.Status)</span>
+                                }
+                                else if (item.Status == LifelogBb.Models.Entities.BucketListStatus.InProgress)
+                                {
+                                    <span class="badge text-bg-warning">@Html.DisplayFor(modelItem => item.Status)</span>
+                                }
+                                else
+                                {
+                                    <span class="badge text-bg-secondary">@Html.DisplayFor(modelItem => item.Status)</span>
+                                }
+                            </div>
+                            <div class="ms-auto">
+                                <span class="badge text-bg-info">@Html.DisplayFor(modelItem => item.Category)</span>
+                            </div>
+                        </div>
                         <p class="card-text">
                             @Html.DisplayFor(modelItem => item.Description)
                         </p>
