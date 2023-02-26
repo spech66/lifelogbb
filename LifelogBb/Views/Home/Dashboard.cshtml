@@ -12,33 +12,44 @@
                 <div class="card card-sm">
                     <div class="card-body">
                         <div class="row align-items-center">
-                            <div class="col-auto">
-                                <span class="bg-primary text-white avatar">
-                                    <!-- https://tabler-icons.io/ -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-weight" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 6m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path><path d="M6.835 9h10.33a1 1 0 0 1 .984 .821l1.637 9a1 1 0 0 1 -.984 1.179h-13.604a1 1 0 0 1 -.984 -1.179l1.637 -9a1 1 0 0 1 .984 -.821z"></path></svg>                               
-                                </span>
-                            </div>
+                            <div class="col-auto"><span class="bg-primary text-white avatar"><i class="fa-solid fa-weight-scale icon icon-tabler icon-tabler-weight"></i></span></div>
                             <div class="col">
-                                <div class="font-weight-medium">
-                                    Last Weight
-                                </div>
-                                <div class="text-muted">
-                                    @Model.LastWeight.BodyWeight
-                                </div>
+                                <div class="font-weight-medium">Last Weight</div>
+                                <div class="text-muted">@Model.LastWeight.BodyWeight</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         }
-        @if (Model.LastEnduranceTraining != null || Model.LastStrengthTraining != null)
+        @if (Model.LastStrengthTraining != null)
         {
-            <div class="col-lg-6">
-                <div class="card h-100">
+            <div class="col-sm-6 col-lg-3">
+                <div class="card card-sm">
                     <div class="card-body">
-                        <h5 class="card-title">Training</h5>
-                        <p class="card-text">Last endurance training: @(Model.LastEnduranceTraining != null ? Model.LastEnduranceTraining.CreatedAt.ToString() : "-")</p>
-                        <p class="card-text">Last strength training: @(Model.LastStrengthTraining != null ? Model.LastStrengthTraining.CreatedAt.ToString() : "-")</p>
+                        <div class="row align-items-center">
+                            <div class="col-auto"><span class="bg-primary text-white avatar"><i class="fa-solid fa-dumbbell icon icon-tabler icon-tabler-weight"></i></span></div>
+                            <div class="col">
+                                <div class="font-weight-medium">Last Strength Training</div>
+                                <div class="text-muted">@Model.LastStrengthTraining.CreatedAt.ToLongDateString()</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (Model.LastEnduranceTraining != null)
+        {
+            <div class="col-sm-6 col-lg-3">
+                <div class="card card-sm">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-auto"><span class="bg-primary text-white avatar"><i class="fa-solid fa-running icon icon-tabler icon-tabler-weight"></i></span></div>
+                            <div class="col">
+                                <div class="font-weight-medium">Last Endurance Training</div>
+                                <div class="text-muted">@Model.LastEnduranceTraining.CreatedAt.ToLongDateString()</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -57,16 +68,7 @@
                     </div>
                 </div>
             </div>
-        }
-        <div class="col-lg-6">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content.</p>
-                </div>
-            </div>
-        </div>
-        
+        }        
         @if (Model.RandomQuote != null)
         {
             <div class="col-lg-6">
@@ -83,5 +85,14 @@
                 </div>
             </div>
         }
+
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content.</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
