@@ -22,7 +22,7 @@ ToDos and Features for LifelogBB.
 
 ### In Progress :construction:
 
-- [ ] [Tabler](https://github.com/tabler)
+- [ ] [Tabler](https://github.com/tabler) and [ApexCharts](https://apexcharts.com/) lib
 - [ ] Dashboard
 - [x] Habits (Time Boxing/Blocking)
 
