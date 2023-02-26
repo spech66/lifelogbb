@@ -17,7 +17,7 @@
                     <h3 class="card-title">Total</h3>
                 </div>
                 <div class="card-body">
-                    <canvas id="strengthtrainingTotal"></canvas>
+                    <div id="strengthtrainingTotal"></div>
                 </div>
             </div>
         </div>
@@ -27,7 +27,7 @@
                     <h3 class="card-title">Weight</h3>
                 </div>
                 <div class="card-body">
-                    <canvas id="strengthtrainingWeight"></canvas>
+                    <div id="strengthtrainingWeight"></div>
                 </div>
             </div>
         </div>
@@ -37,7 +37,7 @@
                     <h3 class="card-title">Reps</h3>
                 </div>
                 <div class="card-body">
-                    <canvas id="strengthtrainingReps"></canvas>
+                    <div id="strengthtrainingReps"></div>
                 </div>
             </div>
         </div>
@@ -46,13 +46,8 @@
 
 @section Scripts
     {
-    <script src="~/lib/regression/regression.min.js"></script>
-    <script src="~/lib/luxon/luxon.min.js"></script>
-    <script src="~/lib/chartjs/chart.min.js"></script>
-    <script src="~/lib/chartjs-adapter-luxon/chartjs-adapter-luxon.min.js"></script>
+    <script src="~/lib/tabler/core/dist/libs/apexcharts/dist/apexcharts.min.js"></script>
     <script type="text/javascript">
-        var DateTime = luxon.DateTime;
-
         function Strengthtraining(data) {
             this.date = data.createdAt;
             this.exercise = data.exercise;
@@ -62,42 +57,24 @@
             this.rating = data.rating;
         }
 
-        function generateChart(selDiv, chartTitle, chartColor, chartColor2, chartData) {
-            const ctx = document.getElementById(selDiv);
-
-            const myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: chartData.map(sel => sel.x),
-                    datasets: [{
-                        label: chartTitle,
-                        data: chartData.map(sel => sel.y),
-                        backgroundColor: chartColor2,
-                        borderColor: chartColor,
-                        borderWidth: 1,
-                        barThickness: 16
-                    }]
+        function generateChart(selDiv, chartTitle, chartData) {
+            var options = {
+                chart: {
+                    type: 'bar'
                 },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        },
-                        x: {
-                            type: 'time',
-                            time: {
-                                // Luxon format string
-                                tooltipFormat: 'DD T',
-                                unit: 'day'
-                            },
-                            title: {
-                                display: true,
-                                text: 'Date'
-                            }
-                        }
-                    }
+                plotOptions: {
+                },
+                series: [{
+                    name: chartTitle,
+                    data: chartData
+                }],
+                xaxis: {
+                    type: "datetime"
                 }
-            });
+            };
+
+            var chart = new ApexCharts(document.querySelector(`#${selDiv}`), options);
+            chart.render();
         }
 
         $.getJSON("@Url.Action("GraphGet")", { exercise: "@Model" }, function (data) {
@@ -125,9 +102,9 @@
                 }
             });
 
-            generateChart("strengthtrainingTotal", "Total by set", '#7EB26D', '#7EB26D88', resultTotal);
-            generateChart("strengthtrainingWeight", "Weight by set", '#7EB26D', '#7EB26D88', resultSingle);
-            generateChart("strengthtrainingReps", "Reps by set", '#7EB26D', '#7EB26D88', resultReps);
+            generateChart("strengthtrainingTotal", "Total by set", resultTotal);
+            generateChart("strengthtrainingWeight", "Weight by set", resultSingle);
+            generateChart("strengthtrainingReps", "Reps by set", resultReps);
         });
     </script>
 }

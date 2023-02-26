@@ -17,7 +17,7 @@
                     <h3 class="card-title">Distance</h3>
                 </div>
                 <div class="card-body">
-                    <canvas id="enduranceworkoutDistance"></canvas>
+                    <div id="enduranceworkoutDistance"></div>
                 </div>
             </div>
         </div>
@@ -27,7 +27,7 @@
                     <h3 class="card-title">Duration</h3>
                 </div>
                 <div class="card-body">
-                    <canvas id="enduranceworkoutDuration"></canvas>
+                    <div id="enduranceworkoutDuration"></div>
                 </div>
             </div>
         </div>
@@ -37,7 +37,7 @@
                     <h3 class="card-title">Rating</h3>
                 </div>
                 <div class="card-body">
-                    <canvas id="enduranceworkoutRating"></canvas>
+                    <div id="enduranceworkoutRating"></div>
                 </div>
             </div>
         </div>
@@ -46,14 +46,8 @@
 
 @section Scripts
     {
-    <script src="~/lib/regression/regression.min.js"></script>
-    <script src="~/lib/luxon/luxon.min.js"></script>
-    <script src="~/lib/chartjs/chart.min.js"></script>
-    <script src="~/lib/chartjs-adapter-luxon/chartjs-adapter-luxon.min.js"></script>
+    <script src="~/lib/tabler/core/dist/libs/apexcharts/dist/apexcharts.min.js"></script>
     <script type="text/javascript">
-        var DateTime = luxon.DateTime;
-        var Duration = luxon.Duration;
-
         function Enduranceworkout(data) {
             this.date = data.createdAt;
             this.exercise = data.exercise;
@@ -63,42 +57,24 @@
             this.rating = data.rating;
         }
 
-        function generateChart(selDiv, chartTitle, chartColor, chartColor2, chartData) {
-            const ctx = document.getElementById(selDiv);
-
-            const myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: chartData.map(sel => sel.x),
-                    datasets: [{
-                        label: chartTitle,
-                        data: chartData.map(sel => sel.y),
-                        backgroundColor: chartColor2,
-                        borderColor: chartColor,
-                        borderWidth: 1,
-                        barThickness: 16
-                    }]
+        function generateChart(selDiv, chartTitle, chartData) {
+            var options = {
+                chart: {
+                    type: 'bar'
                 },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        },
-                        x: {
-                            type: 'time',
-                            time: {
-                                // Luxon format string
-                                tooltipFormat: 'DD T',
-                                unit: 'day'
-                            },
-                            title: {
-                                display: true,
-                                text: 'Date'
-                            }
-                        }
-                    }
+                plotOptions: {
+                },
+                series: [{
+                    name: chartTitle,
+                    data: chartData
+                }],
+                xaxis: {
+                    type: "datetime"
                 }
-            });
+            };
+
+            var chart = new ApexCharts(document.querySelector(`#${selDiv}`), options);
+            chart.render();
         }
 
         $.getJSON("@Url.Action("GraphGet")", { exercise: "@Model" }, function (data) {
@@ -114,10 +90,10 @@
 
             const resultDuration = mappedEnduranceworkout.map(sel => {
                 var timeSegments = sel.duration.split(":");
-                var duration = Duration.fromObject({ hours: timeSegments[0], minutes: timeSegments[1], seconds: timeSegments[2] })
+                console.log(timeSegments);
                 return {
                     x: sel.date,
-                    y: ((duration.hours * 3600.0) + (duration.minutes * 60.0) + duration.seconds) / 60.0
+                    y: ((timeSegments[0] * 3600.0) + (timeSegments[1] * 60.0) +  timeSegments[2]) / 60.0 / 100.0
                 }
             });
 
@@ -128,9 +104,9 @@
                 }
             });
 
-            generateChart("enduranceworkoutDistance", "Distance (Km)", '#7EB26D', '#7EB26D88', resultDistance);
-            generateChart("enduranceworkoutDuration", "Duration (Min.)", '#7EB26D', '#7EB26D88', resultDuration);
-            generateChart("enduranceworkoutRating", "Rating", '#7EB26D', '#7EB26D88', resultRating);
+            generateChart("enduranceworkoutDistance", "Distance (Km)", resultDistance);
+            generateChart("enduranceworkoutDuration", "Duration (Min.)", resultDuration);
+            generateChart("enduranceworkoutRating", "Rating", resultRating);
         });
     </script>
 }
