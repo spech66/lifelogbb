@@ -36,6 +36,7 @@ All **data** is stored in a single **SQLite database** for full control and port
 ## Screenshots
 
 ![Start](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/s_001_start.jpg "Start")
+![Dashboard](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/s_002_dashboard.png "Dashboard")
 ![Weight](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/s_002_weight_01.jpg "Weight")
 ![Bucket List Vision Board](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/s_006_bucketlist_02.jpg "Bucket List Vision Board")
 
