@@ -23,6 +23,7 @@ All **data** is stored in a single **SQLite database** for full control and port
 * 📜 Quotes
 * 🛠️ RESTful API for all routes
 * ⚙️ Settings
+* 🖼 [Tabler](https://tabler.io/) UI
 
 [TODO](https://github.com/spech66/lifelogbb/blob/main/TODO.md)
 
