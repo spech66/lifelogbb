@@ -71,13 +71,13 @@
                                         @Html.DisplayFor(modelItem => item.Notes)
                                     </td>
                                     <td class="text-end">
-                                        <span class="dropdown">
+                                        <div class="dropdown">
                                             <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
                                             <div class="dropdown-menu dropdown-menu-end">
                                                 <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                                                 <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                                             </div>
-                                        </span>
+                                        </div>
                                     </td>
                                 </tr>
                             }
