@@ -52,14 +52,12 @@ jobs:
           else
             dotnet ef migrations bundle --self-contained -r "${{ matrix.target }}" -p LifelogBb -o "./LifelogBb/$release_name/efbundle"
           fi
-          
 
           # Pack files
           if [ "${{ matrix.target }}" == "win-x64" ]; then
-            # Pack to zip for Windows
             7z a -tzip "$release_name.zip" "./LifelogBb/$release_name/*"
           else
-            tar czvf "$release_name.tar.gz" "./LifelogBb/$release_name"
+            tar czvf "$release_name.tar.gz" -C "./LifelogBb/$release_name" .             
           fi
 
           # Delete output directory
