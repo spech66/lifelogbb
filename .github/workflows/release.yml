@@ -45,6 +45,7 @@ jobs:
           # Build everything
           dotnet publish --framework net7.0 --runtime "${{ matrix.target }}" -c Release --property:PublishDir="$release_name"
     
+          dotnet tool install --global dotnet-ef
           # Build migration bundle https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/applying?tabs=dotnet-core-cli
           if [ "${{ matrix.target }}" == "win-x64" ]; then
             dotnet ef migrations bundle -r "${{ matrix.target }}" -p LifelogBb -o "./LifelogBb/$release_name/efbundle.exe"
