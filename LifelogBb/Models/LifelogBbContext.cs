@@ -37,7 +37,7 @@ namespace LifelogBb.Models
             {
                 Directory.CreateDirectory(path);
             }
-            DbPath = Path.Join(path, "liefelogbb.db");
+            DbPath = Path.Join(path, "lifelogbb.db");
         }
 
         // Create Sqlite database file in the "local" folder.
