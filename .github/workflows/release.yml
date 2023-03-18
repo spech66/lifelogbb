@@ -9,7 +9,7 @@ on:
     types: [published]
 
 env:
-  DOTNET_VERSION: '6.0.x'
+  DOTNET_VERSION: '7.0.x'
 
 jobs:
   release:
@@ -43,7 +43,7 @@ jobs:
           release_name="lifelogbb-$tag-${{ matrix.target }}"
 
           # Build everything
-          dotnet publish --framework net6.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name"
+          dotnet publish --framework net7.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name"
     
           # Build migration bundle https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/applying?tabs=dotnet-core-cli
           if [ "${{ matrix.target }}" == "win-x64" ]; then
