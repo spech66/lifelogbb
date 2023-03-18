@@ -44,6 +44,14 @@ jobs:
 
           # Build everything
           dotnet publish --framework net6.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name"
+    
+          # Build migration bundle https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/applying?tabs=dotnet-core-cli
+          if [ "${{ matrix.target }}" == "win-x64" ]; then
+            dotnet ef migrations bundle --output "./${release_name}/efbundle.exe"
+          else
+            dotnet ef migrations bundle --self-contained -r linux-x64 --output "./${release_name}/efbundle"
+          fi
+          
 
           # Pack files
           if [ "${{ matrix.target }}" == "win-x64" ]; then
