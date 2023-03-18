@@ -1,6 +1,7 @@
 # Screenshots
 
 ![Start](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/001_start.png "Start")
+![Dashboard](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/002_dashboard.png "Dashboard")
 ![Weight](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/002_weight_01.png "Weight")
 
 <!--![Weight Graph](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/002_weight_02.png "Weight Graph")
