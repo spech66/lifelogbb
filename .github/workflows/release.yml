@@ -43,7 +43,7 @@ jobs:
           release_name="lifelogbb-$tag-${{ matrix.target }}"
 
           # Build everything
-          dotnet publish --framework net7.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name"
+          dotnet publish --framework net7.0 --runtime "${{ matrix.target }}" -c Release --property:PublishDir="$release_name"
     
           # Build migration bundle https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/applying?tabs=dotnet-core-cli
           if [ "${{ matrix.target }}" == "win-x64" ]; then
