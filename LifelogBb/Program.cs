@@ -10,6 +10,7 @@ using LifelogBb.ApiServices;
 using LifelogBb.ApiRepositories;
 using LifelogBb.Models;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace LifelogBb
 {
@@ -56,6 +57,12 @@ namespace LifelogBb
                 });
             }); // Swagger
 
+            // https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-7.0
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
+
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // Add all Repositories
@@ -74,6 +81,8 @@ namespace LifelogBb
             ConfigureCookieJwt(services, config);
 
             var app = builder.Build();
+
+            app.UseForwardedHeaders();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
