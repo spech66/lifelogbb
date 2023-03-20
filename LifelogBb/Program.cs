@@ -127,6 +127,7 @@ namespace LifelogBb
             {
                 options.LoginPath = "/Account/Login/";
                 options.ExpireTimeSpan = TimeSpan.FromDays(double.Parse(config["Authentication:Cookie:ExpireDays"]));
+                options.IsPersistent = true;
             })
             .AddJwtBearer(options =>
             {
