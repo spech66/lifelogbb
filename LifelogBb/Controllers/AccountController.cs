@@ -45,6 +45,7 @@ namespace LifelogBb.Controllers
                 var authProperties = new AuthenticationProperties
                 {
                     RedirectUri = "/Index",
+                    IsPersistent = true,
                 };
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
