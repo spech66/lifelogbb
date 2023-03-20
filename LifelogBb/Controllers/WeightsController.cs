@@ -9,6 +9,7 @@ using LifelogBb.Models;
 using LifelogBb.Models.Entities;
 using LifelogBb.Models.Weights;
 using AutoMapper;
+using LifelogBb.Utilities;
 
 namespace LifelogBb.Controllers
 {
@@ -24,9 +25,27 @@ namespace LifelogBb.Controllers
         }
 
         // GET: Weights
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, int? pageNumber)
         {
-              return View(await _context.Weights.OrderByDescending(o => o.CreatedAt).ToListAsync());
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["DateSortParm"] = sortOrder == "date_asc" ? "date_desc" : "date_asc";
+
+            var weights = from s in _context.Weights select s;
+            switch (sortOrder)
+            {
+                case "date_asc":
+                    weights = weights.OrderBy(s => s.CreatedAt);
+                    break;
+                case "date_desc":
+                default:
+                    weights = weights.OrderByDescending(s => s.CreatedAt);
+                    break;
+            }
+
+            int pageSize = 20;
+            return View(await PaginatedList<Weight>.CreateAsync(weights.AsNoTracking(), pageNumber ?? 1, pageSize));
+
+            // return View(await _context.Weights.OrderByDescending(o => o.CreatedAt).ToListAsync());
         }
 
         // GET: Weights/Graph
