@@ -28,24 +28,13 @@ namespace LifelogBb.Controllers
         public async Task<IActionResult> Index(string sortOrder, int? pageNumber)
         {
             ViewData["CurrentSort"] = sortOrder;
-            ViewData["DateSortParm"] = sortOrder == "date_asc" ? "date_desc" : "date_asc";
+            ViewData["DateSortParm"] = sortOrder == "CreatedAt" ? "CreatedAt_desc" : "CreatedAt";
 
             var weights = from s in _context.Weights select s;
-            switch (sortOrder)
-            {
-                case "date_asc":
-                    weights = weights.OrderBy(s => s.CreatedAt);
-                    break;
-                case "date_desc":
-                default:
-                    weights = weights.OrderByDescending(s => s.CreatedAt);
-                    break;
-            }
+            weights = weights.SortByName(sortOrder, "CreatedAt_desc");
 
             int pageSize = 20;
             return View(await PaginatedList<Weight>.CreateAsync(weights.AsNoTracking(), pageNumber ?? 1, pageSize));
-
-            // return View(await _context.Weights.OrderByDescending(o => o.CreatedAt).ToListAsync());
         }
 
         // GET: Weights/Graph
