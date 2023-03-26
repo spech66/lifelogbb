@@ -15,7 +15,7 @@
                         <thead>
                             <tr>
                                 <th class="w-1">
-                                    <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Date</a>
+                                    <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")">Date</a>
                                 </th>
                                 <th>
                                     Name

@@ -12,7 +12,7 @@
         <div class="col">
             <div class="card">
                 <div class="card-body">
-                    Sort by <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Date</a>.
+                    Sort by <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")">Date</a>.
                 </div>
             </div>
         </div>

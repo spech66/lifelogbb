@@ -38,7 +38,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body border-bottom py-3">
-                    <div class="d-flex">                      
+                    <div class="d-flex">
                         <div class="ms-auto text-muted">
                             Search weight (+/- 1):
                             <div class="ms-2 d-inline-block">
@@ -54,7 +54,7 @@
                         <thead>
                             <tr>
                                 <th class="w-1">
-                                    <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Date</a>
+                                    <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")">Date</a>
                                 </th>
                                 <th>
                                     BodyWeight
