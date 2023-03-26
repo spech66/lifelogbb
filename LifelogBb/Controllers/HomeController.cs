@@ -47,6 +47,13 @@ namespace LifelogBb.Controllers
             var randomQuote = await _context.Quotes.OrderBy(r => EF.Functions.Random()).Take(1).FirstOrDefaultAsync();
             model.RandomQuote = randomQuote;
 
+            var activities = new List<IndexDashboardViewModelActivity>
+            {
+                new IndexDashboardViewModelActivity { Text = "Test", Date = DateTime.Now },
+                new IndexDashboardViewModelActivity { Text = "Test 2", Date = DateTime.Now },
+            };
+            model.Activities = activities;
+
             return View(model);
         }
 

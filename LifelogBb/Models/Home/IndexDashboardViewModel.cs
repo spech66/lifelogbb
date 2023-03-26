@@ -2,6 +2,13 @@
 
 namespace LifelogBb.Models.Home
 {
+    public class IndexDashboardViewModelActivity
+    {
+        public string Text { get; set; } = string.Empty;
+
+        public DateTime? Date { get; set; }
+    }
+
     public class IndexDashboardViewModel
     {
         public Weight? LastWeight { get; set; }
@@ -13,5 +20,7 @@ namespace LifelogBb.Models.Home
         public BucketList? RandomBucketList { get; set; }
 
         public Quote? RandomQuote { get; set; }
+
+        public List<IndexDashboardViewModelActivity>? Activities { get; set; }
     }
 }

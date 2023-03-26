@@ -68,7 +68,7 @@
                     </div>
                 </div>
             </div>
-        }        
+        }
         @if (Model.RandomQuote != null)
         {
             <div class="col-lg-6">
@@ -81,6 +81,36 @@
                             <p>@Model.RandomQuote.Text</p>
                             <footer class="blockquote-footer"><cite>@Model.RandomQuote.Author</cite></footer>
                         </blockquote>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (Model.Activities != null)
+        {
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="divide-y">
+                            @foreach (var item in Model.Activities)
+                            {
+                                <div>
+                                    <div class="row">
+                                        <div class="col-auto">
+                                            <span class="avatar">T</span>
+                                        </div>
+                                        <div class="col">
+                                            <div class="text-truncate">
+                                                @item.Text
+                                            </div>
+                                            <div class="text-muted">@item.Date.ToString()</div>
+                                        </div>
+                                        <div class="col-auto align-self-center">
+                                            <div class="badge bg-primary"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
