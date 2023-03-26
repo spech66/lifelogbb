@@ -16,7 +16,7 @@
                         <thead>
                             <tr>
                                 <th class="w-1">
-                                    CreatedAt
+                                    <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Date</a>
                                 </th>
                                 <th>
                                     Exercise

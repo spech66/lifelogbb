@@ -22,7 +22,23 @@ namespace LifelogBb.Controllers
         // GET: Habits
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
+            var defaultSortOrder = $"{nameof(Habit.CreatedAt)}_desc";
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["DateSortParm"] = sortOrder == nameof(Habit.CreatedAt) ? defaultSortOrder : nameof(Habit.CreatedAt);
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
             var habits = from s in _context.Habits select s;
+            habits = habits.SortByName(sortOrder, defaultSortOrder);
 
             int pageSize = 20;
             return View(await PaginatedList<Habit>.CreateAsync(habits.AsNoTracking(), pageNumber ?? 1, pageSize));

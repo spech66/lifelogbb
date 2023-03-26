@@ -22,7 +22,23 @@ namespace LifelogBb.Controllers
         // GET: Journals
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
+            var defaultSortOrder = $"{nameof(Journal.CreatedAt)}_desc";
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["DateSortParm"] = sortOrder == nameof(Journal.CreatedAt) ? defaultSortOrder : nameof(Journal.CreatedAt);
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
             var journals = from s in _context.Journals select s;
+            journals = journals.SortByName(sortOrder, defaultSortOrder);
 
             int pageSize = 20;
             return View(await PaginatedList<Journal>.CreateAsync(journals.AsNoTracking(), pageNumber ?? 1, pageSize));

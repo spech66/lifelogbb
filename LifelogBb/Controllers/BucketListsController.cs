@@ -27,7 +27,23 @@ namespace LifelogBb.Controllers
         // GET: BucketLists
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
+            var defaultSortOrder = $"{nameof(BucketList.CreatedAt)}_desc";
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["DateSortParm"] = sortOrder == nameof(BucketList.CreatedAt) ? defaultSortOrder : nameof(BucketList.CreatedAt);
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
             var items = from s in _context.BucketLists select s;
+            items = items.SortByName(sortOrder, defaultSortOrder);
 
             int pageSize = 20;
             return View(await PaginatedList<BucketList>.CreateAsync(items.AsNoTracking(), pageNumber ?? 1, pageSize));

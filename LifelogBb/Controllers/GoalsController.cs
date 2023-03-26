@@ -22,7 +22,23 @@ namespace LifelogBb.Controllers
         // GET: Goals
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
+            var defaultSortOrder = $"{nameof(Goal.CreatedAt)}_desc";
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["DateSortParm"] = sortOrder == nameof(Goal.CreatedAt) ? defaultSortOrder : nameof(Goal.CreatedAt);
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
             var goals = from s in _context.Goals select s;
+            goals = goals.SortByName(sortOrder, defaultSortOrder);
 
             int pageSize = 20;
             return View(await PaginatedList<Goal>.CreateAsync(goals.AsNoTracking(), pageNumber ?? 1, pageSize));

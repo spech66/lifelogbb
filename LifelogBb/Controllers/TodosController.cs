@@ -22,7 +22,23 @@ namespace LifelogBb.Controllers
         // GET: Todos
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
+            var defaultSortOrder = $"{nameof(Todo.CreatedAt)}_desc";
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["DateSortParm"] = sortOrder == nameof(Todo.CreatedAt) ? defaultSortOrder : nameof(Todo.CreatedAt);
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
             var todos = from s in _context.Todos select s;
+            todos = todos.SortByName(sortOrder, defaultSortOrder);
 
             int pageSize = 20;
             return View(await PaginatedList<Todo>.CreateAsync(todos.AsNoTracking(), pageNumber ?? 1, pageSize));

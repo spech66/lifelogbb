@@ -22,7 +22,23 @@ namespace LifelogBb.Controllers
         // GET: StrengthTrainings
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
+            var defaultSortOrder = $"{nameof(StrengthTraining.CreatedAt)}_desc";
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["DateSortParm"] = sortOrder == nameof(StrengthTraining.CreatedAt) ? defaultSortOrder : nameof(StrengthTraining.CreatedAt);
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
             var trainings = from s in _context.StrengthTrainings select s;
+            trainings = trainings.SortByName(sortOrder, defaultSortOrder);
 
             int pageSize = 20;
             return View(await PaginatedList<StrengthTraining>.CreateAsync(trainings.AsNoTracking(), pageNumber ?? 1, pageSize));
