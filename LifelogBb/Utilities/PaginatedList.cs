@@ -27,7 +27,7 @@ namespace LifelogBb.Utilities
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
             PageSize = pageSize;
 
-            this.AddRange(items);
+            AddRange(items);
         }
 
         public bool HasPreviousPage => PageIndex > 1;

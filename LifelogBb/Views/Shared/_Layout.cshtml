@@ -91,11 +91,17 @@
                                         <span class="d-none d-sm-inline">
                                             <a class="btn btn-success" asp-action="Graph" role="button"><i class="fas fa-chart-bar icon"></i>Graph</a>
                                         </span>
+                                        <span class="d-sm-none">
+                                            <a class="btn btn-success btn-icon" asp-action="Graph" role="button"><i class="fas fa-chart-bar icon"></i></a>
+                                        </span>
                                     }
                                     else if (ViewData.TryGetValue("SecondaryAction", out action) && action is string && (string)action == "vision")
                                     {
                                         <span class="d-none d-sm-inline">
                                             <a class="btn btn-success" asp-action="VisionBoard" role="button"><i class="fas fa-chart-bar icon"></i>Vision board</a>
+                                        </span>
+                                        <span class="d-sm-none">
+                                            <a class="btn btn-success btn-icon" asp-action="VisionBoard" role="button"><i class="fas fa-chart-bar icon"></i></a>
                                         </span>
                                     }
                                 }
