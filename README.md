@@ -35,10 +35,10 @@ All **data** is stored in a single **SQLite database** for full control and port
 
 ## Screenshots
 
-![Start](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/s_001_start.png "Start")
-![Dashboard](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/s_002_dashboard.png "Dashboard")
-![Weight](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/s_002_weight_01.png "Weight")
-![Bucket List Vision Board](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/s_006_bucketlist_02.png "Bucket List Vision Board")
+[![Start](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/s_001_start.png "Start")](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/001_start.png)
+[![Dashboard](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/s_002_dashboard.png "Dashboard")](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/002_dashboard.png)
+[![Weight](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/s_002_weight_01.png "Weight")](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/002_weight_01.png)
+[![Bucket List Vision Board](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/s_006_bucketlist_02.png "Bucket List Vision Board")](https://raw.githubusercontent.com/spech66/lifelogbb/main/_screenshots/006_bucketlist_02.png)
 
 [More screenshots](https://github.com/spech66/lifelogbb/tree/main/_screenshots)
 
