@@ -8,7 +8,6 @@ ToDos and Features for LifelogBB.
  - Tasks: Progress
  - Todos: Upcoming today, next 7 days, ...
  - Habits: Timeline
-- [ ] [Paginations](https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/sort-filter-page?view=aspnetcore-6.0) - Styles prepared in weight/index
 - [ ] Settings (Units, Start of week, ...)
 - [ ] [iCal](https://github.com/rianjs/ical.net) for Goals/Habits (Time Boxing/Blocking)/BucketList/...
   - Alarms
@@ -19,9 +18,11 @@ ToDos and Features for LifelogBB.
   - https://telegrambots.github.io/book/2/send-msg/index.html
 - [ ] [CLI tool](https://github.com/gui-cs/Terminal.Gui)
 - [ ] [Globalization and localization](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization?view=aspnetcore-6.0)
+- [ ] ChatGPT (LLaMA, ... ?) integration
 
 ### In Progress :construction:
 
+- [ ] [Paginations](https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/advanced?view=aspnetcore-7.0#use-dynamic-linq-to-simplify-code)
 - [ ] Dashboard
 
 ### Done :heavy_check_mark:
