@@ -1,4 +1,5 @@
-﻿@model IEnumerable<LifelogBb.Models.Entities.Todo>
+﻿@using LifelogBb.Utilities;
+@model PaginatedList<LifelogBb.Models.Entities.Todo>
 
 @{
     ViewData["Title"] = "ToDos";
@@ -37,22 +38,22 @@
                         <thead>
                             <tr>
                                 <th class="w-1">
-                                    @Html.DisplayNameFor(model => model.CreatedAt)
+                                    Created At
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Title)
+                                    Title
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Description)
+                                    Description
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.DueDate)
+                                    DueDate
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.IsCompleted)
+                                    Is Completed
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.IsImportant)
+                                    Is Important
                                 </th>
                                 <th></th>
                             </tr>
@@ -92,6 +93,9 @@
                             }
                         </tbody>
                     </table>
+                </div>
+                <div class="card-footer d-flex align-items-center">
+                    @await Component.InvokeAsync("Pagination", Model)
                 </div>
             </div>
         </div>

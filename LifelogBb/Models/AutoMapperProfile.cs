@@ -34,8 +34,7 @@ namespace LifelogBb.Models
 
             // BucketLists
             CreateMap<EditBucketListViewModel, BucketList>();
-            CreateMap<BucketList, EditBucketListViewModel>();
-            CreateMap<BucketList, IndexBucketListViewModel>();            
+            CreateMap<BucketList, EditBucketListViewModel>();          
             CreateMap<CreateBucketListViewModel, BucketList>()
                 .ForSourceMember(source => source.ImageData, opt => opt.DoNotValidate());
             CreateMap<EditBucketListViewModel, BucketList>()

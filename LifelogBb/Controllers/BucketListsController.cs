@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LifelogBb.Models;
 using LifelogBb.Models.Entities;
 using AutoMapper;
-using LifelogBb.Models.Weights;
 using LifelogBb.Models.BucketLists;
-using System.IO.Compression;
 using System.Net;
-using static System.Net.Mime.MediaTypeNames;
-using NuGet.Packaging.Signing;
-using Microsoft.EntityFrameworkCore.ValueGeneration;
+using LifelogBb.Utilities;
 
 namespace LifelogBb.Controllers
 {
@@ -34,10 +25,12 @@ namespace LifelogBb.Controllers
         }
 
         // GET: BucketLists
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
-            var items = await _context.BucketLists.OrderBy(o => o.Status).ThenBy(o => o.Category).ThenByDescending(o => o.CreatedAt).ToListAsync();            
-            return View(_mapper.Map<List<IndexBucketListViewModel>>(items));
+            var items = from s in _context.BucketLists select s;
+
+            int pageSize = 20;
+            return View(await PaginatedList<BucketList>.CreateAsync(items.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: /BucketLists/GetImage/2
@@ -78,7 +71,7 @@ namespace LifelogBb.Controllers
         public async Task<IActionResult> VisionBoard()
         {
             var items = await _context.BucketLists.ToListAsync();
-            return View(_mapper.Map<List<IndexBucketListViewModel>>(items));
+            return View(_mapper.Map<List<BucketList>>(items));
         }
 
         // GET: BucketLists/Details/5

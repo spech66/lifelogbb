@@ -1,10 +1,10 @@
-﻿@model IEnumerable<LifelogBb.Models.Entities.Journal>
+﻿@using LifelogBb.Utilities;
+@model PaginatedList<LifelogBb.Models.Entities.Journal>
 
 @{
     ViewData["Title"] = "Journal";
     ViewData["PrimaryAction"] = "create";
 }
-
 
 <div class="container-xl">
     <div class="row row-cards">
@@ -15,10 +15,10 @@
                         <thead>
                             <tr>
                                 <th class="w-1">
-                                    @Html.DisplayNameFor(model => model.CreatedAt)
+                                    Created At
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Text)
+                                    Text
                                 </th>
                                 <th></th>
                             </tr>
@@ -46,6 +46,9 @@
                             }
                         </tbody>
                     </table>
+                </div>
+                <div class="card-footer d-flex align-items-center">
+                    @await Component.InvokeAsync("Pagination", Model)
                 </div>
             </div>
         </div>

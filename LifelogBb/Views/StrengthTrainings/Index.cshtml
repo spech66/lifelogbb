@@ -1,11 +1,11 @@
-﻿@model IEnumerable<LifelogBb.Models.Entities.StrengthTraining>
+﻿@using LifelogBb.Utilities;
+@model PaginatedList<LifelogBb.Models.Entities.StrengthTraining>
 
 @{
     ViewData["Title"] = "Strength Training";
     ViewData["PrimaryAction"] = "create";
     ViewData["SecondaryAction"] = "graph";
 }
-
 
 <div class="container-xl">
     <div class="row row-cards">
@@ -16,25 +16,25 @@
                         <thead>
                             <tr>
                                 <th class="w-1">
-                                    @Html.DisplayNameFor(model => model.CreatedAt)
+                                    CreatedAt
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Exercise)
+                                    Exercise
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Reps)
+                                    Reps
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Weight)
+                                    Weight
                                 </th>
                                 <th>
                                     Total
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Rating)
+                                    Rating
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Notes)
+                                    Notes
                                 </th>
                                 <th></th>
                             </tr>
@@ -77,6 +77,9 @@
                             }
                         </tbody>
                     </table>
+                </div>
+                <div class="card-footer d-flex align-items-center">
+                    @await Component.InvokeAsync("Pagination", Model)
                 </div>
             </div>
         </div>

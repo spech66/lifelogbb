@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LifelogBb.Models;
 using LifelogBb.Models.Entities;
 using AutoMapper;
-using LifelogBb.Models.Journals;
 using LifelogBb.Models.Quotes;
+using LifelogBb.Utilities;
 
 namespace LifelogBb.Controllers
 {
@@ -25,11 +20,12 @@ namespace LifelogBb.Controllers
         }
 
         // GET: Quotes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
-              return _context.Quotes != null ? 
-                          View(await _context.Quotes.OrderByDescending(o => o.CreatedAt).ToListAsync()) :
-                          Problem("Entity set 'LifelogBbContext.Quotes'  is null.");
+            var quotes = from s in _context.Quotes select s;
+
+            int pageSize = 20;
+            return View(await PaginatedList<Quote>.CreateAsync(quotes.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Quotes/Details/5

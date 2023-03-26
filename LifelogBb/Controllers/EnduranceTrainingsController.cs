@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LifelogBb.Models;
 using LifelogBb.Models.Entities;
 using AutoMapper;
-using LifelogBb.Models.StrengthTrainings;
 using LifelogBb.Models.EnduranceTrainings;
+using LifelogBb.Utilities;
 
 namespace LifelogBb.Controllers
 {
@@ -25,9 +20,12 @@ namespace LifelogBb.Controllers
         }
 
         // GET: EnduranceTrainings
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
-              return View(await _context.EnduranceTrainings.OrderByDescending(o => o.CreatedAt).ToListAsync());
+            var trainings = from s in _context.EnduranceTrainings select s;
+
+            int pageSize = 20;
+            return View(await PaginatedList<EnduranceTraining>.CreateAsync(trainings.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: EnduranceTrainings/Graph

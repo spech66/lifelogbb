@@ -1,10 +1,10 @@
-﻿@model IEnumerable<LifelogBb.Models.Entities.Goal>
+﻿@using LifelogBb.Utilities;
+@model PaginatedList<LifelogBb.Models.Entities.Goal>
 
 @{
     ViewData["Title"] = "Goals";
     ViewData["PrimaryAction"] = "create";
 }
-
 
 <div class="container-xl">
     <div class="row row-cards">
@@ -15,28 +15,28 @@
                         <thead>
                             <tr>
                                 <th class="w-1">
-                                    @Html.DisplayNameFor(model => model.CreatedAt)
+                                    Created At
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Name)
+                                    Name
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Description)
+                                    Description
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.TargetValue)
+                                    Target Value
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.CurrentValue)
+                                    Current Value
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.StartDate)
+                                    Start Date
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.EndDate)
+                                    End Date
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.IsCompleted)
+                                    Is Completed
                                 </th>
                                 <th></th>
                             </tr>
@@ -82,6 +82,9 @@
                             }
                         </tbody>
                     </table>
+                </div>
+                <div class="card-footer d-flex align-items-center">
+                    @await Component.InvokeAsync("Pagination", Model)
                 </div>
             </div>
         </div>
