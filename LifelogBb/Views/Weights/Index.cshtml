@@ -37,23 +37,25 @@
     <div class="row row-cards">
         <div class="col-12">
             <div class="card">
-                <!--<div class="card-body border-bottom py-3">
+                <div class="card-body border-bottom py-3">
                     <div class="d-flex">
-                        <div class="text-muted">
+                        <!--<div class="text-muted">
                             Show
                             <div class="mx-2 d-inline-block">
                                 <input type="text" class="form-control form-control-sm" value="8" size="3" aria-label="Count">
                             </div>
                             entries
-                        </div>
+                        </div>-->                        
                         <div class="ms-auto text-muted">
-                            Search:
+                            Search weight (+/- 1):
                             <div class="ms-2 d-inline-block">
-                                <input type="text" class="form-control form-control-sm" aria-label="Search">
+                                <form asp-action="Index" method="get">
+                                    <input type="text" class="form-control form-control-sm" aria-label="Search" name="searchString">
+                                </form>
                             </div>
                         </div>
                     </div>
-                </div>-->
+                </div>
                 <div class="table-responsive">
                     <table class="table card-table table-vcenter text-nowrap datatable">
                         <thead>

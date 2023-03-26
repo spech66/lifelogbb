@@ -25,13 +25,26 @@ namespace LifelogBb.Controllers
         }
 
         // GET: Weights
-        public async Task<IActionResult> Index(string sortOrder, int? pageNumber)
+        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
+            var defaultSortOrder = $"{nameof(Weight.CreatedAt)}_desc";
             ViewData["CurrentSort"] = sortOrder;
-            ViewData["DateSortParm"] = sortOrder == "CreatedAt" ? "CreatedAt_desc" : "CreatedAt";
+            ViewData["DateSortParm"] = sortOrder == nameof(Weight.CreatedAt) ? defaultSortOrder : nameof(Weight.CreatedAt);
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
 
             var weights = from s in _context.Weights select s;
-            weights = weights.SortByName(sortOrder, "CreatedAt_desc");
+            weights = weights.FilterByDoubleProps(nameof(Weight.BodyWeight), searchString, 1.0);
+            weights = weights.SortByName(sortOrder, defaultSortOrder);
 
             int pageSize = 20;
             return View(await PaginatedList<Weight>.CreateAsync(weights.AsNoTracking(), pageNumber ?? 1, pageSize));
