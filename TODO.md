@@ -22,7 +22,6 @@ ToDos and Features for LifelogBB.
 
 ### In Progress :construction:
 
-- [ ] [Paginations](https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/advanced?view=aspnetcore-7.0#use-dynamic-linq-to-simplify-code)
 - [ ] Dashboard
 
 ### Done :heavy_check_mark:
@@ -45,3 +44,4 @@ ToDos and Features for LifelogBB.
 - [x] Authentication
 - [x] Dockerfile
 - [x] SQLite
+- [x] [Paginations](https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/advanced?view=aspnetcore-7.0#use-dynamic-linq-to-simplify-code)
