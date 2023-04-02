@@ -2,7 +2,7 @@
 
 namespace LifelogBb.Models.Entities
 {
-    public class Journal : BaseEntity
+    public class Journal : BaseEntityTagged
     {
         [Required]
         [MinLength(1)]

@@ -4,7 +4,7 @@ using System.Xml.Linq;
 
 namespace LifelogBb.Models.Entities
 {
-    public class Todo : BaseEntity
+    public class Todo : BaseEntityTagged
     {
         [Required]
         [MinLength(1)]

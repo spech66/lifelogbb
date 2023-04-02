@@ -65,13 +65,15 @@ namespace LifelogBb.Controllers
         // GET: Journals/Create
         public IActionResult Create()
         {
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View();
         }
 
         // POST: Journals/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Text")] Journal journal)
+        public async Task<IActionResult> Create([Bind("Text,Category,Tags")] Journal journal)
         {
             if (ModelState.IsValid)
             {
@@ -80,6 +82,9 @@ namespace LifelogBb.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View(journal);
         }
 
@@ -96,14 +101,17 @@ namespace LifelogBb.Controllers
             {
                 return NotFound();
             }
+
             var journal = _mapper.Map<EditJournalViewModel>(journalDb);
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View(journal);
         }
 
         // POST: Journals/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Text,Id")] EditJournalViewModel journalViewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Text,Category,Tags,Id")] EditJournalViewModel journalViewModel)
         {
             if (id != journalViewModel.Id)
             {
@@ -133,6 +141,9 @@ namespace LifelogBb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View(journalViewModel);
         }
 

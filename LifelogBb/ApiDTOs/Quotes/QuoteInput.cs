@@ -9,5 +9,9 @@ namespace LifelogBb.ApiDTOs.Quotes
         public string Text { get; set; } = string.Empty;
 
         public string? Author { get; set; }
+
+        public string? Category { get; set; }
+
+        public string? Tags { get; set; }
     }
 }

@@ -23,5 +23,9 @@ namespace LifelogBb.Models.Goals
 
         [DefaultValue(false)]
         public bool IsCompleted { get; set; }
+
+        public string? Category { get; set; }
+
+        public string? Tags { get; set; }
     }
 }

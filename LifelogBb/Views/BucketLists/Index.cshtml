@@ -12,7 +12,7 @@
         <div class="col">
             <div class="card">
                 <div class="card-body">
-                    Sort by <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")">Date</a>.
+                    Sort by <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")" style="display: inline">Date</a>.
                 </div>
             </div>
         </div>
@@ -43,11 +43,12 @@
                                 }
                                 else
                                 {
-                                    <span class="badge text-bg-secondary">@Html.DisplayFor(modelItem => item.Status)</span>
+                                    <span class="badge text-bg-azure">@Html.DisplayFor(modelItem => item.Status)</span>
                                 }
                             </div>
                             <div class="ms-auto">
-                                <span class="badge text-bg-info">@Html.DisplayFor(modelItem => item.Category)</span>
+                                @Html.DisplayFor(modelItem => item.Category, "Category")
+                                @Html.DisplayFor(modelItem => item.Tags, "Tags")
                             </div>
                         </div>
                         <p class="card-text">

@@ -8,18 +8,26 @@
     var maxPage = minPage + 8 > Model.TotalPages ? Model.TotalPages : minPage + 8;
     var pageSelects = Enumerable.Range(1, Model.TotalPages).Select(x => new { Value = x, Text = x });
 }
-<p class="m-0 text-muted">
-    Showing <span>@((Model.PageIndex - 1) * Model.PageSize + 1)</span> to
-    <span>@(Model.PageIndex * Model.PageSize > Model.TotalItems ? Model.TotalItems : Model.PageIndex * Model.PageSize)</span> of
-    <span>@Model.TotalItems</span> entries.
-</p>
+
+@if (Model.TotalItems > 0)
+{
+    <p class="m-0 text-muted">
+        Showing <span> @((Model.PageIndex - 1) * Model.PageSize + 1)</span> to
+        <span> @(Model.PageIndex * Model.PageSize > Model.TotalItems ? Model.TotalItems : Model.PageIndex * Model.PageSize)</span>
+        of <span>@Model.TotalItems</span> entries.
+    </p>
+}
+else
+{
+    <p class="m-0 text-muted">No Data.</p>
+}
 <ul class="pagination m-0 ms-auto d-none d-sm-flex">
     <li class="page-item">
         <a asp-action="Index"
-            asp-route-sortOrder="@ViewData["CurrentSort"]"
-            asp-route-pageNumber="@(Model.PageIndex - 1)"
-            asp-route-currentFilter="@ViewData["CurrentFilter"]"
-            class="page-link @prevDisabled">
+           asp-route-sortOrder="@ViewData["CurrentSort"]"
+           asp-route-pageNumber="@(Model.PageIndex - 1)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           class="page-link @prevDisabled">
             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M15 6l-6 6l6 6"></path></svg>
             prev
         </a>
@@ -28,20 +36,20 @@
     {
         <li class="page-item">
             <a asp-action="Index"
-            asp-route-sortOrder="@ViewData["CurrentSort"]"
-            asp-route-pageNumber="@(i)"
-            asp-route-currentFilter="@ViewData["CurrentFilter"]"
-            class="page-link @(i == Model.PageIndex ? "active" : "")">
+           asp-route-sortOrder="@ViewData["CurrentSort"]"
+           asp-route-pageNumber="@(i)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           class="page-link @(i == Model.PageIndex ? "active" : "")">
                 @i
             </a>
         </li>
     }
     <li class="page-item">
         <a asp-action="Index"
-            asp-route-sortOrder="@ViewData["CurrentSort"]"
-            asp-route-pageNumber="@(Model.PageIndex + 1)"
-            asp-route-currentFilter="@ViewData["CurrentFilter"]"
-            class="page-link @nextDisabled">
+           asp-route-sortOrder="@ViewData["CurrentSort"]"
+           asp-route-pageNumber="@(Model.PageIndex + 1)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           class="page-link @nextDisabled">
             next
             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M9 6l6 6l-6 6"></path></svg>
         </a>

@@ -65,13 +65,15 @@ namespace LifelogBb.Controllers
         // GET: Quotes/Create
         public IActionResult Create()
         {
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View();
         }
 
         // POST: Quotes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Text,Author")] Quote quote)
+        public async Task<IActionResult> Create([Bind("Text,Author,Category,Tags")] Quote quote)
         {
             if (ModelState.IsValid)
             {
@@ -80,6 +82,9 @@ namespace LifelogBb.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View(quote);
         }
 
@@ -96,14 +101,17 @@ namespace LifelogBb.Controllers
             {
                 return NotFound();
             }
+
             var quote = _mapper.Map<EditQuoteViewModel>(quoteDb);
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View(quote);
         }
 
         // POST: Quotes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Text,Author,Id")] EditQuoteViewModel quoteViewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Text,Author,Category,Tags,Id")] EditQuoteViewModel quoteViewModel)
         {
             if (id != quoteViewModel.Id)
             {
@@ -133,6 +141,9 @@ namespace LifelogBb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View(quoteViewModel);
         }
 

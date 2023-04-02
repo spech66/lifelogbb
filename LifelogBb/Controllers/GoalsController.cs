@@ -65,13 +65,15 @@ namespace LifelogBb.Controllers
         // GET: Goals/Create
         public IActionResult Create()
         {
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View();
         }
 
         // POST: Goals/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,TargetValue,CurrentValue,StartDate,EndDate,IsCompleted")] Goal goal)
+        public async Task<IActionResult> Create([Bind("Name,Description,TargetValue,CurrentValue,StartDate,EndDate,IsCompleted,Category,Tags")] Goal goal)
         {
             if (ModelState.IsValid)
             {
@@ -80,6 +82,9 @@ namespace LifelogBb.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View(goal);
         }
 
@@ -96,14 +101,17 @@ namespace LifelogBb.Controllers
             {
                 return NotFound();
             }
+
             var goal = _mapper.Map<EditGoalViewModel>(goalDb);
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View(goal);
         }
 
         // POST: Goals/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Name,Description,TargetValue,CurrentValue,StartDate,EndDate,IsCompleted,Id")] EditGoalViewModel goalViewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Name,Description,TargetValue,CurrentValue,StartDate,EndDate,IsCompleted,Category,Tags,Id")] EditGoalViewModel goalViewModel)
         {
             if (id != goalViewModel.Id)
             {
@@ -133,6 +141,9 @@ namespace LifelogBb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View(goalViewModel);
         }
 

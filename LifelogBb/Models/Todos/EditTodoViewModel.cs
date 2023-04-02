@@ -20,5 +20,9 @@ namespace LifelogBb.Models.Todos
 
         [DefaultValue(false)]
         public bool IsImportant { get; set; }
+
+        public string? Category { get; set; }
+
+        public string? Tags { get; set; }
     }
 }

@@ -55,6 +55,18 @@
                             @Html.DisplayFor(model => model.IsCompleted)
                         </dd>
                         <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Category)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Category, "Category")
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Tags)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Tags, "Tags")
+                        </dd>
+                        <dt class="col-sm-2">
                             @Html.DisplayNameFor(model => model.CreatedAt)
                         </dt>
                         <dd class="col-sm-10">

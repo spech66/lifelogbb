@@ -76,6 +76,14 @@
         "dist/libs/apexcharts/dist/apexcharts.min.css",
         "dist/libs/apexcharts/dist/apexcharts.min.js"
       ]
+    },
+    {
+      "library": "tagify@4.17.7",
+      "destination": "wwwroot/lib/tagify/",
+      "files": [
+        "tagify.min.js",
+        "tagify.min.css"
+      ]
     }
   ]
 }

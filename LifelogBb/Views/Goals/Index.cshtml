@@ -38,6 +38,12 @@
                                 <th>
                                     Is Completed
                                 </th>
+                                <th>
+                                    Category
+                                </th>
+                                <th>
+                                    Tags
+                                </th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -68,6 +74,12 @@
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.IsCompleted)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Category, "Category")
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Tags, "Tags")
                                     </td>
                                     <td class="text-end">
                                         <div class="dropdown">

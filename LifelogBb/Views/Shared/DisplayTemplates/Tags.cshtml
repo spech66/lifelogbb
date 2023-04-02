@@ -1,0 +1,9 @@
+﻿@model string?
+
+@if (!string.IsNullOrEmpty(Model))
+{
+    @foreach(string tag in Model.Split(","))
+    {
+        <span class="badge bg-blue">@tag.Trim()</span>
+    }
+}

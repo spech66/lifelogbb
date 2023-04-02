@@ -2,7 +2,7 @@
 
 namespace LifelogBb.Models.Entities
 {
-    public class Quote : BaseEntity
+    public class Quote : BaseEntityTagged
     {
         [Required]
         [MinLength(1)]

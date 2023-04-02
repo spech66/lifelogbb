@@ -65,13 +65,15 @@ namespace LifelogBb.Controllers
         // GET: Todos/Create
         public IActionResult Create()
         {
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View();
         }
 
         // POST: Todos/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,Description,DueDate,IsCompleted,IsImportant")] Todo todo)
+        public async Task<IActionResult> Create([Bind("Title,Description,DueDate,IsCompleted,IsImportant,Category,Tags")] Todo todo)
         {
             if (ModelState.IsValid)
             {
@@ -80,6 +82,9 @@ namespace LifelogBb.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View(todo);
         }
 
@@ -96,14 +101,17 @@ namespace LifelogBb.Controllers
             {
                 return NotFound();
             }
+
             var todo = _mapper.Map<EditTodoViewModel>(todoDb);
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View(todo);
         }
 
         // POST: Todos/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Title,Description,DueDate,IsCompleted,IsImportant,Id")] EditTodoViewModel todoViewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Title,Description,DueDate,IsCompleted,IsImportant,Category,Tags,Id")] EditTodoViewModel todoViewModel)
         {
             if (id != todoViewModel.Id)
             {
@@ -133,6 +141,9 @@ namespace LifelogBb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View(todoViewModel);
         }
 

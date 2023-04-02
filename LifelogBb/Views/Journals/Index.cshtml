@@ -18,7 +18,10 @@
                                     <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")">Date</a>
                                 </th>
                                 <th>
-                                    Text
+                                    Category
+                                </th>
+                                <th>
+                                    Tags
                                 </th>
                                 <th></th>
                             </tr>
@@ -31,7 +34,10 @@
                                         <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
                                     </th>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.Text)
+                                        @Html.DisplayFor(modelItem => item.Category, "Category")
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Tags, "Tags")
                                     </td>
                                     <td class="text-end">
                                         <div class="dropdown">

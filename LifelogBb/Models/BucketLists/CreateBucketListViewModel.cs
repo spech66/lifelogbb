@@ -10,11 +10,13 @@ namespace LifelogBb.Models.BucketLists
 
         public string? Description { get; set; }
 
-        public string? Category { get; set; }
-
         public BucketListStatus Status { get; set; }
 
         [Display(Name = "Image")]
         public IFormFile? ImageData { get; set; }
+
+        public string? Category { get; set; }
+
+        public string? Tags { get; set; }
     }
 }

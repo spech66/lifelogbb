@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LifelogBb.Models.Entities
 {
-    public class Habit : BaseEntity
+    public class Habit : BaseEntityTagged
     {
         [Required]
         [MinLength(1)]

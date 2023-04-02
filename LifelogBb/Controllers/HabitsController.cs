@@ -65,13 +65,15 @@ namespace LifelogBb.Controllers
         // GET: Habits/Create
         public IActionResult Create()
         {
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View();
         }
 
         // POST: Habits/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,Frequency,FrequencyUnit,StartDate,EndDate,ExtraRules,IsCompleted")] Habit habit)
+        public async Task<IActionResult> Create([Bind("Name,Description,Frequency,FrequencyUnit,StartDate,EndDate,ExtraRules,IsCompleted,Category,Tags")] Habit habit)
         {
             if (ModelState.IsValid)
             {
@@ -80,6 +82,9 @@ namespace LifelogBb.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View(habit);
         }
 
@@ -96,14 +101,17 @@ namespace LifelogBb.Controllers
             {
                 return NotFound();
             }
+
             var habit = _mapper.Map<EditHabitViewModel>(habitDb);
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View(habit);
         }
 
         // POST: Habits/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Name,Description,Frequency,FrequencyUnit,StartDate,EndDate,ExtraRules,IsCompleted,Id")] EditHabitViewModel habitViewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Name,Description,Frequency,FrequencyUnit,StartDate,EndDate,ExtraRules,IsCompleted,Category,Tags,Id")] EditHabitViewModel habitViewModel)
         {
             if (id != habitViewModel.Id)
             {

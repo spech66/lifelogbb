@@ -111,6 +111,8 @@ namespace LifelogBb.Controllers
         // GET: BucketLists/Create
         public IActionResult Create()
         {
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View();
         }
 
@@ -154,6 +156,9 @@ namespace LifelogBb.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View(bucketListViewModel);
         }
 
@@ -170,7 +175,10 @@ namespace LifelogBb.Controllers
             {
                 return NotFound();
             }
+
             var bucketList = _mapper.Map<EditBucketListViewModel>(bucketListDb);
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View(bucketList);
         }
 
@@ -247,6 +255,9 @@ namespace LifelogBb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View(bucketListViewModel);
         }
 
