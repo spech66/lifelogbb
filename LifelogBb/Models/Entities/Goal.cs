@@ -12,6 +12,9 @@ namespace LifelogBb.Models.Entities
         public string? Description { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:0.00}")]
+        public double? InitialValue { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:0.00}")]
         public double? TargetValue { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:0.00}")]
@@ -29,10 +32,11 @@ namespace LifelogBb.Models.Entities
             // Default constructor
         }
 
-        public Goal(string name, string description, double targetValue, double currentValue, DateTime? startDate, DateTime? endDate, bool isCompleted)
+        public Goal(string name, string description, double initialValue, double targetValue, double currentValue, DateTime? startDate, DateTime? endDate, bool isCompleted)
         {
             Name = name;
             Description = description;
+            InitialValue = initialValue;
             TargetValue = targetValue;
             CurrentValue = currentValue;
             StartDate = startDate;

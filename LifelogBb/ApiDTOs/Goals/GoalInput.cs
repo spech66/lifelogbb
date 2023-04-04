@@ -11,6 +11,8 @@ namespace LifelogBb.ApiDTOs.Goals
 
         public string? Description { get; set; }
 
+        public double? InitialValue { get; set; }
+
         public double? TargetValue { get; set; }
 
         public double? CurrentValue { get; set; }

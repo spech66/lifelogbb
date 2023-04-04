@@ -24,10 +24,16 @@
                                     Description
                                 </th>
                                 <th>
+                                    Initial Value
+                                </th>
+                                <th>
                                     Target Value
                                 </th>
                                 <th>
                                     Current Value
+                                </th>
+                                <th>
+                                    Progress
                                 </th>
                                 <th>
                                     Start Date
@@ -61,10 +67,22 @@
                                         @Html.DisplayFor(modelItem => item.Description)
                                     </td>
                                     <td>
+                                        @Html.DisplayFor(modelItem => item.InitialValue)
+                                    </td>
+                                    <td>
                                         @Html.DisplayFor(modelItem => item.TargetValue)
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.CurrentValue)
+                                    </td>
+                                    <td>
+                                        @if (item.TargetValue != null && item.CurrentValue != null && item.CurrentValue != 0)
+                                        {
+                                            var percentage = Math.Round((item.TargetValue < item.CurrentValue ? item.TargetValue.Value / item.CurrentValue.Value : item.CurrentValue.Value / item.TargetValue.Value) * 100);
+                                            <div class="progress progress-xs">
+                                                <div class="progress-bar bg-primary" style="width: @percentage%"></div>
+                                            </div>
+                                        }
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.StartDate)

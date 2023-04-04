@@ -12,6 +12,9 @@ namespace LifelogBb.ApiDTOs.Goals
         public string? Description { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:0.00}")]
+        public double? InitialValue { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:0.00}")]
         public double? TargetValue { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:0.00}")]

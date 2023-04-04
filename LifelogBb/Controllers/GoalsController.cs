@@ -73,7 +73,7 @@ namespace LifelogBb.Controllers
         // POST: Goals/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,TargetValue,CurrentValue,StartDate,EndDate,IsCompleted,Category,Tags")] Goal goal)
+        public async Task<IActionResult> Create([Bind("Name,Description,InitialValue,TargetValue,CurrentValue,StartDate,EndDate,IsCompleted,Category,Tags")] Goal goal)
         {
             if (ModelState.IsValid)
             {
@@ -111,7 +111,7 @@ namespace LifelogBb.Controllers
         // POST: Goals/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Name,Description,TargetValue,CurrentValue,StartDate,EndDate,IsCompleted,Category,Tags,Id")] EditGoalViewModel goalViewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Name,Description,InitialValue,TargetValue,CurrentValue,StartDate,EndDate,IsCompleted,Category,Tags,Id")] EditGoalViewModel goalViewModel)
         {
             if (id != goalViewModel.Id)
             {

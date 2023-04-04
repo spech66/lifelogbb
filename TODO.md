@@ -11,11 +11,12 @@ ToDos and Features for LifelogBB.
  - [Journal date grid](https://github.com/usememos/memos)
 - [ ] Settings (Units, Start of week, ...)
 - [ ] [iCal](https://github.com/rianjs/ical.net) for Goals/Habits (Time Boxing/Blocking)/BucketList/...
+  - RRULE ui [rrule.js](https://jakubroztocil.github.io/rrule/), [rrule-generator](https://freetools.textmagic.com/rrule-generator)
   - Alarms
 - [ ] Telegram bot
   - https://github.com/TelegramBots/Telegram.Bot
   - https://telegrambots.github.io/book/2/send-msg/index.html
-- [ ] [CLI tool](https://github.com/gui-cs/Terminal.Gui)
+- [ ] [CLI tool](https://github.com/gui-cs/Terminal.Gui) or using [Python](https://github.com/bczsalba/pytermgui)
 - [ ] [Globalization and localization](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization?view=aspnetcore-6.0)
 - [ ] ChatGPT (LLaMA, ... ?) integration
 - [ ] [Secret management](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&tabs=windows)
