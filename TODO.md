@@ -18,7 +18,6 @@ ToDos and Features for LifelogBB.
 - [ ] [CLI tool](https://github.com/gui-cs/Terminal.Gui) or using [Python](https://github.com/bczsalba/pytermgui)
 - [ ] [Globalization and localization](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization?view=aspnetcore-6.0)
 - [ ] ChatGPT (LLaMA, ... ?) integration
-- [ ] [Secret management](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&tabs=windows)
 
 ### In Progress :construction:
 
