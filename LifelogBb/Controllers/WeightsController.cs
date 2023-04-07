@@ -41,7 +41,9 @@ namespace LifelogBb.Controllers
             weights = weights.FilterByDoubleProps(nameof(Weight.BodyWeight), searchString, 1.0);
             weights = weights.SortByName(sortOrder, defaultSortOrder);
 
-            int pageSize = 20;
+            var config = Config.GetConfig(_context);
+            int pageSize = config.WeightPageSize;
+            ViewData["UnitsType"] = config.UnitsType;
             return View(await PaginatedList<Weight>.CreateAsync(weights.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
@@ -66,6 +68,7 @@ namespace LifelogBb.Controllers
                 return NotFound();
             }
 
+            ViewData["UnitsType"] = Config.GetConfig(_context).UnitsType;
             return View(weight);
         }
 
@@ -76,9 +79,11 @@ namespace LifelogBb.Controllers
             if(weight != null)
             {
                 weight.Id = 0;
+                ViewData["UnitsType"] = Config.GetConfig(_context).UnitsType;
                 return View(weight);
             }
 
+            ViewData["UnitsType"] = Config.GetConfig(_context).UnitsType;
             return View();
         }
 
@@ -89,12 +94,13 @@ namespace LifelogBb.Controllers
         {
             if (ModelState.IsValid)
             {
-                weight.Bmi = ((weight.BodyWeight * 1.0) / (((weight.Height * 0.01) * weight.Height) * 0.01));
+                CalculateBmi(weight);
                 weight.SetCreateFields();
                 _context.Add(weight);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["UnitsType"] = Config.GetConfig(_context).UnitsType;
             return View(weight);
         }
 
@@ -112,6 +118,7 @@ namespace LifelogBb.Controllers
                 return NotFound();
             }
             var weight = _mapper.Map<EditWeightViewModel>(weightDb);
+            ViewData["UnitsType"] = Config.GetConfig(_context).UnitsType;
             return View(weight);
         }
 
@@ -131,7 +138,7 @@ namespace LifelogBb.Controllers
                 try
                 {
                     weightDb = _mapper.Map(weightViewModel, weightDb);
-                    weightDb.Bmi = ((weightViewModel.BodyWeight * 1.0) / (((weightViewModel.Height * 0.01) * weightViewModel.Height) * 0.01));
+                    CalculateBmi(weightDb);
                     weightDb.SetUpdateFields();
                     _context.Update(weightDb);
                     await _context.SaveChangesAsync();
@@ -149,6 +156,7 @@ namespace LifelogBb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["UnitsType"] = Config.GetConfig(_context).UnitsType;
             return View(weightViewModel);
         }
 
@@ -167,6 +175,7 @@ namespace LifelogBb.Controllers
                 return NotFound();
             }
 
+            ViewData["UnitsType"] = Config.GetConfig(_context).UnitsType;
             return View(weight);
         }
 
@@ -192,6 +201,18 @@ namespace LifelogBb.Controllers
         private bool WeightExists(long id)
         {
           return _context.Weights.Any(e => e.Id == id);
+        }
+
+        private void CalculateBmi(Weight weight)
+        {
+            var measurements = Config.GetConfig(_context).UnitsType;
+            if (measurements == Measurements.Metric)
+            {
+                weight.Bmi = (weight.BodyWeight * 1.0) / (((weight.Height * 0.01) * weight.Height) * 0.01);
+            } else
+            {
+                weight.Bmi = weight.BodyWeight / (weight.Height * weight.Height) * 703.0;
+            }
         }
     }
 }

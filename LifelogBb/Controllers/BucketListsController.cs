@@ -45,7 +45,7 @@ namespace LifelogBb.Controllers
             var items = from s in _context.BucketLists select s;
             items = items.SortByName(sortOrder, defaultSortOrder);
 
-            int pageSize = 20;
+            int pageSize = Config.GetConfig(_context).BucketListPageSize;
             return View(await PaginatedList<BucketList>.CreateAsync(items.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 

@@ -1,4 +1,5 @@
-﻿@using LifelogBb.Utilities;
+﻿@using LifelogBb.Models.Entities;
+@using LifelogBb.Utilities;
 @model PaginatedList<LifelogBb.Models.Entities.Weight>
 
 @{
@@ -76,10 +77,10 @@
                                         <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
                                     </th>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.BodyWeight) kg
+                                        @Html.DisplayFor(modelItem => item.BodyWeight) @((Measurements?)ViewData["UnitsType"] == Measurements.Metric ? "kg" : "lb")
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.Height) cm
+                                        @Html.DisplayFor(modelItem => item.Height) @((Measurements?)ViewData["UnitsType"] == Measurements.Metric ? "cm" : "in")
                                     </td>
                                     <td class="@GetBmiColorClass(item)">
                                         @Html.DisplayFor(modelItem => item.Bmi)

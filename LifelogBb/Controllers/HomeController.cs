@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using LifelogBb.Models;
+using LifelogBb.Models.Entities;
 using LifelogBb.Models.Home;
+using LifelogBb.Models.Journals;
+using LifelogBb.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -59,7 +62,27 @@ namespace LifelogBb.Controllers
 
         public IActionResult Config()
         {
-            return View();
+            var config = Models.Entities.Config.GetConfig(_context);
+            var model = _mapper.Map<EditConfigViewModel>(config);
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Config(long id, EditConfigViewModel configViewModel)
+        {
+            // Will always create the first entry if it doesn't exist which most likely was done in the view
+            var configDb = Models.Entities.Config.GetConfig(_context);
+            if (ModelState.IsValid)
+            {
+                configDb = _mapper.Map(configViewModel, configDb);
+                configDb.SetUpdateFields();
+                _context.Update(configDb);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(nameof(Config), configViewModel);
         }
 
         [AllowAnonymous]

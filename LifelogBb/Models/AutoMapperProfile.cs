@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using LifelogBb.Models.Entities;
+using LifelogBb.Models.Home;
 using LifelogBb.Models.Weights;
 using LifelogBb.Models.Journals;
 using LifelogBb.Models.StrengthTrainings;
@@ -16,6 +17,10 @@ namespace LifelogBb.Models
     {
         public AutoMapperProfile()
         {
+            // Config
+            CreateMap<EditConfigViewModel, Config>();
+            CreateMap<Config, EditConfigViewModel>();
+
             // Weights
             CreateMap<EditWeightViewModel, Weight>();
             CreateMap<Weight, EditWeightViewModel>();

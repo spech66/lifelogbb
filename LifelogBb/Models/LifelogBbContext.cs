@@ -1,6 +1,8 @@
 ﻿using LifelogBb.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Reflection.Metadata;
+using LifelogBb.Models.Home;
 
 namespace LifelogBb.Models
 {
@@ -15,6 +17,7 @@ namespace LifelogBb.Models
         public DbSet<Todo> Todos { get; set; } = null!;
         public DbSet<Habit> Habits { get; set; } = null!;
         public DbSet<Goal> Goals { get; set; } = null!;
+        public DbSet<Config> Configs { get; set; } = null!;
 
         private readonly IConfiguration _configuration;
 
@@ -43,6 +46,21 @@ namespace LifelogBb.Models
         // Create Sqlite database file in the "local" folder.
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite($"Data Source={DbPath}");
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Config>().Property(b => b.StartOfWeek).HasDefaultValue(DayOfWeek.Monday);
+            modelBuilder.Entity<Config>().Property(b => b.UnitsType).HasDefaultValue(Measurements.Metric);
+            modelBuilder.Entity<Config>().Property(b => b.BucketListPageSize).HasDefaultValue(12);
+            /*modelBuilder.Entity<Config>().Property(b => b.EnduranceTrainingPageSize).HasDefaultValue(20);
+            modelBuilder.Entity<Config>().Property(b => b.GoalPageSize).HasDefaultValue(20);
+            modelBuilder.Entity<Config>().Property(b => b.HabitPageSize).HasDefaultValue(20);
+            modelBuilder.Entity<Config>().Property(b => b.JournalPageSize).HasDefaultValue(20);
+            modelBuilder.Entity<Config>().Property(b => b.QuotePageSize).HasDefaultValue(20);
+            modelBuilder.Entity<Config>().Property(b => b.StrengthTrainingPageSize).HasDefaultValue(20);
+            modelBuilder.Entity<Config>().Property(b => b.TodoPageSize).HasDefaultValue(20);*/
+            modelBuilder.Entity<Config>().Property(b => b.WeightPageSize).HasDefaultValue(20);
+        }
 
         public void BeginTransaction()
         {
@@ -76,5 +94,7 @@ namespace LifelogBb.Models
                 _transaction.Dispose();
             }
         }
+
+        public DbSet<LifelogBb.Models.Home.EditConfigViewModel> EditConfigViewModel { get; set; } = default!;
     }
 }

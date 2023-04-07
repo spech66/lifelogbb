@@ -9,7 +9,6 @@ ToDos and Features for LifelogBB.
  - [Todos/Tasks](https://preview.tabler.io/tasks.html#) Kanban: Upcoming today, next 7 days, ...
  - Habits: Timeline
  - [Journal date grid](https://github.com/usememos/memos)
-- [ ] Settings (Units, Start of week, ...)
 - [ ] [iCal](https://github.com/rianjs/ical.net) for Goals/Habits (Time Boxing/Blocking)/BucketList/...
   - RRULE ui [rrule.js](https://jakubroztocil.github.io/rrule/), [rrule-generator](https://freetools.textmagic.com/rrule-generator)
   - Alarms
@@ -27,6 +26,8 @@ ToDos and Features for LifelogBB.
 
 ### Done :heavy_check_mark:
 
+- [x] Weights in metric system and imperial units (no conversion)
+- [x] Settings (Units, Start of week, ...)
 - [x] Tags, Category
 - [x] [Paginations](https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/advanced?view=aspnetcore-7.0#use-dynamic-linq-to-simplify-code)
 - [x] [Tabler](https://github.com/tabler)

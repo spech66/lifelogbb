@@ -1,11 +1,70 @@
-﻿@{
+﻿@model LifelogBb.Models.Home.EditConfigViewModel
+
+@{
     ViewData["Title"] = "Config";
 }
 
-<div class="container">
-    <ul>
-        <li>Page sizes</li>
-        <li>Units</li>
-        <li>Start of week</li>
-    </ul>
-</div>
+<form asp-action="Config">
+    <div class="container-xl">
+        <div class="row row-cards">
+            @if (ViewData.ModelState.ErrorCount > 0)
+            {
+                <div class="col-12">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                </div>
+            }
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Global</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group mb-3">
+                            <label asp-for="StartOfWeek" class="control-label mb-1"></label>
+                            <select asp-for="StartOfWeek" asp-items="@Html.GetEnumSelectList(typeof(DayOfWeek))" class="form-select"></select>
+                            <span asp-validation-for="StartOfWeek" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="UnitsType" class="control-label mb-1"></label>
+                            <select asp-for="UnitsType" asp-items="@Html.GetEnumSelectList(typeof(LifelogBb.Models.Entities.Measurements))" class="form-select"></select>
+                            <span class="text-warning">This won't change existing values!</span>
+                            <span asp-validation-for="UnitsType" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="card-footer text-end">
+                        <div class="d-flex">
+                            <a class="btn btn-link" asp-action="Index">Back</a>
+                            <button type="submit" value="Save" class="btn btn-primary ms-auto"><i class="fas fa-pen icon"></i>Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Page sizes</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group mb-3">
+                            <label asp-for="BucketListPageSize" class="control-label mb-1"></label>
+                            <input asp-for="BucketListPageSize" class="form-control form-control-lg" />
+                            <span asp-validation-for="BucketListPageSize" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="WeightPageSize" class="control-label mb-1"></label>
+                            <input asp-for="WeightPageSize" class="form-control form-control-lg" />
+                            <span asp-validation-for="WeightPageSize" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="card-footer text-end">
+                        <div class="d-flex">
+                            <a class="btn btn-link" asp-action="Index">Back</a>
+                            <button type="submit" value="Save" class="btn btn-primary ms-auto"><i class="fas fa-pen icon"></i>Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" asp-for="Id" />
+</form>
