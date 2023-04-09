@@ -76,9 +76,11 @@
                                         @Html.DisplayFor(modelItem => item.CurrentValue)
                                     </td>
                                     <td>
-                                        @if (item.TargetValue != null && item.CurrentValue != null && item.CurrentValue != 0)
+                                        @if (item.TargetValue != null && item.CurrentValue != null && item.InitialValue != null && item.CurrentValue != 0)
                                         {
-                                            var percentage = Math.Round((item.TargetValue < item.CurrentValue ? item.TargetValue.Value / item.CurrentValue.Value : item.CurrentValue.Value / item.TargetValue.Value) * 100);
+                                            var diffTarget = item.TargetValue < item.InitialValue ? item.InitialValue.Value - item.TargetValue.Value : item.TargetValue.Value - item.InitialValue.Value;
+                                            var diffCurrent = item.TargetValue < item.InitialValue ? item.InitialValue.Value - item.CurrentValue.Value : item.CurrentValue.Value - item.InitialValue.Value;
+                                            var percentage = Math.Round((diffCurrent / diffTarget) * 100);
                                             <div class="progress progress-xs">
                                                 <div class="progress-bar bg-primary" style="width: @percentage%"></div>
                                             </div>
