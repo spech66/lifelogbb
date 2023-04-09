@@ -186,7 +186,7 @@ namespace LifelogBb.Controllers
         {
             if (_context.Weights == null)
             {
-                return Problem("Entity set 'LifelogBbContext.Weights'  is null.");
+                return Problem("Entity set 'LifelogBbContext.Weights' is null.");
             }
             var weight = await _context.Weights.FindAsync(id);
             if (weight != null)

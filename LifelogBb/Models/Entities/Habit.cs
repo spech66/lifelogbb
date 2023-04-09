@@ -11,15 +11,11 @@ namespace LifelogBb.Models.Entities
 
         public string? Description { get; set; }
 
-        public int? Frequency { get; set; } // Interval
-
-        public string? FrequencyUnit { get; set; } // daily, weekly, ...
-
         public DateTime? StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }
 
-        public string? ExtraRules { get; set; }
+        public string? RecurrenceRules { get; set; }
 
         [DefaultValue(false)]
         public bool IsCompleted { get; set; }
@@ -29,12 +25,10 @@ namespace LifelogBb.Models.Entities
             // Default constructor
         }
 
-        public Habit(string name, string description /*, int frequency, string frequencyUnit,*/)
+        public Habit(string name, string description)
         {
             Name = name;
             Description = description;
-            // Frequency = frequency;
-            // FrequencyUnit = frequencyUnit;
         }
     }
 }

@@ -13,10 +13,17 @@ namespace LifelogBb.Models.Todos
 
         public string? Description { get; set; }
 
+        public DateTime? Start { get; set; }
+
         public DateTime? DueDate { get; set; }
+
+        [Range(0, 100)]
+        public int Progress { get; set; }
 
         [DefaultValue(false)]
         public bool IsCompleted { get; set; }
+
+        public DateTime? Completed { get; set; }
 
         [DefaultValue(false)]
         public bool IsImportant { get; set; }

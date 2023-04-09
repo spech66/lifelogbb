@@ -172,7 +172,7 @@ namespace LifelogBb.Controllers
         {
             if (_context.Quotes == null)
             {
-                return Problem("Entity set 'LifelogBbContext.Quotes'  is null.");
+                return Problem("Entity set 'LifelogBbContext.Quotes' is null.");
             }
             var quote = await _context.Quotes.FindAsync(id);
             if (quote != null)

@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = "ToDos";
     ViewData["PrimaryAction"] = "create";
+    ViewData["SecondaryAction"] = "feed";
 }
 
 @functions {
@@ -47,10 +48,16 @@
                                     Description
                                 </th>
                                 <th>
+                                    Start
+                                </th>
+                                <th>
                                     DueDate
                                 </th>
                                 <th>
-                                    Is Completed
+                                    Completed
+                                </th>
+                                <th>
+                                    Progress
                                 </th>
                                 <th>
                                     Is Important
@@ -78,10 +85,17 @@
                                         @Html.DisplayFor(modelItem => item.Description)
                                     </td>
                                     <td class="@DateToColor(item)">
+                                        @Html.DisplayFor(modelItem => item.StartDate)
+                                    </td>
+                                    <td class="@DateToColor(item)">
                                         @Html.DisplayFor(modelItem => item.DueDate)
+                                    </td>
+                                    <td class="@DateToColor(item)">
+                                        @Html.DisplayFor(modelItem => item.Progress)
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.IsCompleted)
+                                        @Html.DisplayFor(modelItem => item.Completed)
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.IsImportant)

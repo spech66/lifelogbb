@@ -60,6 +60,8 @@ namespace LifelogBb.Models
             modelBuilder.Entity<Config>().Property(b => b.StrengthTrainingPageSize).HasDefaultValue(20);
             modelBuilder.Entity<Config>().Property(b => b.TodoPageSize).HasDefaultValue(20);*/
             modelBuilder.Entity<Config>().Property(b => b.WeightPageSize).HasDefaultValue(20);
+            modelBuilder.Entity<Config>().Property(b => b.FeedToken).HasDefaultValue("ChangeMeInTheConfig");
+            modelBuilder.Entity<Config>().Property(b => b.FeedTimeZone).HasDefaultValue("Europe/Berlin");
         }
 
         public void BeginTransaction()
@@ -94,7 +96,5 @@ namespace LifelogBb.Models
                 _transaction.Dispose();
             }
         }
-
-        public DbSet<LifelogBb.Models.Home.EditConfigViewModel> EditConfigViewModel { get; set; } = default!;
     }
 }

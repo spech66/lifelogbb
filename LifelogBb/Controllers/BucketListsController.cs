@@ -286,7 +286,7 @@ namespace LifelogBb.Controllers
         {
             if (_context.BucketLists == null)
             {
-                return Problem("Entity set 'LifelogBbContext.BucketList'  is null.");
+                return Problem("Entity set 'LifelogBbContext.BucketList' is null.");
             }
             var bucketList = await _context.BucketLists.FindAsync(id);
             if (bucketList != null)

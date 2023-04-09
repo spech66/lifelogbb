@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Xml.Linq;
 
 namespace LifelogBb.Models.Entities
 {
@@ -12,12 +11,24 @@ namespace LifelogBb.Models.Entities
 
         public string? Description { get; set; }
 
-        [Display(Name = "Due Date")]
+        [Display(Name = "Start")]
+        [DataType(DataType.DateTime)]
+        public DateTime? StartDate { get; set; }
+
+        [Display(Name = "Due")]
         [DataType(DataType.DateTime)]
         public DateTime? DueDate { get; set; }
 
+        [DisplayName("Progress")]
+        [Range(0, 100)]
+        public int Progress { get; set; }
+
         [DefaultValue(false)]
         public bool IsCompleted { get; set; }
+
+        [Display(Name = "Completed")]
+        [DataType(DataType.DateTime)]
+        public DateTime? Completed { get; set; }
 
         [DefaultValue(false)]
         public bool IsImportant { get; set; }

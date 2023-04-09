@@ -5,6 +5,11 @@ using LifelogBb.Models.Entities;
 using AutoMapper;
 using LifelogBb.Models.Todos;
 using LifelogBb.Utilities;
+using Ical.Net.Serialization;
+using Microsoft.AspNetCore.Authorization;
+using Ical.Net;
+using CalendarComponents = Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
 
 namespace LifelogBb.Controllers
 {
@@ -40,7 +45,9 @@ namespace LifelogBb.Controllers
             var todos = from s in _context.Todos select s;
             todos = todos.SortByName(sortOrder, defaultSortOrder);
 
+            var config = Config.GetConfig(_context);
             int pageSize = 20;
+            ViewData["FeedToken"] = config.FeedToken;
             return View(await PaginatedList<Todo>.CreateAsync(todos.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
@@ -73,11 +80,15 @@ namespace LifelogBb.Controllers
         // POST: Todos/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,Description,DueDate,IsCompleted,IsImportant,Category,Tags")] Todo todo)
+        public async Task<IActionResult> Create([Bind("Title,Description,DueDate,IsCompleted,IsImportant,Category,Tags,StartDate,Progress,Progress")] Todo todo)
         {
             if (ModelState.IsValid)
             {
                 todo.SetCreateFields();
+                if (todo.Completed == null && todo.IsCompleted)
+                {
+                    todo.Completed = DateTime.Now;
+                }
                 _context.Add(todo);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -111,7 +122,7 @@ namespace LifelogBb.Controllers
         // POST: Todos/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Title,Description,DueDate,IsCompleted,IsImportant,Category,Tags,Id")] EditTodoViewModel todoViewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Title,Description,DueDate,IsCompleted,IsImportant,Category,Tags,StartDate,Progress,Progress,Id")] EditTodoViewModel todoViewModel)
         {
             if (id != todoViewModel.Id)
             {
@@ -125,6 +136,10 @@ namespace LifelogBb.Controllers
                 {
                     todoDb = _mapper.Map(todoViewModel, todoDb);
                     todoDb.SetUpdateFields();
+                    if(todoViewModel.Completed == null && todoViewModel.IsCompleted)
+                    {
+                        todoDb.Completed = DateTime.Now;
+                    }
                     _context.Update(todoDb);
                     await _context.SaveChangesAsync();
                 }
@@ -172,7 +187,7 @@ namespace LifelogBb.Controllers
         {
             if (_context.Todos == null)
             {
-                return Problem("Entity set 'LifelogBbContext.Todos'  is null.");
+                return Problem("Entity set 'LifelogBbContext.Todos' is null.");
             }
             var todo = await _context.Todos.FindAsync(id);
             if (todo != null)
@@ -182,6 +197,42 @@ namespace LifelogBb.Controllers
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [AllowAnonymous]
+        public async Task<IResult> Feed(string token)
+        {
+            var config = Config.GetConfig(_context);
+            if (config == null || config.FeedToken == null || config.FeedToken != token)
+            {
+                return Results.Content("Unauthorized", contentType: "text/plain");
+            }
+
+            var calendar = new Calendar();
+            calendar.AddTimeZone(new CalendarComponents.VTimeZone(config.FeedTimeZone));
+
+            var todosQuery = from s in _context.Todos select s;
+            var todos = await todosQuery.ToListAsync();
+            todos.ToList().ForEach(todo =>
+            {
+                calendar.Todos.Add(new CalendarComponents.Todo()
+                {
+                    Uid = todo.Id.ToString(),
+                    Url = new Uri(Url.Action(nameof(Details), nameof(TodosController).Replace("Controller", ""), new { id = todo.Id }, "https", Request.Host.Value)),
+                    Summary = todo.Title,
+                    Description = todo.Description,
+                    Completed = todo.Completed.HasValue ? new CalDateTime(todo.Completed.Value) : null,
+                    Start = todo.StartDate.HasValue ? new CalDateTime(todo.StartDate.Value) : null,
+                    Priority = todo.IsImportant ? 1 : 5, // 0-9, 0=undefined, 1=highest, 9=lowest
+                    Status = todo.IsCompleted || todo.Completed.HasValue ? "COMPLETED" : (todo.Progress > 0 ? "IN-PROCESS" : ""),
+                    Categories = new List<string>() { todo.Category ?? "" },
+                    PercentComplete = todo.Progress, // 0 = not started, 1=100
+                });
+            });
+
+            var serializer = new CalendarSerializer();
+            var serializedCalendar = serializer.SerializeToString(calendar);
+            return Results.Content(serializedCalendar, contentType: "text/calendar");
         }
 
         private bool TodoExists(long id)

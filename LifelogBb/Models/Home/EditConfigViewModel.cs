@@ -27,5 +27,9 @@ namespace LifelogBb.Models.Home
         public int TodoPageSize { get; set; }*/
 
         public int WeightPageSize { get; set; }
+
+        public string FeedToken { get; set; } = Guid.NewGuid().ToString();
+
+        public string FeedTimeZone { get; set; } = "Europe/Berlin";
     }
 }

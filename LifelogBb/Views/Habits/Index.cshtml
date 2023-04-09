@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = "Habits";
     ViewData["PrimaryAction"] = "create";
+    ViewData["SecondaryAction"] = "feed";
 }
 
 <div class="container-xl">
@@ -24,19 +25,13 @@
                                     Description
                                 </th>
                                 <th>
-                                    Frequency
-                                </th>
-                                <th>
-                                    Frequency Unit
-                                </th>
-                                <th>
                                     Start Date
                                 </th>
                                 <th>
                                     End Date
                                 </th>
                                 <th>
-                                    Extra Rules
+                                    Recurrence Rules
                                 </th>
                                 <th>
                                     Is Completed
@@ -64,19 +59,13 @@
                                         @Html.DisplayFor(modelItem => item.Description)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.Frequency)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.FrequencyUnit)
-                                    </td>
-                                    <td>
                                         @Html.DisplayFor(modelItem => item.StartDate)
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.EndDate)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.ExtraRules)
+                                        @Html.DisplayFor(modelItem => item.RecurrenceRules)
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.IsCompleted)

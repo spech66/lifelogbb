@@ -37,6 +37,10 @@ namespace LifelogBb.Models.Entities
 
         public int WeightPageSize { get; set; } = 20;
 
+        public string FeedToken { get; set; } = Guid.NewGuid().ToString();
+
+        public string FeedTimeZone { get; set; } = "Europe/Berlin";
+
         public Config()
         {
             // Default constructor

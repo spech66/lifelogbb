@@ -104,6 +104,15 @@
                                             <a class="btn btn-success btn-icon" asp-action="VisionBoard" role="button"><i class="fas fa-chart-bar icon"></i></a>
                                         </span>
                                     }
+                                    else if(ViewData.TryGetValue("SecondaryAction", out action) && action is string && (string)action == "feed" && ViewData.ContainsKey("FeedToken"))
+                                    {
+                                        <span class="d-none d-sm-inline">
+                                            <a class="btn btn-success" asp-action="Feed" asp-route-token="@ViewData["FeedToken"]" role="button"><i class="fa-regular fa-calendar-plus icon"></i>Feed</a>
+                                        </span>
+                                        <span class="d-sm-none">
+                                            <a class="btn btn-success btn-icon" asp-action="Feed" asp-route-token="@ViewData["FeedToken"]" role="button"><i class="fa-regular fa-calendar-plus icon"></i></a>
+                                        </span>
+                                    }
                                 }
                                 @if (ViewData.ContainsKey("PrimaryAction"))
                                 {

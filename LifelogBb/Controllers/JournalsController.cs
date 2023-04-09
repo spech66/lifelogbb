@@ -172,7 +172,7 @@ namespace LifelogBb.Controllers
         {
             if (_context.Journals == null)
             {
-                return Problem("Entity set 'LifelogBbContext.Journals'  is null.");
+                return Problem("Entity set 'LifelogBbContext.Journals' is null.");
             }
             var journal = await _context.Journals.FindAsync(id);
             if (journal != null)

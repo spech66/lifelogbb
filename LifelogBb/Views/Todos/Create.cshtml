@@ -22,15 +22,30 @@
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                     <div class="form-group mb-3">
+                        <label asp-for="StartDate" class="control-label mb-1"></label>
+                        <input asp-for="StartDate" class="form-control form-control-lg" />
+                        <span asp-validation-for="StartDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-3">
                         <label asp-for="DueDate" class="control-label mb-1"></label>
                         <input asp-for="DueDate" class="form-control form-control-lg" />
                         <span asp-validation-for="DueDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="Progress" class="control-label mb-1"></label>
+                        <input asp-for="Progress" class="form-control form-control-lg" />
+                        <span asp-validation-for="Progress" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
                         <label class="form-group form-check form-switch">
                             <input class="form-check-input" asp-for="IsCompleted" type="checkbox">
                             <span class="form-check-label">@Html.DisplayNameFor(model => model.IsCompleted)</span>
                         </label>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="Completed" class="control-label mb-1"></label>
+                        <input asp-for="Completed" class="form-control form-control-lg" />
+                        <span asp-validation-for="Completed" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
                         <label class="form-group form-check form-switch">

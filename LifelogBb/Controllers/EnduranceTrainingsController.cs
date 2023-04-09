@@ -179,7 +179,7 @@ namespace LifelogBb.Controllers
         {
             if (_context.EnduranceTrainings == null)
             {
-                return Problem("Entity set 'LifelogBbContext.EnduranceTrainings'  is null.");
+                return Problem("Entity set 'LifelogBbContext.EnduranceTrainings' is null.");
             }
             var enduranceTraining = await _context.EnduranceTrainings.FindAsync(id);
             if (enduranceTraining != null)

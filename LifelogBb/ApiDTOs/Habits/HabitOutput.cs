@@ -11,15 +11,11 @@ namespace LifelogBb.ApiDTOs.Habits
 
         public string? Description { get; set; }
 
-        public int? Frequency { get; set; } // Interval
-
-        public string? FrequencyUnit { get; set; } // daily, weekly, ...
-
         public DateTime? StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }
 
-        public string? ExtraRules { get; set; }
+        public string? RecurrenceRules { get; set; }
 
         public bool IsCompleted { get; set; }
 

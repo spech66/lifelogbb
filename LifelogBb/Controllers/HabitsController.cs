@@ -5,6 +5,12 @@ using LifelogBb.Models.Entities;
 using AutoMapper;
 using LifelogBb.Models.Habits;
 using LifelogBb.Utilities;
+using NuGet.Protocol;
+using Microsoft.AspNetCore.Authorization;
+using Ical.Net.Serialization;
+using Ical.Net.CalendarComponents;
+using Ical.Net;
+using Ical.Net.DataTypes;
 
 namespace LifelogBb.Controllers
 {
@@ -40,7 +46,9 @@ namespace LifelogBb.Controllers
             var habits = from s in _context.Habits select s;
             habits = habits.SortByName(sortOrder, defaultSortOrder);
 
+            var config = Config.GetConfig(_context);
             int pageSize = 20;
+            ViewData["FeedToken"] = config.FeedToken;
             return View(await PaginatedList<Habit>.CreateAsync(habits.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
@@ -169,7 +177,7 @@ namespace LifelogBb.Controllers
         {
             if (_context.Habits == null)
             {
-                return Problem("Entity set 'LifelogBbContext.Habits'  is null.");
+                return Problem("Entity set 'LifelogBbContext.Habits' is null.");
             }
             var habit = await _context.Habits.FindAsync(id);
             if (habit != null)
@@ -179,6 +187,41 @@ namespace LifelogBb.Controllers
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [AllowAnonymous]
+        public async Task<IResult> Feed(string token)
+        {
+            var config = Config.GetConfig(_context);
+            if (config == null || config.FeedToken == null || config.FeedToken != token)
+            {
+                return Results.Content("Unauthorized", contentType: "text/plain");
+            }
+
+            var calendar = new Calendar();
+            calendar.AddTimeZone(new VTimeZone(config.FeedTimeZone));
+
+            var habitsQuery = from s in _context.Habits select s;
+            var habits = await habitsQuery.ToListAsync();
+            habits.ToList().ForEach(habit =>
+            {
+                calendar.Events.Add(new CalendarEvent()
+                {
+                    Uid = habit.Id.ToString(),
+                    Url = new Uri(Url.Action(nameof(Details), nameof(HabitsController).Replace("Controller", ""), new { id = habit.Id }, "https", Request.Host.Value)),
+                    Summary = habit.Name,
+                    Description = habit.Description,
+                    LastModified = new CalDateTime(habit.UpdatedAt),
+                    Start = habit.StartDate.HasValue ? new CalDateTime(habit.StartDate.Value) : null,
+                    End = habit.EndDate.HasValue ? new CalDateTime(habit.EndDate.Value) : null,
+                    IsAllDay = !habit.EndDate.HasValue,
+                    // TODO: RecurrenceRules, Alarms
+                });
+            });
+
+            var serializer = new CalendarSerializer();
+            var serializedCalendar = serializer.SerializeToString(calendar);
+            return Results.Content(serializedCalendar, contentType: "text/calendar");
         }
 
         private bool HabitExists(long id)
