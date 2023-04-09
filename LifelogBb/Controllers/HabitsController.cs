@@ -81,7 +81,7 @@ namespace LifelogBb.Controllers
         // POST: Habits/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,Frequency,FrequencyUnit,StartDate,EndDate,ExtraRules,IsCompleted,Category,Tags")] Habit habit)
+        public async Task<IActionResult> Create([Bind("Name,Description,StartDate,EndDate,RecurrenceRules,IsCompleted,Category,Tags")] Habit habit)
         {
             if (ModelState.IsValid)
             {
@@ -119,7 +119,7 @@ namespace LifelogBb.Controllers
         // POST: Habits/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Name,Description,Frequency,FrequencyUnit,StartDate,EndDate,ExtraRules,IsCompleted,Category,Tags,Id")] EditHabitViewModel habitViewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Name,Description,StartDate,EndDate,RecurrenceRules,IsCompleted,Category,Tags,Id")] EditHabitViewModel habitViewModel)
         {
             if (id != habitViewModel.Id)
             {
@@ -205,7 +205,12 @@ namespace LifelogBb.Controllers
             var habits = await habitsQuery.ToListAsync();
             habits.ToList().ForEach(habit =>
             {
-                calendar.Events.Add(new CalendarEvent()
+                if(!habit.StartDate.HasValue)
+                {
+                    return;
+                }
+
+                var calEvent = new CalendarEvent()
                 {
                     Uid = habit.Id.ToString(),
                     Url = new Uri(Url.Action(nameof(Details), nameof(HabitsController).Replace("Controller", ""), new { id = habit.Id }, "https", Request.Host.Value)),
@@ -215,8 +220,15 @@ namespace LifelogBb.Controllers
                     Start = habit.StartDate.HasValue ? new CalDateTime(habit.StartDate.Value) : null,
                     End = habit.EndDate.HasValue ? new CalDateTime(habit.EndDate.Value) : null,
                     IsAllDay = !habit.EndDate.HasValue,
-                    // TODO: RecurrenceRules, Alarms
-                });
+                };
+
+                if (habit.RecurrenceRules != null)
+                {
+                    RecurrencePattern recurrenceRule = new RecurrencePattern(habit.RecurrenceRules);
+                    calEvent.RecurrenceRules = new List<RecurrencePattern>() { recurrenceRule };
+                }
+
+                calendar.Events.Add(calEvent);
             });
 
             var serializer = new CalendarSerializer();
