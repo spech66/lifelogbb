@@ -3,7 +3,10 @@ var rruleModule = rrule;
 var rruleInput = document.getElementById("RecurrenceRules");
 var reccurenceRulesTextElement = document.getElementById("rruleEditorText");
 var reccurenceRulesModalTextElement = document.getElementById("rruleEditorModalText");
+
 var rruleEditorModalFrequencySelect = document.getElementById("rruleEditorModalFrequency");
+var rruleEditorModalIntervalInput = document.getElementById("rruleEditorModalIntervalInput");
+
 var rruleEditorModalEndSelect = document.getElementById("rruleEditorModalEnd");
 var rruleEditorModalUntilInput = document.getElementById("rruleEditorModalUntilInput");
 var rruleEditorModalCountInput = document.getElementById("rruleEditorModalCountInput");
@@ -12,6 +15,7 @@ var rruleEditorModalCountInput = document.getElementById("rruleEditorModalCountI
 function updateCurrentRule() {
   var rule = new rruleModule.RRule({
     freq: rruleEditorModalFrequencySelect.value,
+    interval: rruleEditorModalFrequencySelect.value !== "0" ? rruleEditorModalIntervalInput.value : "",
     until: rruleEditorModalEndSelect.value === "on" && rruleEditorModalUntilInput.value != "" ? new Date(rruleEditorModalUntilInput.value) : null,
     count: rruleEditorModalEndSelect.value === "count" ? rruleEditorModalCountInput.value : null,
   });
@@ -26,6 +30,13 @@ function updateCurrentRule() {
 
   // console.log(rule.all());
   // console.log(rule.between(new Date(new Date().getFullYear(), 1, 1), new Date(new Date().getFullYear() + 1, 1, 1), true));
+}
+
+function updateFrequencyControls() {
+  var newVal = rruleEditorModalFrequencySelect.value;
+  document.getElementById("rruleEditorModalIntervalInfo").innerText = newVal === "1" ? "Month(s)" : newVal === "2" ? "Week(s)" : "Day(s)";
+
+  document.getElementById("rruleEditorModalIntervalContainer").hidden = newVal === "0"; // Hide on yearly
 }
 
 function updateEndControls() {
@@ -54,6 +65,8 @@ document.addEventListener("DOMContentLoaded", function () {
   rruleEditorModalUntilInput.value = rule.options.until;
   rruleEditorModalCountInput.value = rule.options.count;
 
+  updateFrequencyControls();
+
   if (rule.options.until !== null) {
     rruleEditorModalEndSelect.value = "on";
   } else if (rule.options.count !== null) {
@@ -65,6 +78,11 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 rruleEditorModalFrequencySelect.onchange = function () {
+  updateFrequencyControls();
+  updateCurrentRule();
+}
+
+rruleEditorModalIntervalInput.onchange = function () {
   updateCurrentRule();
 }
 
