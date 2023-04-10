@@ -5,12 +5,15 @@ var reccurenceRulesTextElement = document.getElementById("rruleEditorText");
 var reccurenceRulesModalTextElement = document.getElementById("rruleEditorModalText");
 var rruleEditorModalFrequencySelect = document.getElementById("rruleEditorModalFrequency");
 var rruleEditorModalEndSelect = document.getElementById("rruleEditorModalEnd");
+var rruleEditorModalUntilInput = document.getElementById("rruleEditorModalUntilInput");
+var rruleEditorModalCountInput = document.getElementById("rruleEditorModalCountInput");
+
 
 function updateCurrentRule() {
   var rule = new rruleModule.RRule({
     freq: rruleEditorModalFrequencySelect.value,
-    until: rruleEditorModalEndSelect.value === "on" ? new Date(new Date().getFullYear() + 1, 1, 1) : null, // TODO: Get date from input
-    count: rruleEditorModalEndSelect.value === "count" ? 10 : null,// TODO: Get count from input
+    until: rruleEditorModalEndSelect.value === "on" && rruleEditorModalUntilInput.value != "" ? new Date(rruleEditorModalUntilInput.value) : null,
+    count: rruleEditorModalEndSelect.value === "count" ? rruleEditorModalCountInput.value : null,
   });
 
   console.log(rule.toString());
@@ -25,6 +28,19 @@ function updateCurrentRule() {
   // console.log(rule.between(new Date(new Date().getFullYear(), 1, 1), new Date(new Date().getFullYear() + 1, 1, 1), true));
 }
 
+function updateEndControls() {
+  if (rruleEditorModalEndSelect.value === "on") {
+    document.getElementById("rruleEditorModalCountContainer").hidden = true;
+    document.getElementById("rruleEditorModalUntilContainer").hidden = false;
+  } else if (rruleEditorModalEndSelect.value === "count") {
+    document.getElementById("rruleEditorModalCountContainer").hidden = false;
+    document.getElementById("rruleEditorModalUntilContainer").hidden = true;
+  } else {
+    document.getElementById("rruleEditorModalCountContainer").hidden = true;
+    document.getElementById("rruleEditorModalUntilContainer").hidden = true;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   var currentRule = rruleInput.value === "" ? "FREQ=DAILY;INTERVAL=1" : rruleInput.value;
   console.log(currentRule);
@@ -35,6 +51,8 @@ document.addEventListener("DOMContentLoaded", function () {
   reccurenceRulesTextElement.innerText = rule.toText();
   reccurenceRulesModalTextElement.innerText = rule.toText();
   rruleEditorModalFrequencySelect.value = rule.options.freq;
+  rruleEditorModalUntilInput.value = rule.options.until;
+  rruleEditorModalCountInput.value = rule.options.count;
 
   if (rule.options.until !== null) {
     rruleEditorModalEndSelect.value = "on";
@@ -43,6 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
   } else {
     rruleEditorModalEndSelect.value = "never";
   }
+  updateEndControls();
 });
 
 rruleEditorModalFrequencySelect.onchange = function () {
@@ -50,5 +69,14 @@ rruleEditorModalFrequencySelect.onchange = function () {
 }
 
 rruleEditorModalEndSelect.onchange = function () {
+  updateEndControls();
+  updateCurrentRule();
+}
+
+rruleEditorModalUntilInput.onchange = function () {
+  updateCurrentRule();
+}
+
+rruleEditorModalCountInput.onchange = function () {
   updateCurrentRule();
 }
