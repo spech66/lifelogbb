@@ -111,26 +111,28 @@ document.addEventListener("DOMContentLoaded", function () {
   rruleEditorModalUntilInput.value = rule.options.until;
   rruleEditorModalCountInput.value = rule.options.count;
 
-  console.log(rule.options)
-  console.log(rule.options.byweekday)
-  console.log(rule.options.bynweekday)
+  var days = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"];
   if (rule.options.freq === 2) { // Weekly
-    var days = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"];
     if (rule.options.byweekday !== null) {
       rruleEditorModalByDayInput.forEach(s => {
         s.checked = rule.options.byweekday.includes(days.indexOf(s.value));
       });
     }
   } else if (rule.options.freq === 1) { // Monthly
-    if (rule.options.bymonthday !== null) {
+    if (rule.options.bymonthday !== null && rule.options.bymonthday.length > 0) {
       rruleEditorModalMonthlyByInputBYMONTHDAY.checked = true;
       rruleEditorModalMonthlyByInputBYSETPOS.checked = false;
       var byMonthDayStrings = rule.options.bymonthday.map(d => d.toString());
       for (var i = 0; i < rruleEditorModalByMonthDayInput.options.length; i++) {
         rruleEditorModalByMonthDayInput.options[i].selected = byMonthDayStrings.includes(rruleEditorModalByMonthDayInput.options[i].value);
       }
-    } else if (rule.options.bynweekday !== null) { // byNweekday => [[0, 1], [1, -1], ...]
-    // rruleEditorModalBySetPosInput
+    } else if (rule.options.bynweekday !== null && rule.options.bynweekday.length > 0) { // byNweekday => [[0, 1], [1, -1], ...]
+      rruleEditorModalMonthlyByInputBYMONTHDAY.checked = false;
+      rruleEditorModalMonthlyByInputBYSETPOS.checked = true;
+      var bySetPosStrings = rule.options.bynweekday.map(d => d[1].toString() + days[d[0]]); // [0, 2] => "2MO"
+      for (var i = 0; i < rruleEditorModalBySetPosInput.options.length; i++) {
+        rruleEditorModalBySetPosInput.options[i].selected = bySetPosStrings.includes(rruleEditorModalBySetPosInput.options[i].value);
+      }
     }
   }
 
