@@ -32,8 +32,7 @@
                         <span asp-validation-for="EndDate" class="text-danger"></span>
                     </div>
                     <div class="form-group mb-3">
-                        <label asp-for="RecurrenceRules" class="control-label mb-1"></label>
-                        <input asp-for="RecurrenceRules" class="form-control form-control-lg" />
+                        @Html.EditorFor(model => model.RecurrenceRules, "RecurrenceRules")
                         <span asp-validation-for="RecurrenceRules" class="text-danger"></span>
                     </div>
                     <div class="mb-3 mt-3">
@@ -70,6 +69,9 @@
 }
 
 @section Scripts {
+    <script src="~/lib/rrule/dist/es5/rrule.min.js"></script>
+    <script src="~/js/rruleeditor.js"></script>
+
     <script src="~/lib/tagify/tagify.min.js"></script>
     <script>
         new Tagify(document.querySelector('#Category'), {

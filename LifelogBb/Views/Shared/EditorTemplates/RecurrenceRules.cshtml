@@ -1,0 +1,74 @@
+﻿@model string?
+
+<label for="RecurrenceRules" class="control-label mb-1">Recurrence Rules</label>
+<input name="RecurrenceRules" id="RecurrenceRules" class="form-control form-control-lg" value="@Model" hidden />
+<div id="rruleEditorText"></div>
+<div>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#rruleEditorModal"><i class="fas fa-pen icon"></i> Edit rules</button>
+</div>
+
+<div class="modal fade" id="rruleEditorModal" tabindex="-1" aria-labelledby="rruleEditorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rruleEditorModalLabel">Recurrence Rules Editor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Repeat</label>
+                    <select class="form-select" id="rruleEditorModalFrequency">
+                        <option value="0">Yearly</option>
+                        <option value="1">Monthly</option>
+                        <option value="2">Weekly</option>
+                        <option value="3">Daily</option>
+                    </select>
+                </div>
+                <!--<div class="row">
+                    <div class="col-lg-8">
+                        <div class="mb-3">
+                            <label class="form-label">Visibility</label>
+                            <select class="form-select">
+                                <option value="1" selected>Private</option>
+                                <option value="2">Public</option>
+                                <option value="3">Hidden</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="form-label">Visibility</label>
+                            <select class="form-select">
+                                <option value="1" selected>Private</option>
+                                <option value="2">Public</option>
+                                <option value="3">Hidden</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>-->
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">End</label>
+                    <select class="form-select" id="rruleEditorModalEnd">
+                        <option value="never">Never</option>
+                        <option value="count">After</option>
+                        <option value="on">On date</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div id="rruleEditorModalText"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-primary ms-auto" data-bs-dismiss="modal">
+                    Close
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
