@@ -28,6 +28,7 @@
                     </div>
                     <div class="form-group mb-3">
                         @Html.EditorFor(model => model.Rating, "Rating")
+                        <span asp-validation-for="Rating" class="text-danger"></span>
                     </div>
                     <div class="form-group mb-3">
                         <label asp-for="Notes" class="control-label mb-1"></label>
