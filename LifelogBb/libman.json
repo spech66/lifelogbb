@@ -84,6 +84,14 @@
         "tagify.min.js",
         "tagify.min.css"
       ]
+    },
+    {
+      "provider": "unpkg",
+      "library": "rrule@2.7.2",
+      "destination": "wwwroot/lib/rrule/",
+      "files": [
+        "dist/es5/rrule.min.js"
+      ]
     }
   ]
 }

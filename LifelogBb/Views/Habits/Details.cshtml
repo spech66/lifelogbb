@@ -39,7 +39,7 @@
                         <dt class="col-sm-2">
                             @Html.DisplayNameFor(model => model.RecurrenceRules)
                         </dt>
-                        <dd class="col-sm-10">
+                        <dd class="col-sm-10 rrule">
                             @Html.DisplayFor(model => model.RecurrenceRules)
                         </dd>
                         <dt class="col-sm-2">
@@ -85,3 +85,9 @@
         </div>
     </div>
 </div>
+
+@section Scripts
+    {
+    <script src="~/lib/rrule/dist/es5/rrule.min.js"></script>
+    <script src="~/js/rrulereplacer.js"></script>
+}

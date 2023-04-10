@@ -64,7 +64,7 @@
                                     <td>
                                         @Html.DisplayFor(modelItem => item.EndDate)
                                     </td>
-                                    <td>
+                                    <td class="rrule">
                                         @Html.DisplayFor(modelItem => item.RecurrenceRules)
                                     </td>
                                     <td>
@@ -97,3 +97,9 @@
         </div>
     </div>
 </div>
+
+@section Scripts
+{
+    <script src="~/lib/rrule/dist/es5/rrule.min.js"></script>
+    <script src="~/js/rrulereplacer.js"></script>
+}
