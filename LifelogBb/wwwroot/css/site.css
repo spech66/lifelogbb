@@ -8,3 +8,7 @@
     margin-bottom: 10px;
     display: block;
 }
+
+div.card-body > dl > dd {
+    min-height: 1.4rem;
+}
