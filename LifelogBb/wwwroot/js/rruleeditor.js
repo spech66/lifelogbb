@@ -183,6 +183,9 @@ document.addEventListener("DOMContentLoaded", function () {
     rruleEditorModalEndSelect.value = "never";
   }
   updateEndControls();
+
+  // Create for new entries and update for existing entries
+  updateCurrentRule();
 });
 
 rruleEditorModalFrequencySelect.onchange = function () {
