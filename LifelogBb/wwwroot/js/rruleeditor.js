@@ -3,6 +3,8 @@ var rruleModule = rrule;
 var rruleInput = document.getElementById("RecurrenceRules");
 var reccurenceRulesTextElement = document.getElementById("rruleEditorText");
 var reccurenceRulesModalTextElement = document.getElementById("rruleEditorModalText");
+var editRulesButton = document.getElementById("editRulesButton");
+var enableCustomRulesButton = document.getElementById("enableCustomRulesButton");
 
 var rruleEditorModalFrequencySelect = document.getElementById("rruleEditorModalFrequency");
 var rruleEditorModalIntervalInput = document.getElementById("rruleEditorModalIntervalInput");
@@ -227,4 +229,16 @@ rruleEditorModalUntilInput.onchange = function () {
 
 rruleEditorModalCountInput.onchange = function () {
   updateCurrentRule();
+}
+
+enableCustomRulesButton.onclick = function () {
+  if (RecurrenceRules.hidden) {
+    RecurrenceRules.hidden = false;
+    rruleEditorText.hidden = true;
+    editRulesButton.disabled = true;
+  } else {
+    RecurrenceRules.hidden = true;
+    rruleEditorText.hidden = false;
+    editRulesButton.disabled = false;
+  }
 }

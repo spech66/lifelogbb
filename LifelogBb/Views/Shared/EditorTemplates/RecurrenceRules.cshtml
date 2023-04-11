@@ -11,7 +11,8 @@
 <input name="RecurrenceRules" id="RecurrenceRules" class="form-control form-control-lg" value="@Model" hidden />
 <div id="rruleEditorText"></div>
 <div>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#rruleEditorModal"><i class="fas fa-pen icon"></i> Edit rules</button>
+    <button type="button" class="btn btn-primary" id="editRulesButton" data-bs-toggle="modal" data-bs-target="#rruleEditorModal"><i class="fas fa-pen icon"></i> Edit rules</button>
+    <button type="button" class="btn btn-primary" id="enableCustomRulesButton"><i class="fas fa-pen icon"></i> Custom rules</button>
 </div>
 
 <div class="modal fade" id="rruleEditorModal" tabindex="-1" aria-labelledby="rruleEditorModalLabel" aria-hidden="true">
