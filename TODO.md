@@ -9,8 +9,8 @@ ToDos and Features for LifelogBB.
  - [Todos/Tasks](https://preview.tabler.io/tasks.html#) Kanban: Upcoming today, next 7 days, ...
  - Habits: Timeline
  - [Journal date grid](https://github.com/usememos/memos)
-- iCal Alarms
 - [ ] [Globalization and localization](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization?view=aspnetcore-6.0)
+- [ ] iCal Alarms
 - [ ] ChatGPT (LLaMA, ... ?) integration
 
 #### External tools
@@ -23,13 +23,13 @@ ToDos and Features for LifelogBB.
 ### In Progress :construction:
 
 - [ ] Dashboard
-- [ ] [iCal](https://github.com/rianjs/ical.net) feed
-  - VTODO for Goals/Todos
-  - VEVENT for Habits (Time Boxing/Blocking)
-    - RRULE ui [rrule.js](https://jakubroztocil.github.io/rrule/), [rrule-generator](https://freetools.textmagic.com/rrule-generator)    
 
 ### Done :heavy_check_mark:
 
+- [x] [iCal](https://github.com/rianjs/ical.net) feed
+  - VTODO for Goals/Todos
+  - VEVENT for Habits (Time Boxing/Blocking)
+    - RRULE ui [rrule.js](https://jakubroztocil.github.io/rrule/), [rrule-tool](https://icalendar.org/rrule-tool.html), [rrule-generator](https://freetools.textmagic.com/rrule-generator)    
 - [x] Weights in metric system and imperial units (no conversion)
 - [x] Settings (Units, Start of week, ...)
 - [x] Tags, Category
