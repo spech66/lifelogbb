@@ -67,7 +67,7 @@ function updateCurrentRule() {
 
   var rule = new rruleModule.RRule({
     freq: rruleEditorModalFrequencySelect.value,
-    interval: rruleEditorModalFrequencySelect.value !== "0" ? rruleEditorModalIntervalInput.value : "",
+    interval: rruleEditorModalIntervalInput.value !== "" || rruleEditorModalIntervalInput.value !== "1" ? rruleEditorModalIntervalInput.value : "",
     until: rruleEditorModalEndSelect.value === "on" && rruleEditorModalUntilInput.value != "" ? new Date(rruleEditorModalUntilInput.value) : null,
     count: rruleEditorModalEndSelect.value === "count" ? rruleEditorModalCountInput.value : null,
     byweekday: weekdays,
@@ -89,9 +89,21 @@ function updateCurrentRule() {
 
 function updateFrequencyControls() {
   var newVal = rruleEditorModalFrequencySelect.value;
-  document.getElementById("rruleEditorModalIntervalInfo").innerText = newVal === "1" ? "Month(s)" : newVal === "2" ? "Week(s)" : "Day(s)";
+  switch (newVal) {
+    case "0":
+      document.getElementById("rruleEditorModalIntervalInfo").innerText = "Year(s)";
+      break;
+    case "1":
+      document.getElementById("rruleEditorModalIntervalInfo").innerText = "Month(s)";
+      break;
+    case "2":
+      document.getElementById("rruleEditorModalIntervalInfo").innerText = "Week(s)";
+      break;
+    case "3":
+      document.getElementById("rruleEditorModalIntervalInfo").innerText = "Day(s)";
+      break;
+  }
 
-  document.getElementById("rruleEditorModalIntervalContainer").hidden = newVal === "0"; // Hide on yearly
   document.getElementById("rruleEditorModalByDayContainer").hidden = newVal !== "2"; // Show only on weekly
   document.getElementById("rruleEditorModalMonthlyByContainer1").hidden = (newVal !== "1" && newVal !== "0"); // Show only on monthly and yearly
   document.getElementById("rruleEditorModalMonthlyByContainer2").hidden = (newVal !== "1" && newVal !== "0"); // Show only on monthly and yearly
