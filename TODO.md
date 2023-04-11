@@ -30,7 +30,6 @@ ToDos and Features for LifelogBB.
  - Endurance workout
  - Quotes
 
-
 ### Done :heavy_check_mark:
 
 - [x] [iCal](https://github.com/rianjs/ical.net) feed
