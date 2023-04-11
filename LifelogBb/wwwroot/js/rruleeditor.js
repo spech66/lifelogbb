@@ -10,6 +10,7 @@ var rruleEditorModalByDayInput = document.getElementsByName("rruleEditorModalByD
 var rruleEditorModalMonthlyByInput = document.getElementsByName("rruleEditorModalMonthlyByInput"); // Group!
 var rruleEditorModalByMonthDayInput = document.getElementById("rruleEditorModalByMonthDayInput");
 var rruleEditorModalBySetPosInput = document.getElementById("rruleEditorModalBySetPosInput");
+var rruleEditorModalByMonthInput = document.getElementById("rruleEditorModalByMonthInput");
 
 var rruleEditorModalEndSelect = document.getElementById("rruleEditorModalEnd");
 var rruleEditorModalUntilInput = document.getElementById("rruleEditorModalUntilInput");
@@ -19,6 +20,7 @@ var rruleEditorModalCountInput = document.getElementById("rruleEditorModalCountI
 function updateCurrentRule() {
   var weekdays = [];
   var monthdays = [];
+  var yearmonths = [];
 
   // Stupid conversion because library doesn't support array of days/ints
   if (rruleEditorModalFrequencySelect.value === "2") { // Weekly
@@ -33,7 +35,9 @@ function updateCurrentRule() {
       else if (s.value === "SA") weekdays.push(rruleModule.RRule.SA);
       else if (s.value === "SU") weekdays.push(rruleModule.RRule.SU);
     });
-  } else if (rruleEditorModalFrequencySelect.value === "1") { // Monthly
+  }
+
+  if (rruleEditorModalFrequencySelect.value === "1" || rruleEditorModalFrequencySelect.value === "0") { // Monthly and Yearly
     if (document.getElementById("rruleEditorModalMonthlyByInputBYMONTHDAY").checked) { // ex: 1, 4, 9, ...
       for (var i = 0; i < rruleEditorModalByMonthDayInput.selectedOptions.length; i++) {
         monthdays.push(rruleEditorModalByMonthDayInput.selectedOptions[i].value);
@@ -55,6 +59,12 @@ function updateCurrentRule() {
     }
   }
 
+  if (rruleEditorModalFrequencySelect.value === "0") { // Yearly
+    for (var i = 0; i < rruleEditorModalByMonthInput.selectedOptions.length; i++) {
+      yearmonths.push(rruleEditorModalByMonthInput.selectedOptions[i].value);
+    }
+  }
+
   var rule = new rruleModule.RRule({
     freq: rruleEditorModalFrequencySelect.value,
     interval: rruleEditorModalFrequencySelect.value !== "0" ? rruleEditorModalIntervalInput.value : "",
@@ -62,6 +72,7 @@ function updateCurrentRule() {
     count: rruleEditorModalEndSelect.value === "count" ? rruleEditorModalCountInput.value : null,
     byweekday: weekdays,
     bymonthday: monthdays,
+    bymonth: yearmonths,
   });
 
   console.log(rule.toString());
@@ -82,8 +93,9 @@ function updateFrequencyControls() {
 
   document.getElementById("rruleEditorModalIntervalContainer").hidden = newVal === "0"; // Hide on yearly
   document.getElementById("rruleEditorModalByDayContainer").hidden = newVal !== "2"; // Show only on weekly
-  document.getElementById("rruleEditorModalMonthlyByContainer1").hidden = newVal !== "1"; // Show only on monthly
-  document.getElementById("rruleEditorModalMonthlyByContainer2").hidden = newVal !== "1"; // Show only on monthly
+  document.getElementById("rruleEditorModalMonthlyByContainer1").hidden = (newVal !== "1" && newVal !== "0"); // Show only on monthly and yearly
+  document.getElementById("rruleEditorModalMonthlyByContainer2").hidden = (newVal !== "1" && newVal !== "0"); // Show only on monthly and yearly
+  document.getElementById("rruleEditorModalYearlyByContainer").hidden = newVal !== "0"; // Show only on yearly
 }
 
 function updateEndControls() {
@@ -118,7 +130,9 @@ document.addEventListener("DOMContentLoaded", function () {
         s.checked = rule.options.byweekday.includes(days.indexOf(s.value));
       });
     }
-  } else if (rule.options.freq === 1) { // Monthly
+  }
+
+  if (rule.options.freq === 1 || rule.options.freq === 0) { // Monthly and Yearly
     if (rule.options.bymonthday !== null && rule.options.bymonthday.length > 0) {
       rruleEditorModalMonthlyByInputBYMONTHDAY.checked = true;
       rruleEditorModalMonthlyByInputBYSETPOS.checked = false;
@@ -132,6 +146,15 @@ document.addEventListener("DOMContentLoaded", function () {
       var bySetPosStrings = rule.options.bynweekday.map(d => d[1].toString() + days[d[0]]); // [0, 2] => "2MO"
       for (var i = 0; i < rruleEditorModalBySetPosInput.options.length; i++) {
         rruleEditorModalBySetPosInput.options[i].selected = bySetPosStrings.includes(rruleEditorModalBySetPosInput.options[i].value);
+      }
+    }
+  }
+
+  if (rule.options.freq === 0) { // Yearly
+    if (rule.options.bymonth !== null && rule.options.bymonth.length > 0) {
+      var byMonthStrings = rule.options.bymonth.map(d => d.toString());
+      for (var i = 0; i < rruleEditorModalByMonthInput.options.length; i++) {
+        rruleEditorModalByMonthInput.options[i].selected = byMonthStrings.includes(rruleEditorModalByMonthInput.options[i].value);
       }
     }
   }
@@ -162,6 +185,10 @@ rruleEditorModalByDayInput.forEach(s => {
     updateCurrentRule();
   }
 });
+
+rruleEditorModalByMonthInput.onchange = function () {
+  updateCurrentRule();
+}
 
 rruleEditorModalMonthlyByInput.forEach(s => {
   s.onselectionchange = function () {

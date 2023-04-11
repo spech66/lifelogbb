@@ -4,6 +4,7 @@
     var dayRules = new[] { "MO", "TU", "WE", "TH", "FR", "SA", "SU" };
     var dayShort = new[] { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
     var dayLong = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+    var monthLong = new[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 }
 
 <label for="RecurrenceRules" class="control-label mb-1">Recurrence Rules</label>
@@ -42,6 +43,23 @@
                             <input type="checkbox" class="btn-check" id="rruleEditorModalByDayInput@(dayRules[i])" name="rruleEditorModalByDayInput" value="@dayRules[i]" autocomplete="off">
                             <label class="btn btn-outline-primary" for="rruleEditorModalByDayInput@(dayRules[i])">@dayShort[i]</label>
                         }
+                    </div>
+                </div>
+                <div class="row" id="rruleEditorModalYearlyByContainer">
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            By month
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="mb-3">
+                            <select class="form-select" id="rruleEditorModalByMonthInput" multiple>
+                                @for (int i = 1; i <= monthLong.Length; i++)
+                                {
+                                    <option value="@i">@monthLong[i-1]</option>
+                                }
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="row" id="rruleEditorModalMonthlyByContainer1">

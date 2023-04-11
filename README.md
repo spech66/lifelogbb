@@ -21,7 +21,8 @@ All **data** is stored in a single **SQLite database** for full control and port
 * 🚀 Habits
 * 🌄 Bucket list and Vision board
 * 📜 Quotes
-* 🛠️ RESTful API for all routes
+* 🛠️ RESTful API for all routes, Swagger UI
+* 📅 iCal feeds: Todo for Todos and Goals, Event for Habits (Time boxing/blocking)
 * ⚙️ Settings
 * 🖼 [Tabler](https://tabler.io/) UI
 
