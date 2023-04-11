@@ -4,11 +4,6 @@ ToDos and Features for LifelogBB.
 
 ### Todo
 
-- [ ] Dedicated views and filters
- - [Tasks/Todos](https://tabler.io/preview) List: Progress
- - [Todos/Tasks](https://preview.tabler.io/tasks.html#) Kanban: Upcoming today, next 7 days, ...
- - Habits: Timeline
- - [Journal date grid](https://github.com/usememos/memos)
 - [ ] [Globalization and localization](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization?view=aspnetcore-6.0)
 - [ ] iCal Alarms
 - [ ] ChatGPT (LLaMA, ... ?) integration
@@ -23,6 +18,18 @@ ToDos and Features for LifelogBB.
 ### In Progress :construction:
 
 - [ ] Dashboard
+- [ ] Dedicated views and filters
+ - [Tasks/Todos](https://tabler.io/preview) List: Progress
+ - [Todos/Tasks](https://preview.tabler.io/tasks.html#) Kanban: Upcoming today, next 7 days, ...
+ - Habits: Timeline
+ - [Journal date grid](https://github.com/usememos/memos)
+ - Weights
+ - Goals
+ - Bucket list
+ - Strength training
+ - Endurance workout
+ - Quotes
+
 
 ### Done :heavy_check_mark:
 
