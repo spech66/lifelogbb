@@ -22,9 +22,7 @@ namespace LifelogBb.Controllers
         // GET: Weights
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
-            var defaultSortOrder = $"{nameof(Weight.CreatedAt)}_desc";
             ViewData["CurrentSort"] = sortOrder;
-            ViewData["DateSortParm"] = sortOrder == nameof(Weight.CreatedAt) ? defaultSortOrder : nameof(Weight.CreatedAt);
 
             if (searchString != null)
             {
@@ -39,7 +37,7 @@ namespace LifelogBb.Controllers
 
             var weights = from s in _context.Weights select s;
             weights = weights.FilterByDoubleProps(nameof(Weight.BodyWeight), searchString, 1.0);
-            weights = weights.SortByName(sortOrder, defaultSortOrder);
+            weights = weights.SortByName(sortOrder, $"{nameof(Weight.CreatedAt)}_desc");
 
             var config = Config.GetConfig(_context);
             int pageSize = config.WeightPageSize;

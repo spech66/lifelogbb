@@ -27,9 +27,7 @@ namespace LifelogBb.Controllers
         // GET: BucketLists
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
-            var defaultSortOrder = $"{nameof(BucketList.CreatedAt)}_desc";
             ViewData["CurrentSort"] = sortOrder;
-            ViewData["DateSortParm"] = sortOrder == nameof(BucketList.CreatedAt) ? defaultSortOrder : nameof(BucketList.CreatedAt);
 
             if (searchString != null)
             {
@@ -43,7 +41,7 @@ namespace LifelogBb.Controllers
             ViewData["CurrentFilter"] = searchString;
 
             var items = from s in _context.BucketLists select s;
-            items = items.SortByName(sortOrder, defaultSortOrder);
+            items = items.SortByName(sortOrder, $"{nameof(BucketList.CreatedAt)}_desc");
 
             int pageSize = Config.GetConfig(_context).BucketListPageSize;
             return View(await PaginatedList<BucketList>.CreateAsync(items.AsNoTracking(), pageNumber ?? 1, pageSize));
@@ -132,6 +130,8 @@ namespace LifelogBb.Controllers
                     if (!ValidateFileExtions(bucketListViewModel.ImageData.FileName))
                     {
                         ModelState.AddModelError("ImageData", "Invalid file extension.");
+                        this.AddCategoriesToViewData(_context);
+                        this.AddTagsToViewData(_context);
                         return View(bucketListViewModel);
                     }
 
@@ -147,6 +147,8 @@ namespace LifelogBb.Controllers
                         else
                         {
                             ModelState.AddModelError("ImageData", "The file is too large.");
+                            this.AddCategoriesToViewData(_context);
+                            this.AddTagsToViewData(_context);
                             return View(bucketListViewModel);
                         }
                     }
@@ -205,6 +207,8 @@ namespace LifelogBb.Controllers
                         if (!ValidateFileExtions(bucketListViewModel.ImageData.FileName))
                         {
                             ModelState.AddModelError("ImageData", "Invalid file extension.");
+                            this.AddCategoriesToViewData(_context);
+                            this.AddTagsToViewData(_context);
                             return View(bucketListViewModel);
                         }
 
@@ -220,6 +224,8 @@ namespace LifelogBb.Controllers
                             else
                             {
                                 ModelState.AddModelError("ImageData", "The file is too large.");
+                                this.AddCategoriesToViewData(_context);
+                                this.AddTagsToViewData(_context);
                                 return View(bucketListViewModel);
                             }
                         }

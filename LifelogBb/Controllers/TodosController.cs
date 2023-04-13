@@ -27,9 +27,7 @@ namespace LifelogBb.Controllers
         // GET: Todos
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
-            var defaultSortOrder = $"{nameof(Todo.CreatedAt)}_desc";
             ViewData["CurrentSort"] = sortOrder;
-            ViewData["DateSortParm"] = sortOrder == nameof(Todo.CreatedAt) ? defaultSortOrder : nameof(Todo.CreatedAt);
 
             if (searchString != null)
             {
@@ -43,7 +41,7 @@ namespace LifelogBb.Controllers
             ViewData["CurrentFilter"] = searchString;
 
             var todos = from s in _context.Todos select s;
-            todos = todos.SortByName(sortOrder, defaultSortOrder);
+            todos = todos.SortByName(sortOrder, $"{nameof(Todo.CreatedAt)}_desc");
 
             var config = Config.GetConfig(_context);
             int pageSize = 20;

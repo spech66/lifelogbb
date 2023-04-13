@@ -28,9 +28,7 @@ namespace LifelogBb.Controllers
         // GET: Habits
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
-            var defaultSortOrder = $"{nameof(Habit.CreatedAt)}_desc";
             ViewData["CurrentSort"] = sortOrder;
-            ViewData["DateSortParm"] = sortOrder == nameof(Habit.CreatedAt) ? defaultSortOrder : nameof(Habit.CreatedAt);
 
             if (searchString != null)
             {
@@ -44,7 +42,7 @@ namespace LifelogBb.Controllers
             ViewData["CurrentFilter"] = searchString;
 
             var habits = from s in _context.Habits select s;
-            habits = habits.SortByName(sortOrder, defaultSortOrder);
+            habits = habits.SortByName(sortOrder, $"{nameof(Habit.CreatedAt)}_desc");
 
             var config = Config.GetConfig(_context);
             int pageSize = 20;
@@ -149,6 +147,9 @@ namespace LifelogBb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View(habitViewModel);
         }
 

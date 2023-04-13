@@ -27,9 +27,7 @@ namespace LifelogBb.Controllers
         // GET: Goals
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
-            var defaultSortOrder = $"{nameof(Goal.CreatedAt)}_desc";
             ViewData["CurrentSort"] = sortOrder;
-            ViewData["DateSortParm"] = sortOrder == nameof(Goal.CreatedAt) ? defaultSortOrder : nameof(Goal.CreatedAt);
 
             if (searchString != null)
             {
@@ -43,7 +41,7 @@ namespace LifelogBb.Controllers
             ViewData["CurrentFilter"] = searchString;
 
             var goals = from s in _context.Goals select s;
-            goals = goals.SortByName(sortOrder, defaultSortOrder);
+            goals = goals.SortByName(sortOrder, $"{nameof(Goal.CreatedAt)}_desc");
 
             var config = Config.GetConfig(_context);
             int pageSize = 20;

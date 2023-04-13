@@ -22,9 +22,7 @@ namespace LifelogBb.Controllers
         // GET: Quotes
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
-            var defaultSortOrder = $"{nameof(Quote.CreatedAt)}_desc";
             ViewData["CurrentSort"] = sortOrder;
-            ViewData["DateSortParm"] = sortOrder == nameof(Quote.CreatedAt) ? defaultSortOrder : nameof(Quote.CreatedAt);
 
             if (searchString != null)
             {
@@ -38,7 +36,7 @@ namespace LifelogBb.Controllers
             ViewData["CurrentFilter"] = searchString;
 
             var quotes = from s in _context.Quotes select s;
-            quotes = quotes.SortByName(sortOrder, defaultSortOrder);
+            quotes = quotes.SortByName(sortOrder, $"{nameof(Quote.CreatedAt)}_desc");
 
             int pageSize = 20;
             return View(await PaginatedList<Quote>.CreateAsync(quotes.AsNoTracking(), pageNumber ?? 1, pageSize));
