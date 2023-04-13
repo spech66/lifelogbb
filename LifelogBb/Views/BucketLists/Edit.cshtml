@@ -22,11 +22,6 @@
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                     <div class="form-group mb-3">
-                        <label asp-for="Category" class="control-label mb-1"></label>
-                        <input asp-for="Category" class="form-control form-control-lg" />
-                        <span asp-validation-for="Category" class="text-danger"></span>
-                    </div>
-                    <div class="form-group mb-3">
                         <label asp-for="Status" class="control-label mb-1"></label>
                         <select asp-for="Status" class="form-control form-control-lg" asp-items="Html.GetEnumSelectList<LifelogBb.Models.Entities.BucketListStatus>()"></select>
                         <span asp-validation-for="Status" class="text-danger"></span>
