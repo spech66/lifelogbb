@@ -6,7 +6,7 @@ ToDos and Features for LifelogBB.
 
 - [ ] [Globalization and localization](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization?view=aspnetcore-6.0)
 - [ ] iCal Alarms
-- [ ] ChatGPT (LLaMA, ... ?) integration
+- [ ] ChatGPT (LLaMA, ... ?) [integration](https://www.nuget.org/packages/Azure.AI.OpenAI/)
 
 #### External tools
 
