@@ -50,12 +50,20 @@ namespace LifelogBb.Controllers
             var randomQuote = await _context.Quotes.OrderBy(r => EF.Functions.Random()).Take(1).FirstOrDefaultAsync();
             model.RandomQuote = randomQuote;
 
-            var activities = new List<IndexDashboardViewModelActivity>
+            var journals = await _context.Journals.OrderByDescending(o => o.CreatedAt).Take(5).ToListAsync();
+            var activities = new List<IndexDashboardViewModelActivity>();
+            activities.AddRange(journals.ConvertAll(j => new IndexDashboardViewModelActivity { Type = "J", Text = j.Text.Length > 200 ? j.Text.Substring(0, 200) + "..." : j.Text, Date = j.CreatedAt }));
+            /* var activities = new List<IndexDashboardViewModelActivity>
             {
                 new IndexDashboardViewModelActivity { Text = "Test", Date = DateTime.Now },
                 new IndexDashboardViewModelActivity { Text = "Test 2", Date = DateTime.Now },
-            };
+            };*/
             model.Activities = activities;
+
+            model.TodoList = await _context.Todos.Where(t => !t.IsCompleted).OrderByDescending(o => o.DueDate).ThenByDescending(o => o.IsImportant).Take(5).ToListAsync();
+
+            // Goals
+            // Habits
 
             return View(model);
         }

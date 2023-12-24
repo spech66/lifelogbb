@@ -54,6 +54,72 @@
                 </div>
             </div>
         }
+
+        @if (Model.Activities != null)
+        {
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="divide-y">
+                            @foreach (var item in Model.Activities)
+                            {
+                                <div>
+                                    <div class="row">
+                                        <div class="col-auto">
+                                            <span class="avatar">@item.Type</span>
+                                        </div>
+                                        <div class="col">
+                                            <div class="text-truncate">
+                                                @item.Text
+                                            </div>
+                                            <div class="text-muted">@item.Date.ToString()</div>
+                                        </div>
+                                        <div class="col-auto align-self-center">
+                                            <div class="badge bg-primary"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (Model.TodoList != null)
+        {
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="divide-y">
+                            @foreach (var item in Model.TodoList)
+                            {
+                                <div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="text-truncate">@item.Title</div>
+                                        </div>
+                                        @if (item.DueDate != null)
+                                        {
+                                            <div class="col-auto">
+                                                <span class="text-muted">@item.DueDate.Value.ToString()</span>
+                                            </div>
+                                        }
+                                        @if (item.IsImportant)
+                                        {
+                                            <div class="col-auto align-self-center">
+                                                <div class="badge bg-red">!</div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
         @if (Model.RandomBucketList != null)
         {
             <div class="col-lg-6">
@@ -85,44 +151,14 @@
                 </div>
             </div>
         }
-        @if (Model.Activities != null)
-        {
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="divide-y">
-                            @foreach (var item in Model.Activities)
-                            {
-                                <div>
-                                    <div class="row">
-                                        <div class="col-auto">
-                                            <span class="avatar">T</span>
-                                        </div>
-                                        <div class="col">
-                                            <div class="text-truncate">
-                                                @item.Text
-                                            </div>
-                                            <div class="text-muted">@item.Date.ToString()</div>
-                                        </div>
-                                        <div class="col-auto align-self-center">
-                                            <div class="badge bg-primary"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
 
-        <div class="col-lg-6">
+        <!-- <div class="col-lg-6">
             <div class="card h-100">
                 <div class="card-body">
                     <h5 class="card-title">Card title</h5>
                     <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content.</p>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </div>
