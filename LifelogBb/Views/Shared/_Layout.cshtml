@@ -20,52 +20,7 @@
                     <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">LifelogBB</a>
                 </h1>
                 <div class="collapse navbar-collapse" id="sidebar-menu">
-                    <ul class="navbar-nav pt-lg-3">
-                        @if (User.Identity is not null && User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-home"></i></span><span class="nav-link-title">Home</span></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Dashboard"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fa-solid fa-chalkboard"></i></span><span class="nav-link-title">Dashboard</span></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Weights" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-weight-scale"></i></span><span class="nav-link-title">Weight</span></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Journals" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-pencil"></i></span><span class="nav-link-title">Journal</span></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="StrengthTrainings" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-dumbbell"></i></span><span class="nav-link-title">Strength training</span></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="EnduranceTrainings" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-running"></i></span><span class="nav-link-title">Endurance training</span></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Todos" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-check"></i></span><span class="nav-link-title">Todos</span></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Goals" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-bullseye"></i></span><span class="nav-link-title">Goals</span></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Habits" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-arrows-spin"></i></span><span class="nav-link-title">Habits</span></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="BucketLists" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-tent"></i></span><span class="nav-link-title">Bucket list</span></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Quotes" asp-action="Index"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-quote-right"></i></span><span class="nav-link-title">Quotes</span></a>
-                            </li>
-                            <li class="nav-item">&nbsp;</li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Config"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-gear"></i></span><span class="nav-link-title">Config</span></a>
-                            </li>
-                            <li class="nav-item">&nbsp;</li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Logout"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-right-from-bracket"></i></span><span class="nav-link-title">Logout</span></a>
-                            </li>
-                        }
-                    </ul>
+                    @await Component.InvokeAsync("Navigation")                   
                 </div>
             </div>
         </aside>

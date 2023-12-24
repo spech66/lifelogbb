@@ -1,0 +1,56 @@
+﻿@using LifelogBb.Views.Shared.Components.Navigation
+@model List<NavItem>
+
+<ul class="navbar-nav pt-lg-3">
+    @if (User.Identity is not null && User.Identity.IsAuthenticated)
+    {
+        @foreach(var item in Model)
+        {
+            if (item.SubItems is not null && item.SubItems.Count > 0)
+            {
+                var hasActiveSubItem = item.SubItems.Any(x => x.Controller == ViewContext.RouteData.Values["controller"].ToString() && x.Action == ViewContext.RouteData.Values["action"].ToString());
+                var activeClass = hasActiveSubItem ? "active" : "";
+                var showSubItems = hasActiveSubItem ? "true" : "false";
+                var showSubItemsClass = hasActiveSubItem ? "show" : "";
+                <li class="nav-item @activeClass">
+                    <a class="nav-link dropdown-toggle @showSubItemsClass" href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button" aria-expanded="@showSubItems">
+                        <span class="nav-link-icon d-md-none d-lg-inline-block"><i class="@item.Icon"></i></span>
+                        <span class="nav-link-title">@item.Title</span>
+                    </a>
+                    <div class="dropdown-menu @showSubItemsClass">
+                        <div class="dropdown-menu-columns">
+                            <div class="dropdown-menu-column">
+                                @foreach(var subItem in item.SubItems)
+                                {
+                                    var isSubActive = subItem.Controller == ViewContext.RouteData.Values["controller"].ToString() && subItem.Action == ViewContext.RouteData.Values["action"].ToString();
+                                    var subActiveClass = isSubActive ? "active" : "";
+                                    <a class="dropdown-item @subActiveClass" asp-area="" asp-controller="@subItem.Controller" asp-action="@subItem.Action">
+                                        <span class="nav-link-icon d-md-none d-lg-inline-block"><i class="@subItem.Icon"></i></span>
+                                        <span class="nav-link-title">@subItem.Title</span>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            } else
+            {
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="@item.Controller" asp-action="@item.Action">
+                        <span class="nav-link-icon d-md-none d-lg-inline-block"><i class="@item.Icon"></i></span>
+                        <span class="nav-link-title">@item.Title</span>
+                    </a>
+                </li>
+            }
+        }
+
+        <li class="nav-item">&nbsp;</li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Config"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-gear"></i></span><span class="nav-link-title">Config</span></a>
+        </li>
+        <li class="nav-item">&nbsp;</li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Logout"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fas fa-right-from-bracket"></i></span><span class="nav-link-title">Logout</span></a>
+        </li>
+    }
+</ul>
