@@ -18,10 +18,10 @@ namespace LifelogBb.Utilities
                 return "";
             }
 
-            if ((string)viewData["CurrentSort"] == $"{fieldName}_desc")
+            if (viewData["CurrentSort"] as string == $"{fieldName}_desc")
             {
                 return "desc";
-            } else if ((string)viewData["CurrentSort"] == fieldName)
+            } else if (viewData["CurrentSort"] as string == fieldName)
             {
                 return "asc";
             }
@@ -38,7 +38,7 @@ namespace LifelogBb.Utilities
         /// <returns></returns>
         public static string GetSortRoute<T>(ViewDataDictionary<T> viewData, string fieldName)
         {
-            if (viewData.ContainsKey("CurrentSort") && viewData["CurrentSort"] != null && (string)viewData["CurrentSort"] == $"{fieldName}_desc")
+            if (viewData.ContainsKey("CurrentSort") && viewData["CurrentSort"] != null && viewData["CurrentSort"] as string == $"{fieldName}_desc")
             {
                 return fieldName;
             }
