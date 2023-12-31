@@ -6,7 +6,7 @@
 
 <div class="container-xl">
     <div class="row row-deck row-cards">
-        @if (Model.LastWeight != null)
+        @if (Model.WeightList != null && Model.WeightList.Count > 0)
         {
             <div class="col-sm-6 col-lg-3">
                 <div class="card card-sm">
@@ -15,7 +15,40 @@
                             <div class="col-auto"><span class="bg-primary text-white avatar"><i class="fa-solid fa-weight-scale icon icon-tabler icon-tabler-weight"></i></span></div>
                             <div class="col">
                                 <div class="font-weight-medium">Last Weight</div>
-                                <div class="text-muted">@Model.LastWeight.BodyWeight</div>
+                                <div class="text-muted">
+                                    @if(Model.WeightList.Count > 1)
+                                    {
+                                        @if (Model.WeightList.Last().BodyWeight > Model.WeightList.First().BodyWeight)
+                                        {
+                                            <i class="fa-solid fa-arrow-up text-red"></i>
+                                        }
+                                        else if (Model.WeightList.Last().BodyWeight < Model.WeightList.First().BodyWeight)
+                                        {
+                                            <i class="fa-solid fa-arrow-down text-green"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fa-solid fa-minus"></i>
+                                        }
+                                    }
+                                    @Model.WeightList.Last().BodyWeight
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (Model.WeightList != null && Model.WeightList.Count > 1)
+        {
+            <div class="col-sm-6 col-lg-3">
+                <div class="card card-sm">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-auto"><span class="bg-primary text-white avatar"><i class="fa-solid fa-weight-scale icon icon-tabler icon-tabler-weight"></i></span></div>
+                            <div class="col">
+                                <div class="font-weight-medium">Weight</div>
+                                <div class="text-muted">MINI CHART</div>
                             </div>
                         </div>
                     </div>
@@ -74,9 +107,6 @@
                                             </div>
                                             <div class="text-muted">@item.Date.ToString()</div>
                                         </div>
-                                        <div class="col-auto align-self-center">
-                                            <div class="badge bg-primary"></div>
-                                        </div>
                                     </div>
                                 </div>
                             }
@@ -102,7 +132,8 @@
                                         @if (item.DueDate != null)
                                         {
                                             <div class="col-auto">
-                                                <span class="text-muted">@item.DueDate.Value.ToString()</span>
+                                                <span class="text-muted">@item.DueDate.Value.ToShortDateString() @item.DueDate.Value.ToShortTimeString()</span>
+                                                <div class="badge bg-red"><span class="fas fa-clock"></span></div>
                                             </div>
                                         }
                                         @if (item.IsImportant)

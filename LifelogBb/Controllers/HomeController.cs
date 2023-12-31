@@ -35,8 +35,8 @@ namespace LifelogBb.Controllers
         {
             var model = new IndexDashboardViewModel();
 
-            var weight = await _context.Weights.OrderByDescending(o => o.CreatedAt).Take(1).FirstOrDefaultAsync();
-            model.LastWeight = weight;
+            var weights = await _context.Weights.OrderByDescending(o => o.CreatedAt).Take(10).ToListAsync();
+            model.WeightList = weights.OrderBy(o => o.CreatedAt).ToList();
 
             var enduranceTraining = await _context.EnduranceTrainings.OrderByDescending(o => o.CreatedAt).Take(1).FirstOrDefaultAsync();
             model.LastEnduranceTraining = enduranceTraining;

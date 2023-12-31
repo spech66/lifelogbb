@@ -13,7 +13,7 @@ namespace LifelogBb.Models.Home
 
     public class IndexDashboardViewModel
     {
-        public Weight? LastWeight { get; set; }
+        public List<Weight>? WeightList { get; set; }
 
         public StrengthTraining? LastStrengthTraining { get; set; }
 
