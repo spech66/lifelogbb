@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using LifelogBb.Models;
+﻿using LifelogBb.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LifelogBb.Utilities
@@ -13,8 +12,9 @@ namespace LifelogBb.Utilities
             var tagsJournal = _context.Journals.Select(s => s.Tags).Distinct();
             var tagsQuotes = _context.Quotes.Select(s => s.Tags).Distinct();
             var tagsTodos = _context.Todos.Select(s => s.Tags).Distinct();
+            var tagsBucketLists = _context.BucketLists.Select(s => s.Tags).Distinct();
 
-            var tags = tagGoals.Union(tagsHabits).Union(tagsJournal).Union(tagsQuotes).Union(tagsTodos).Distinct();            
+            var tags = tagGoals.Union(tagsHabits).Union(tagsJournal).Union(tagsQuotes).Union(tagsTodos).Union(tagsBucketLists).Distinct();            
             var tagsList = tags.ToList().Where(s => s != null).SelectMany(s => s.Split(',')).Distinct();
             var tagsText = string.Join(",", tagsList);
             
@@ -28,8 +28,9 @@ namespace LifelogBb.Utilities
             var tagsJournal = _context.Journals.Select(s => s.Category).Distinct();
             var tagsQuotes = _context.Quotes.Select(s => s.Category).Distinct();
             var tagsTodos = _context.Todos.Select(s => s.Category).Distinct();
+            var tagsBucketLists = _context.BucketLists.Select(s => s.Category).Distinct();
 
-            var categories = tagGoals.Union(tagsHabits).Union(tagsJournal).Union(tagsQuotes).Union(tagsTodos).Distinct();
+            var categories = tagGoals.Union(tagsHabits).Union(tagsJournal).Union(tagsQuotes).Union(tagsTodos).Union(tagsBucketLists).Distinct();
             var categoriesList = categories.ToList().Where(s => s != null).Distinct();
             var categoriessText = string.Join(",", categoriesList);
 
