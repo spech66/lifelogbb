@@ -17,6 +17,8 @@ namespace LifelogBb.Models.BucketLists
         [Display(Name = "Image")]
         public IFormFile? ImageData { get; set; }
 
+        public bool DeleteExistingImage { get; set; }
+
         public string? Category { get; set; }
 
         public string? Tags { get; set; }

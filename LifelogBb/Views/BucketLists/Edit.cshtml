@@ -41,6 +41,12 @@
                         <input asp-for="ImageData" class="form-control form-control-lg" type="file" />
                         <span asp-validation-for="ImageData" class="text-danger"></span>
                     </div>
+                    <div class="mb-3 mt-3">
+                        <label class="form-group form-check form-switch">
+                            <input class="form-check-input" asp-for="DeleteExistingImage" type="checkbox">
+                            <span class="form-check-label">@Html.DisplayNameFor(model => model.DeleteExistingImage)</span>
+                        </label>
+                    </div>
                     <input type="hidden" asp-for="Id" />
                 </div>
                 <div class="card-footer text-end">

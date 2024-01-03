@@ -202,6 +202,19 @@ namespace LifelogBb.Controllers
                     bucketListDb = _mapper.Map(bucketListViewModel, bucketListDb);
                     bucketListDb.SetUpdateFields();
 
+                    // Delete existing file if requestd or new file was uploaded (to generate new name and prevent cache of old file)
+                    if (bucketListDb.ImageFileName != null && (bucketListViewModel.DeleteExistingImage || bucketListViewModel.ImageData != null))
+                    {
+                        var file = Path.Join(GetAndCreateBaseDir(), bucketListDb.ImageFileName);
+                        if (System.IO.File.Exists(file))
+                        {
+                            System.IO.File.Delete(file);
+                        }
+
+                        bucketListDb.ImageName = null;
+                        bucketListDb.ImageFileName = null;
+                    }
+
                     if (bucketListViewModel.ImageData != null)
                     {
                         if (!ValidateFileExtions(bucketListViewModel.ImageData.FileName))
@@ -228,20 +241,6 @@ namespace LifelogBb.Controllers
                                 this.AddTagsToViewData(_context);
                                 return View(bucketListViewModel);
                             }
-                        }
-                    } else
-                    {
-                        // Delete existing file
-                        if (bucketListDb.ImageFileName != null)
-                        {
-                            var file = Path.Join(GetAndCreateBaseDir(), bucketListDb.ImageFileName);
-                            if(System.IO.File.Exists(file))
-                            {
-                                System.IO.File.Delete(file);
-                            }
-
-                            bucketListDb.ImageName = null;
-                            bucketListDb.ImageFileName = null;
                         }
                     }
 
@@ -326,7 +325,7 @@ namespace LifelogBb.Controllers
         {
             string untrustedFileName = Path.GetFileName(imageData.FileName);
             bucketListDb.ImageName = WebUtility.HtmlEncode(untrustedFileName);
-            // Create filename if none exists otherwise reuse existing filename
+            // Create filename if none exists
             if (bucketListDb.ImageFileName == null)
             {
                 bucketListDb.ImageFileName = Guid.NewGuid().ToString();
