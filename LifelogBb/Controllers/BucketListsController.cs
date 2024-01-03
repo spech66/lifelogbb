@@ -326,8 +326,8 @@ namespace LifelogBb.Controllers
         {
             string untrustedFileName = Path.GetFileName(imageData.FileName);
             bucketListDb.ImageName = WebUtility.HtmlEncode(untrustedFileName);
-            // Reuse existing filename
-            if (bucketListDb.ImageFileName != null)
+            // Create filename if none exists otherwise reuse existing filename
+            if (bucketListDb.ImageFileName == null)
             {
                 bucketListDb.ImageFileName = Guid.NewGuid().ToString();
             }
