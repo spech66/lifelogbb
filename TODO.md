@@ -17,9 +17,6 @@ ToDos and Features for LifelogBB.
 
 ### In Progress :construction:
 
-- [ ] Edit ohne Bild löscht Bild
-- [ ] Category zeigen nicht alle (Bucket List)
-
 - [ ] Dashboard
 - [ ] Dedicated views and filters
  - [Tasks/Todos](https://tabler.io/preview) List: Progress
