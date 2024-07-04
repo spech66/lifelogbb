@@ -28,6 +28,10 @@ namespace LifelogBb.Models.Home
 
         public int WeightPageSize { get; set; }
 
+        public double WeightWarning { get; set; }
+
+        public string WeightWarningText { get; set; } = "You are gaining weight!";
+
         public string FeedToken { get; set; } = Guid.NewGuid().ToString();
 
         public string FeedTimeZone { get; set; } = "Europe/Berlin";

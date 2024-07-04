@@ -25,7 +25,7 @@ ToDos and Features for LifelogBB.
 ### In Progress :construction:
 
 - [ ] Dashboard
-- [ ] Dedicated views and filters
+- [ ] Dedicated views and filters (as primary view, keep table as overview for everything)
  - [Tasks/Todos](https://tabler.io/preview) List: Progress
  - [Todos/Tasks](https://preview.tabler.io/tasks.html#) Kanban: Upcoming today, next 7 days, ...
  - Habits: Timeline
@@ -58,6 +58,7 @@ ToDos and Features for LifelogBB.
 - [x] Endurance workout
 - [x] Weight
 - [x] Weight chart
+- [x] Weight warning message
 - [x] Goals
 - [x] Todos
 - [x] Habits

@@ -42,6 +42,8 @@ namespace LifelogBb.Controllers
             var config = Config.GetConfig(_context);
             int pageSize = config.WeightPageSize;
             ViewData["UnitsType"] = config.UnitsType;
+            ViewData["WeightWarning"] = config.WeightWarning;
+            ViewData["WeightWarningText"] = config.WeightWarningText;
             return View(await PaginatedList<Weight>.CreateAsync(weights.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
