@@ -25,6 +25,10 @@ namespace LifelogBb.Models.Home
 
         public List<Todo>? TodoList { get; set; }
 
+        public List<Goal>? GoalList { get; set; }
+
+        public List<Habit>? HabitList { get; set; }
+
         public List<IndexDashboardViewModelActivity>? Activities { get; set; }
     }
 }

@@ -23,7 +23,6 @@ ToDos and Features for LifelogBB.
 
 ### In Progress :construction:
 
-- [ ] Dashboard
 - [ ] Dedicated views and filters (as primary view, keep table as overview for everything)
  - [Tasks/Todos](https://tabler.io/preview) List: Progress
  - [Todos/Tasks](https://preview.tabler.io/tasks.html#) Kanban: Upcoming today, next 7 days, ...
@@ -38,6 +37,7 @@ ToDos and Features for LifelogBB.
 
 ### Done :heavy_check_mark:
 
+- [x] Dashboard
 - [x] [iCal](https://github.com/rianjs/ical.net) feed
   - VTODO for Goals/Todos
   - VEVENT for Habits (Time Boxing/Blocking)

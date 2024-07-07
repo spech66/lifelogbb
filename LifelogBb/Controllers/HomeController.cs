@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Ical.Net;
+using Ical.Net.DataTypes;
 using LifelogBb.Models;
 using LifelogBb.Models.Entities;
 using LifelogBb.Models.Home;
@@ -7,6 +9,7 @@ using LifelogBb.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -55,10 +58,12 @@ namespace LifelogBb.Controllers
             activities.AddRange(journals.ConvertAll(j => new IndexDashboardViewModelActivity { Type = "J", Text = j.Text.Length > 200 ? j.Text.Substring(0, 200) + "..." : j.Text, Date = j.CreatedAt }));
             model.Activities = activities;
 
-            model.TodoList = await _context.Todos.Where(t => !t.IsCompleted).OrderByDescending(o => o.DueDate).ThenByDescending(o => o.IsImportant).Take(5).ToListAsync();
+            model.TodoList = await _context.Todos.Where(t => !t.IsCompleted).OrderByDescending(o => o.DueDate).ThenByDescending(o => o.IsImportant).Take(10).ToListAsync();
 
-            // Goals
-            // Habits
+            model.GoalList = await _context.Goals.Where(t => !t.IsCompleted).OrderByDescending(o => o.EndDate).ThenByDescending(o => o.StartDate).Take(10).ToListAsync();
+
+            var allHabits = await _context.Habits.Where(t => !t.IsCompleted && t.RecurrenceRules != null && t.RecurrenceRules != "" && t.StartDate != null && t.EndDate != null).ToListAsync();
+            calculateHabits(model, allHabits);
 
             return View(model);
         }
@@ -93,6 +98,36 @@ namespace LifelogBb.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private static void calculateHabits(IndexDashboardViewModel model, List<Habit> allHabits)
+        {
+            model.HabitList = new List<Habit>();
+            foreach (var habit in allHabits)
+            {
+                var calendar = new Ical.Net.Calendar();
+                calendar.Events.Add(new Ical.Net.CalendarComponents.CalendarEvent
+                {
+                    DtStart = new CalDateTime(habit.StartDate.Value),
+                    DtEnd = new CalDateTime(habit.EndDate.Value),
+                    Summary = habit.Name,
+                    Description = habit.Description,
+                    RecurrenceRules = new List<RecurrencePattern> { new RecurrencePattern(habit.RecurrenceRules) }
+                });
+                calendar.GetOccurrences(DateTime.Now, DateTime.Now.AddDays(7)).ToList().ForEach(o =>
+                {
+                    model.HabitList.Add(new Habit
+                    {
+                        Name = habit.Name,
+                        Description = habit.Description,
+                        StartDate = o.Period.StartTime.Value,
+                        EndDate = o.Period.EndTime.Value,
+                        RecurrenceRules = habit.RecurrenceRules,
+                        IsCompleted = habit.IsCompleted
+                    });
+                });
+            }
+            model.HabitList = model.HabitList.OrderBy(o => o.StartDate).Take(10).ToList();
         }
 
         /*private Quote RandomQuote()

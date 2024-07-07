@@ -152,6 +152,79 @@
             </div>
         }
 
+        @if (Model.GoalList != null)
+        {
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="divide-y">
+                            @foreach (var item in Model.GoalList)
+                            {
+                                <div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="text-truncate">@item.Name</div>
+                                        </div>
+                                        @if (item.CurrentValue != null)
+                                        {
+                                            <div class="col-auto">
+                                                <span class="fas fa-clock"></span> @item.CurrentValue.Value.ToString()
+                                            </div>
+                                        }
+                                        @if (item.TargetValue != null)
+                                        {
+                                            <div class="col-auto">
+                                                <span class="fas fa-bullseye"></span> @item.TargetValue.Value.ToString()
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (Model.HabitList != null)
+        {
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="divide-y">
+                            @foreach (var item in Model.HabitList)
+                            {
+                                <div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="text-truncate">@item.Name</div>
+                                        </div>
+                                        @if (item.StartDate != null)
+                                        {
+                                            <div class="col-auto">
+                                                <span class="fas fa-clock"></span> @item.StartDate.Value.ToShortDateString() @item.StartDate.Value.ToShortTimeString()
+                                            </div>
+                                        }
+                                        @if (item.EndDate != null)
+                                        {
+                                            <div class="col-auto">
+                                                <span class="far fa-clock"></span>
+                                                @if(item.StartDate != null && item.EndDate.Value.Date != item.StartDate.Value.Date)
+                                                {
+                                                    @item.EndDate.Value.ToShortDateString()
+                                                }
+                                                @item.EndDate.Value.ToShortTimeString()
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
         @if (Model.RandomBucketList != null)
         {
             <div class="col-lg-6">
@@ -167,6 +240,7 @@
                 </div>
             </div>
         }
+
         @if (Model.RandomQuote != null)
         {
             <div class="col-lg-6">
@@ -183,15 +257,6 @@
                 </div>
             </div>
         }
-
-        <!-- <div class="col-lg-6">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content.</p>
-                </div>
-            </div>
-        </div> -->
     </div>
 </div>
 
