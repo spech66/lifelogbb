@@ -23,7 +23,10 @@ namespace LifelogBb.Views.Shared.Components.Navigation
                     new NavItem("Weights", "Graph", "Graph", "fas fa-chart-line"),
                     // new NavItem("Weights", "Create", "Create", "fas fa-plus")
                 }),
-                new NavItem("Journals", "Index", "Journal", "fas fa-pencil"),
+                new NavItem("Journals", "fas fa-pencil", new List<NavItem>
+                {
+                    new NavItem("Journals", "Index", "Journal", "fas fa-pencil"),
+                }),
                 new NavItem("Strength training", "fas fa-dumbbell", new List<NavItem>
                 {
                     new NavItem("StrengthTrainings", "Index", "Strength training", "fas fa-dumbbell"),
@@ -34,15 +37,27 @@ namespace LifelogBb.Views.Shared.Components.Navigation
                     new NavItem("EnduranceTrainings", "Index", "Endurance training", "fas fa-running"),
                     new NavItem("EnduranceTrainings", "Graph", "Graph", "fas fa-chart-line"),
                 }),
-                new NavItem("Todos", "Index", "Todos", "fas fa-check"),
-                new NavItem("Goals", "Index", "Goals", "fas fa-bullseye"),
-                new NavItem("Habits", "Index", "Habits", "fas fa-arrows-spin"),
+                new NavItem("Todos", "fas fa-check", new List<NavItem>
+                {
+                    new NavItem("Todos", "Index", "Todos", "fas fa-check"),
+                }),
+                new NavItem("Goals", "fas fa-bullseye", new List<NavItem>
+                {
+                    new NavItem("Goals", "Index", "Goals", "fas fa-bullseye"),
+                }),
+                new NavItem("Habits", "fas fa-arrows-spin", new List<NavItem>
+                {
+                    new NavItem("Habits", "Index", "Habits", "fas fa-arrows-spin"),
+                }),
                 new NavItem("Bucket list", "fas fa-tent", new List <NavItem>
                 {
                     new NavItem("BucketLists", "Index", "Bucket list", "fas fa-tent"),
                     new NavItem("BucketLists", "VisionBoard", "Vision board", "fas fa-chart-bar icon"),
                 }),
-                new NavItem("Quotes", "Index", "Quotes", "fas fa-quote-right")
+                new NavItem("Quotes", "fas fa-quote-right", new List<NavItem>
+                {
+                    new NavItem("Quotes", "Index", "Quotes", "fas fa-quote-right"),
+                }),
             };
 
             return View(list);
