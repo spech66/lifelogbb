@@ -47,6 +47,29 @@ namespace LifelogBb.Controllers
             return View(await PaginatedList<BucketList>.CreateAsync(items.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
+        // GET: BucketLists/Table/
+        public async Task<IActionResult> Table(string sortOrder, string currentFilter, string searchString, int? pageNumber)
+        {
+            ViewData["CurrentSort"] = sortOrder;
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+            var items = from s in _context.BucketLists select s;
+            items = items.SortByName(sortOrder, $"{nameof(BucketList.CreatedAt)}_desc");
+
+            int pageSize = Config.GetConfig(_context).BucketListPageSize;
+            return View(await PaginatedList<BucketList>.CreateAsync(items.AsNoTracking(), pageNumber ?? 1, pageSize));
+        }
+
         // GET: /BucketLists/GetImage/2
         public async Task<IActionResult> GetImage(long? id)
         {

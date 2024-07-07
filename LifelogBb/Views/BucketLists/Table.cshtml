@@ -1,0 +1,86 @@
+﻿@using LifelogBb.Utilities;
+@model PaginatedList<LifelogBb.Models.Entities.BucketList>
+
+@{
+    ViewData["Title"] = "Bucket list";
+    ViewData["PrimaryAction"] = "create";
+    ViewData["SecondaryAction"] = "vision";
+}
+
+<div class="container-xl">
+    <div class="row row-cards">
+        <div class="col-12">
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter text-nowrap datatable">
+                        <thead>
+                            <tr>
+                                <th class="w-1">
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "CreatedAt")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")">Date</a>
+                                </th>
+                                <th>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Title")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Title")">Title</a>
+                                </th>
+                                <th>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Status")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Status")">Status</a>
+                                </th>
+                                <th>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Category")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Category")">Category</a>
+                                </th>
+                                <th>
+                                    Tags
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <th scope="row">
+                                        <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
+                                    </th>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Title)
+                                    </td>
+                                    <td>
+                                        @if (item.Status == LifelogBb.Models.Entities.BucketListStatus.Reached)
+                                        {
+                                            <span class="badge text-bg-success">@Html.DisplayFor(modelItem => item.Status)</span>
+                                        }
+                                        else if (item.Status == LifelogBb.Models.Entities.BucketListStatus.InProgress)
+                                        {
+                                            <span class="badge text-bg-warning">@Html.DisplayFor(modelItem => item.Status)</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge text-bg-azure">@Html.DisplayFor(modelItem => item.Status)</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Category, "Category")
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Tags, "Tags")
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="dropdown">
+                                            <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                                <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer d-flex align-items-center">
+                    @await Component.InvokeAsync("Pagination", Model)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
