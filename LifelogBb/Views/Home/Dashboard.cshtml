@@ -47,8 +47,9 @@
                         <div class="row align-items-center">
                             <div class="col-auto"><span class="bg-primary text-white avatar"><i class="fa-solid fa-weight-scale icon icon-tabler icon-tabler-weight"></i></span></div>
                             <div class="col">
-                                <div class="font-weight-medium">Weight</div>
-                                <div class="text-muted">MINI CHART</div>
+                                <div class="text-muted">
+                                    <div id="weightChart"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -193,3 +194,59 @@
         </div> -->
     </div>
 </div>
+
+@section Scripts
+    {
+    <script src="~/lib/tabler/core/dist/libs/apexcharts/dist/apexcharts.min.js"></script>
+    <script type="text/javascript">
+
+        var weightChartOptions = {
+            chart: {
+                sparkline: {
+                    enabled: true
+                },
+                type: 'line',
+                height: 40,
+            },
+            stroke: {
+                curve: 'smooth'
+            },
+            colors: ["#4c79b3"],
+            xaxis: {
+                type: "datetime",
+            },
+            tooltip: {
+                fixed: {
+                    enabled: false
+                },
+                x: {
+                    show: false
+                },
+                y: {
+                    title: {
+                        formatter: function (seriesName) {
+                            return ''
+                        }
+                    }
+                },
+                marker: {
+                    show: false
+                }
+            },
+            series: [{
+                name: 'weight',
+                data: [
+                    @if(Model.WeightList != null && Model.WeightList.Count > 0) {
+                        @foreach (var item in Model.WeightList)
+                        {
+                            <text>{ x: new Date(@item.CreatedAt.Year, @item.CreatedAt.Month, @item.CreatedAt.Day, @item.CreatedAt.Hour, @item.CreatedAt.Minute), y: @item.BodyWeight.ToString().Replace(',', '.') },</text>
+                        }
+                    }
+                ]
+            }],
+        }
+
+        var weightChart = new ApexCharts(document.querySelector(`#weightChart`), weightChartOptions);
+        weightChart.render();
+    </script>
+}
