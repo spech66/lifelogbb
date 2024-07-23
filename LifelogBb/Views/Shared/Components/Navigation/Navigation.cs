@@ -52,8 +52,8 @@ namespace LifelogBb.Views.Shared.Components.Navigation
                 new NavItem("Bucket list", "fas fa-tent", new List <NavItem>
                 {
                     new NavItem("BucketLists", "Index", "Bucket list", "fas fa-tent"),
-                    new NavItem("BucketLists", "Table", "Table", "fas fa-table"),
                     new NavItem("BucketLists", "VisionBoard", "Vision board", "fas fa-chart-bar icon"),
+                    new NavItem("BucketLists", "Table", "Table", "fas fa-table"),
                 }),
                 new NavItem("Quotes", "fas fa-quote-right", new List<NavItem>
                 {
