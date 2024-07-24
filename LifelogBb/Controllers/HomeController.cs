@@ -129,25 +129,5 @@ namespace LifelogBb.Controllers
             }
             model.HabitList = model.HabitList.OrderBy(o => o.StartDate).Take(10).ToList();
         }
-
-        /*private Quote RandomQuote()
-        {
-            Quote[] quotes =
-            {
-                new Quote { Text = "Success is the product of daily habits - not once-in-a-lifetime transformations.", Cite = "James Clear" },
-                new Quote { Text = "Whoever is happy will make others happy too.", Cite = "Anne Frank" },
-                new Quote { Text = "You only live once, but if you do it right, once is enough.", Cite = "Mae West" },
-                new Quote { Text = "Twenty years from now you will be more disappointed by the things that you didn't do than by the ones you did do.", Cite = "Mark Twain" },
-                new Quote { Text = "The greatest glory in living lies not in never falling, but in rising every time we fall.", Cite = "Nelson Mandela" },
-                new Quote { Text = "A Year From Now You Will Wish You Had Started Today.", Cite = "Karen Lamb" },
-                new Quote { Text = "Are you living your life or just waiting to die?", Cite = "Steve Aoki" },
-                new Quote { Text = "There's a sunrise and a sunset every single day, and they're absolutely free. Don't miss so many of them.", Cite = "Jo Walton" },
-                new Quote { Text = "You don't always need a plan. Sometimes you just need to breathe, trust, let go, and see what happens.", Cite = "Mandy Hale" },
-                new Quote { Text = "Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment.", Cite = "Buddha" },
-            };
-            var random = new Random();
-            int index = random.Next(quotes.Count());
-            return quotes[index];
-        }*/
     }
 }
