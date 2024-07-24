@@ -25,13 +25,10 @@
         @foreach (var item in Model)
         {
             <div class="col-sm-6 col-lg-4">
-                <div class="card card-sm text-bg-dark h-100">
+                <div class="card card-sm h-100">
                     @if (item.ImageName != null)
                     {
                         <a asp-action="Details" asp-route-id="@item.Id" class="d-block"><img src="@Url.Action("GetImage", "BucketLists", new { id = item.Id })" class="card-img-top" alt="@Html.DisplayFor(modelItem => item.Title)" /></a>
-                    } else
-                    {
-                        <a asp-action="Details" asp-route-id="@item.Id" class="d-block"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="card-img-top"></svg></a>
                     }
                     <div class="card-body">
                         <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
@@ -60,7 +57,7 @@
                         </p>
                     </div>
                     <div class="card-footer">
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                        <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id"><i class="fas fa-list-alt icon"></i>Details</a>
                     </div>
                 </div>
             </div>
