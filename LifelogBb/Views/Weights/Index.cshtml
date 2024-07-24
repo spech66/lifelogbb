@@ -36,7 +36,7 @@
 
 <div class="container-xl">
     <div class="row row-cards">
-        @if (Model.Count > 0 && Model.Last().BodyWeight > double.Parse(ViewData["WeightWarning"].ToString()))
+        @if (Model.Count > 0 && Model.PageIndex == 1 && Model.First().BodyWeight > double.Parse(ViewData["WeightWarning"].ToString()))
         {
             <div class="col-12">
                 <div class="alert alert-warning alert-dismissible">
