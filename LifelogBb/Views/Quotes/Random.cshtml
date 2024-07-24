@@ -1,0 +1,31 @@
+﻿@using LifelogBb.Utilities;
+@model LifelogBb.Models.Entities.Quote
+
+@{
+    ViewData["Title"] = "Random Quote";
+    ViewData["PrimaryAction"] = "create";
+}
+
+<div class="container-xl">
+    <div class="row row-cards">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div>
+                        <blockquote class="blockquote">
+                            <p>@Model.Text</p>
+                            <footer class="blockquote-footer"><cite>@Model.Author</cite></footer>
+                        </blockquote>
+                    </div>
+                    <div class="ms-auto">
+                        @Html.DisplayFor(modelItem => Model.Category, "Category")
+                        @Html.DisplayFor(modelItem => Model.Tags, "Tags")
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a asp-action="Details" asp-route-id="@Model.Id">Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

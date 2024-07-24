@@ -42,6 +42,37 @@ namespace LifelogBb.Controllers
             return View(await PaginatedList<Quote>.CreateAsync(quotes.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
+        // GET: Quotes/Table/
+        public async Task<IActionResult> Table(string sortOrder, string currentFilter, string searchString, int? pageNumber)
+        {
+            ViewData["CurrentSort"] = sortOrder;
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+            var quotes = from s in _context.Quotes select s;
+            quotes = quotes.SortByName(sortOrder, $"{nameof(Quote.CreatedAt)}_desc");
+
+            int pageSize = 20;
+            return View(await PaginatedList<Quote>.CreateAsync(quotes.AsNoTracking(), pageNumber ?? 1, pageSize));
+        }
+
+        // GET: Quotes/Random/
+        public async Task<IActionResult> Random()
+        {
+            var quotes = from s in _context.Quotes select s;
+            var randomQuote = await quotes.OrderBy(r => EF.Functions.Random()).Take(1).FirstOrDefaultAsync();
+            return View(randomQuote);
+        }
+
         // GET: Quotes/Details/5
         public async Task<IActionResult> Details(long? id)
         {

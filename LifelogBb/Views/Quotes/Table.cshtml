@@ -1,0 +1,74 @@
+﻿@using LifelogBb.Utilities;
+@model PaginatedList<LifelogBb.Models.Entities.Quote>
+
+@{
+    ViewData["Title"] = "Quotes";
+    ViewData["PrimaryAction"] = "create";
+}
+
+<div class="container-xl">
+    <div class="row row-cards">
+        <div class="col-12">
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter text-nowrap datatable">
+                        <thead>
+                            <tr>
+                                <th class="w-1">
+                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "CreatedAt")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")">Date</a>
+                                </th>
+                                <th>
+                                    Text
+                                </th>
+                                <th>
+                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Author")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Author")">Author</a>
+                                </th>
+                                <th>
+                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Category")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Category")">Category</a>
+                                </th>
+                                <th>
+                                    Tags
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <th scope="row">
+                                        <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
+                                    </th>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Text)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Author)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Category, "Category")
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Tags, "Tags")
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="dropdown">
+                                            <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                                <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer d-flex align-items-center">
+                    @await Component.InvokeAsync("Pagination", Model)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

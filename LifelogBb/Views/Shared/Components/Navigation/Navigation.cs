@@ -58,6 +58,8 @@ namespace LifelogBb.Views.Shared.Components.Navigation
                 new NavItem("Quotes", "fas fa-quote-right", new List<NavItem>
                 {
                     new NavItem("Quotes", "Index", "Quotes", "fas fa-quote-right"),
+                    new NavItem("Quotes", "Random", "Random", "fas fa-shuffle"),
+                    new NavItem("Quotes", "Table", "Table", "fas fa-table"),
                 }),
             };
 

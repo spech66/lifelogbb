@@ -23,17 +23,18 @@ ToDos and Features for LifelogBB.
 
 ### In Progress :construction:
 
-- [ ] Dedicated views and filters (as primary view, keep table as overview for everything)
- - [Tasks/Todos](https://tabler.io/preview) List: Progress
- - [Todos/Tasks](https://preview.tabler.io/tasks.html#) Kanban: Upcoming today, next 7 days, ...
- - Habits: Timeline
- - [Journal date grid](https://github.com/usememos/memos)
- - Weights
- - Goals
- - Bucket list
- - Strength training
- - Endurance workout
- - Quotes
+Dedicated views and filters (as primary view, keep table as overview for everything)
+
+- [ ] [Tasks/Todos](https://tabler.io/preview) List: Progress
+- [ ] [Todos/Tasks](https://preview.tabler.io/tasks.html#) Kanban: Upcoming today, next 7 days, ...
+- [ ] Habits: Timeline
+- [ ] [Journal date grid](https://github.com/usememos/memos)
+- [ ] Weights
+- [ ] Goals
+- [ ] Bucket list
+- [ ] Strength training
+- [ ] Endurance workout
+- [x] Quotes
 
 ### Done :heavy_check_mark:
 

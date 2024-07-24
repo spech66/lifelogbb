@@ -7,65 +7,48 @@
 }
 
 <div class="container-xl">
-    <div class="row row-cards">
-        <div class="col-12">
+    <div class="row row-cards mb-3">
+        <div class="col">
             <div class="card">
-                <div class="table-responsive">
-                    <table class="table card-table table-vcenter text-nowrap datatable">
-                        <thead>
-                            <tr>
-                                <th class="w-1">
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "CreatedAt")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")">Date</a>
-                                </th>
-                                <th>
-                                    Text
-                                </th>
-                                <th>
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Author")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Author")">Author</a>
-                                </th>
-                                <th>
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Category")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Category")">Category</a>
-                                </th>
-                                <th>
-                                    Tags
-                                </th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <th scope="row">
-                                        <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
-                                    </th>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Text)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Author)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Category, "Category")
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Tags, "Tags")
-                                    </td>
-                                    <td class="text-end">
-                                        <div class="dropdown">
-                                            <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                                                <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                <div class="card-body">
+                    Sort by
+                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "CreatedAt")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")" style="display: inline">Date</a>,
+                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Text")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Text")" style="display: inline">Text</a>,
+                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Author")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Author")" style="display: inline">Author</a>,
+                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Status")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Status")" style="display: inline">Status</a>,
+                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Category")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Category")" style="display: inline">Category</a>.
                 </div>
-                <div class="card-footer d-flex align-items-center">
+            </div>
+        </div>
+    </div>
+    <div class="row row-cards">
+        @foreach (var item in Model)
+        {
+            <div class="col-sm-6 col-lg-4">
+                <div class="card card-sm h-100">
+                    <div class="card-body">
+                        <div>
+                            <blockquote class="blockquote">
+                                <p>@item.Text</p>
+                                <footer class="blockquote-footer"><cite>@item.Author</cite></footer>
+                            </blockquote>
+                        </div>
+                        <div class="ms-auto">
+                            @Html.DisplayFor(modelItem => item.Category, "Category")
+                            @Html.DisplayFor(modelItem => item.Tags, "Tags")
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row row-cards mt-3">
+        <div class="col">
+            <div class="card">
+                <div class="card-body d-flex align-items-center">
                     @await Component.InvokeAsync("Pagination", Model)
                 </div>
             </div>
