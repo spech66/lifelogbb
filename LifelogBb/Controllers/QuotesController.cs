@@ -70,6 +70,10 @@ namespace LifelogBb.Controllers
         {
             var quotes = from s in _context.Quotes select s;
             var randomQuote = await quotes.OrderBy(r => EF.Functions.Random()).Take(1).FirstOrDefaultAsync();
+            if(randomQuote == null)
+            {
+                return RedirectToAction("Index");
+            }
             return View(randomQuote);
         }
 
