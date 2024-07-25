@@ -45,9 +45,9 @@ namespace LifelogBb.Controllers
             habits = habits.SortByName(sortOrder, $"{nameof(Habit.CreatedAt)}_desc");
 
             var config = Config.GetConfig(_context);
-            int pageSize = 20;
             ViewData["FeedToken"] = config.FeedToken;
-            return View(await PaginatedList<Habit>.CreateAsync(habits.AsNoTracking(), pageNumber ?? 1, pageSize));
+            var list = await PaginatedList<Habit>.CreateAsync(habits.AsNoTracking(), pageNumber ?? 1, config.HabitPageSize);
+            return View(new PaginatedListViewModel<Habit>(list, config));
         }
 
         // GET: Habits/Details/5

@@ -1,5 +1,5 @@
 ﻿@using LifelogBb.Utilities;
-@model PaginatedList<LifelogBb.Models.Entities.EnduranceTraining>
+@model PaginatedListViewModel<LifelogBb.Models.Entities.EnduranceTraining>
 
 @{
     ViewData["Title"] = "Endurance Training";
@@ -43,7 +43,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model)
+                            @foreach (var item in Model.List)
                             {
                                 <tr>
                                     <th scope="row">
@@ -85,7 +85,7 @@
                     </table>
                 </div>
                 <div class="card-footer d-flex align-items-center">
-                    @await Component.InvokeAsync("Pagination", Model)
+                    @await Component.InvokeAsync("Pagination", Model.List)
                 </div>
             </div>
         </div>

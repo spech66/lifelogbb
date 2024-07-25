@@ -44,9 +44,9 @@ namespace LifelogBb.Controllers
             goals = goals.SortByName(sortOrder, $"{nameof(Goal.CreatedAt)}_desc");
 
             var config = Config.GetConfig(_context);
-            int pageSize = 20;
             ViewData["FeedToken"] = config.FeedToken;
-            return View(await PaginatedList<Goal>.CreateAsync(goals.AsNoTracking(), pageNumber ?? 1, pageSize));
+            var list = await PaginatedList<Goal>.CreateAsync(goals.AsNoTracking(), pageNumber ?? 1, config.GoalPageSize);
+            return View(new PaginatedListViewModel<Goal>(list, config));
         }
 
         // GET: Goals/Details/5

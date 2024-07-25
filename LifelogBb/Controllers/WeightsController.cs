@@ -40,11 +40,8 @@ namespace LifelogBb.Controllers
             weights = weights.SortByName(sortOrder, $"{nameof(Weight.CreatedAt)}_desc");
 
             var config = Config.GetConfig(_context);
-            int pageSize = config.WeightPageSize;
-            ViewData["UnitsType"] = config.UnitsType;
-            ViewData["WeightWarning"] = config.WeightWarning;
-            ViewData["WeightWarningText"] = config.WeightWarningText;
-            return View(await PaginatedList<Weight>.CreateAsync(weights.AsNoTracking(), pageNumber ?? 1, pageSize));
+            var list = await PaginatedList<Weight>.CreateAsync(weights.AsNoTracking(), pageNumber ?? 1, config.WeightPageSize);
+            return View(new PaginatedListViewModel<Weight>(list, config));
         }
 
         // GET: Weights/Graph

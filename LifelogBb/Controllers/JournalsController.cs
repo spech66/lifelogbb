@@ -38,8 +38,9 @@ namespace LifelogBb.Controllers
             var journals = from s in _context.Journals select s;
             journals = journals.SortByName(sortOrder, $"{nameof(Journal.CreatedAt)}_desc");
 
-            int pageSize = 20;
-            return View(await PaginatedList<Journal>.CreateAsync(journals.AsNoTracking(), pageNumber ?? 1, pageSize));
+            var config = Config.GetConfig(_context);
+            var list = await PaginatedList<Journal>.CreateAsync(journals.AsNoTracking(), pageNumber ?? 1, config.JournalPageSize);
+            return View(new PaginatedListViewModel<Journal>(list, config));
         }
 
         // GET: Journals/Details/5

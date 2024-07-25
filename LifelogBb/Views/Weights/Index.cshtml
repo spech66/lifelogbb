@@ -1,6 +1,6 @@
 ﻿@using LifelogBb.Models.Entities;
 @using LifelogBb.Utilities;
-@model PaginatedList<LifelogBb.Models.Entities.Weight>
+@model PaginatedListViewModel<LifelogBb.Models.Entities.Weight>
 
 @{
     ViewData["Title"] = "Weight";
@@ -36,14 +36,14 @@
 
 <div class="container-xl">
     <div class="row row-cards">
-        @if (Model.Count > 0 && Model.PageIndex == 1 && Model.First().BodyWeight > double.Parse(ViewData["WeightWarning"].ToString()))
+        @if (Model.List.Count > 0 && Model.List.PageIndex == 1 && Model.List.First().BodyWeight > Model.Config.WeightWarning)
         {
             <div class="col-12">
                 <div class="alert alert-warning alert-dismissible">
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     <div class="d-flex">
                         <div class="alert-message">
-                            <strong>Warning!</strong> @ViewData["WeightWarningText"]
+                            <strong>Warning!</strong> @Model.Config.WeightWarningText
                         </div>
                     </div>
                 </div>
@@ -83,17 +83,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model)
+                            @foreach (var item in Model.List)
                             {
                                 <tr>
                                     <th scope="row">
                                         <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
                                     </th>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.BodyWeight) @((Measurements?)ViewData["UnitsType"] == Measurements.Metric ? "kg" : "lb")
+                                        @Html.DisplayFor(modelItem => item.BodyWeight) @(Model.Config.UnitsType == Measurements.Metric ? "kg" : "lb")
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.Height) @((Measurements?)ViewData["UnitsType"] == Measurements.Metric ? "cm" : "in")
+                                        @Html.DisplayFor(modelItem => item.Height) @(Model.Config.UnitsType == Measurements.Metric ? "cm" : "in")
                                     </td>
                                     <td class="@GetBmiColorClass(item)">
                                         @Html.DisplayFor(modelItem => item.Bmi)
@@ -113,7 +113,7 @@
                     </table>
                 </div>
                 <div class="card-footer d-flex align-items-center">
-                    @await Component.InvokeAsync("Pagination", Model)
+                    @await Component.InvokeAsync("Pagination", Model.List)
                 </div>
             </div>
         </div>

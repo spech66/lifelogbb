@@ -38,8 +38,9 @@ namespace LifelogBb.Controllers
             var trainings = from s in _context.EnduranceTrainings select s;
             trainings = trainings.SortByName(sortOrder, $"{nameof(EnduranceTraining.CreatedAt)}_desc");
 
-            int pageSize = 20;
-            return View(await PaginatedList<EnduranceTraining>.CreateAsync(trainings.AsNoTracking(), pageNumber ?? 1, pageSize));
+            var config = Config.GetConfig(_context);
+            var list = await PaginatedList<EnduranceTraining>.CreateAsync(trainings.AsNoTracking(), pageNumber ?? 1, config.EnduranceTrainingPageSize);
+            return View(new PaginatedListViewModel<EnduranceTraining>(list, config));
         }
 
         // GET: EnduranceTrainings/Graph

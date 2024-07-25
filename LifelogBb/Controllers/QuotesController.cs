@@ -38,8 +38,9 @@ namespace LifelogBb.Controllers
             var quotes = from s in _context.Quotes select s;
             quotes = quotes.SortByName(sortOrder, $"{nameof(Quote.CreatedAt)}_desc");
 
-            int pageSize = 20;
-            return View(await PaginatedList<Quote>.CreateAsync(quotes.AsNoTracking(), pageNumber ?? 1, pageSize));
+            var config = Config.GetConfig(_context);
+            var list = await PaginatedList<Quote>.CreateAsync(quotes.AsNoTracking(), pageNumber ?? 1, config.QuotePageSize);
+            return View(new PaginatedListViewModel<Quote>(list, config));
         }
 
         // GET: Quotes/Table/
@@ -61,8 +62,9 @@ namespace LifelogBb.Controllers
             var quotes = from s in _context.Quotes select s;
             quotes = quotes.SortByName(sortOrder, $"{nameof(Quote.CreatedAt)}_desc");
 
-            int pageSize = 20;
-            return View(await PaginatedList<Quote>.CreateAsync(quotes.AsNoTracking(), pageNumber ?? 1, pageSize));
+            var config = Config.GetConfig(_context);
+            var list = await PaginatedList<Quote>.CreateAsync(quotes.AsNoTracking(), pageNumber ?? 1, config.QuotePageSize);
+            return View(new PaginatedListViewModel<Quote>(list, config));
         }
 
         // GET: Quotes/Random/

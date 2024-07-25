@@ -44,9 +44,9 @@ namespace LifelogBb.Controllers
             todos = todos.SortByName(sortOrder, $"{nameof(Todo.CreatedAt)}_desc");
 
             var config = Config.GetConfig(_context);
-            int pageSize = 20;
             ViewData["FeedToken"] = config.FeedToken;
-            return View(await PaginatedList<Todo>.CreateAsync(todos.AsNoTracking(), pageNumber ?? 1, pageSize));
+            var list = await PaginatedList<Todo>.CreateAsync(todos.AsNoTracking(), pageNumber ?? 1, config.TodoPageSize);
+            return View(new PaginatedListViewModel<Todo>(list, config));
         }
 
         // GET: Todos/Details/5
