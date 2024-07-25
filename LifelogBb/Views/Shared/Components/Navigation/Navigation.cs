@@ -17,6 +17,7 @@ namespace LifelogBb.Views.Shared.Components.Navigation
             {
                 new NavItem("Home", "Index", "Home", "fas fa-home"),
                 new NavItem("Home", "Dashboard", "Dashboard", "fa-solid fa-chalkboard"),
+                new NavItem("Home", "Calendar", "Calendar", "fas fa-calendar-day"),
                 new NavItem("Weight", "fas fa-weight-scale", new List<NavItem>
                 {
                     new NavItem("Weights", "Index", "Weight", "fas fa-weight-scale"),

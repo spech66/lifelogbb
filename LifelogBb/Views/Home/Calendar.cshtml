@@ -1,0 +1,41 @@
+﻿@model LifelogBb.Models.Home.HomeCalendarViewModel
+
+@{
+    ViewData["Title"] = "Calendar";
+}
+
+
+<!--
+Buttons for the next 7 days.
+Datepicker.
+
+List of Events in the day we start time and end.
+Show gaps in between.
+Blocks of 30min.
+Use cards for events.
+-->
+
+<div class="container-xl">
+    <table>
+        @for (var timeSegment = DateTime.Now.Date; timeSegment < DateTime.Now.AddDays(1).Date.AddTicks(-1); timeSegment = timeSegment.AddHours(1))
+        {
+            <tr>
+                <td>@timeSegment.ToString("HH:mm")</td>
+                <td>
+                    @foreach (var eventItem in Model.Activities)
+                    {
+                        if (eventItem.Date != null && eventItem.Date.Value.Date == timeSegment.Date && eventItem.Date.Value.Hour == timeSegment.Hour)
+                        {
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">@eventItem.Type</h5>
+                                    <p class="card-text">@eventItem.Text</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+</div>

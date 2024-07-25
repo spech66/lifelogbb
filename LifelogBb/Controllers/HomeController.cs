@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Ical.Net;
+using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using LifelogBb.Models;
 using LifelogBb.Models.Entities;
@@ -64,6 +65,18 @@ namespace LifelogBb.Controllers
 
             var allHabits = await _context.Habits.Where(t => !t.IsCompleted && t.RecurrenceRules != null && t.RecurrenceRules != "" && t.StartDate != null && t.EndDate != null).ToListAsync();
             calculateHabits(model, allHabits);
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> Calendar()
+        {
+            var model = new HomeCalendarViewModel();
+
+            var journals = await _context.Journals.OrderByDescending(o => o.CreatedAt).Take(5).ToListAsync();
+            var activities = new List<HomeCalendarViewModelActivity>();
+            activities.AddRange(journals.ConvertAll(j => new HomeCalendarViewModelActivity { Type = "J", Text = j.Text.Length > 200 ? j.Text.Substring(0, 200) + "..." : j.Text, Date = j.CreatedAt }));
+            model.Activities = activities;
 
             return View(model);
         }
