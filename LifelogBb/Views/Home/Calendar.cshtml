@@ -1,7 +1,20 @@
-﻿@model LifelogBb.Models.Home.CalendarViewModel
+﻿@using LifelogBb.Utilities
+@model LifelogBb.Models.Home.CalendarViewModel
 
 @{
     ViewData["Title"] = "Calendar - " + Model.Date.ToShortDateString();
+}
+
+
+@functions {
+    public string GetCardColor(EntityType type)
+    {
+        return type switch
+        {
+            EntityType.Habit => "text-bg-danger",
+            _ => "text-bg-secondary"
+        };
+    }
 }
 
 <div class="container-xl">
@@ -9,14 +22,16 @@
         <div class="col">
             <div class="card">
                 <div class="card-body">
-                    <a asp-action="Calendar" asp-route-date="@DateTime.Now.Date.ToString("yyyy-MM-dd")" style="display: inline">@DateTime.Now.Date.ToShortDateString()</a>
+                    <a asp-action="Calendar" asp-route-date="@DateTime.Now.Date.ToString("yyyy-MM-dd")" style="display: inline">@DateTime.Now.Date.ToString("ddd dd.MM.yyyy")</a>
                     @for(int i = 1; i < 7; i++)
                     {
-                        <a asp-action="Calendar" asp-route-date="@DateTime.Now.AddDays(i).Date.ToString("yyyy-MM-dd")" style="display: inline">@DateTime.Now.AddDays(i).Date.ToShortDateString()</a>
+                        <span>-</span> <a asp-action="Calendar" asp-route-date="@DateTime.Now.AddDays(i).Date.ToString("yyyy-MM-dd")" style="display: inline">@DateTime.Now.AddDays(i).Date.ToString("ddd dd.MM.yyyy")</a>
                     }
                     <form asp-action="Calendar">
-                        <input type="date" name="date" />
-                        <input type="submit" value="Go" />
+                        <div class="input-group mb-2">
+                            <input type="date" class="form-control" name="date" value="@Model.Date.ToString("yyyy-MM-dd")">
+                            <button class="btn" type="submit">Go</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -37,15 +52,16 @@
                                         if (eventItem.StartDate != null && eventItem.StartDate.Value.Hour == timeSegment.Hour)
                                         {
                                             <div class="card mb-2">
+                                                <div class="card-status-start @GetCardColor(eventItem.Type)"></div>
                                                 <div class="card-body">
-                                                    <h5 class="card-title">@eventItem.Type</h5>
-                                                    <h6 class="card-subtitle mb-2 text-muted">
+                                                    <h5 class="card-title mb-2">
                                                         @eventItem.StartDate.Value.ToString("HH:mm")
                                                         @if(eventItem.EndDate != null)
                                                         {
                                                             <span>- @eventItem.EndDate.Value.ToString("HH:mm")</span>
                                                         }
-                                                    </h6>
+                                                        <!-- @eventItem.Type -->
+                                                    </h5>
                                                     <p class="card-text">@eventItem.Text</p>
                                                 </div>
                                             </div>
