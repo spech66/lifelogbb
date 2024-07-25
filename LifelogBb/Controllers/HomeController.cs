@@ -84,6 +84,14 @@ namespace LifelogBb.Controllers
             var habits = calculateHabits(allHabits, forDay, forDay.AddDays(1).Date.AddTicks(-1));
             model.Events.AddRange(habits.ConvertAll(h => new CalendarViewModelEvent { Type = EntityType.Habit, Text = h.Name, StartDate = h.StartDate, EndDate = h.EndDate }).OrderBy(s => s.StartDate));
 
+            // Add Due date for todos on forDay (Set start date and end date to due date to show as block)
+            var todos = await _context.Todos.Where(t => !t.IsCompleted && t.DueDate != null && t.DueDate.Value.Date == forDay).ToListAsync();
+            model.Events.AddRange(todos.ConvertAll(t => new CalendarViewModelEvent { Type = EntityType.Todo, Text = t.Title, StartDate = t.DueDate.Value, EndDate = t.DueDate.Value }));
+
+            // Add End date for goals on forDay (Set start date to end date to show as block)
+            var goals = await _context.Goals.Where(t => !t.IsCompleted && t.EndDate != null && t.EndDate.Value.Date == forDay).ToListAsync();
+            model.Events.AddRange(goals.ConvertAll(g => new CalendarViewModelEvent { Type = EntityType.Goal, Text = g.Name, StartDate = g.EndDate.Value, EndDate = g.EndDate.Value }));
+
             return View(model);
         }
 

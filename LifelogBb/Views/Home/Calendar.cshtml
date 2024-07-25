@@ -11,7 +11,9 @@
     {
         return type switch
         {
-            EntityType.Habit => "text-bg-danger",
+            EntityType.Habit => "text-bg-info",
+            EntityType.Todo => "text-bg-danger",
+            EntityType.Goal => "text-bg-warning",
             _ => "text-bg-secondary"
         };
     }
@@ -41,7 +43,7 @@
         <div class="col">
             <div class="card">
                 <div class="card-body">
-                    <table border="0" cellpadding="0" cellspacing="0">
+                    <table class="table">
                         @for (var timeSegment = DateTime.Now.Date; timeSegment < DateTime.Now.AddDays(1).Date.AddTicks(-1); timeSegment = timeSegment.AddHours(1))
                         {
                             <tr>

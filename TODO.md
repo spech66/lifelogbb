@@ -39,6 +39,7 @@ Dedicated views and filters (as primary view, keep table as overview for everyth
 ### Done :heavy_check_mark:
 
 - [x] Dashboard
+- [x] Calendar
 - [x] [iCal](https://github.com/rianjs/ical.net) feed
   - VTODO for Goals/Todos
   - VEVENT for Habits (Time Boxing/Blocking)
