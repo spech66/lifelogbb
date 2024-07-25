@@ -52,16 +52,18 @@ namespace LifelogBb.Models
             modelBuilder.Entity<Config>().Property(b => b.StartOfWeek).HasDefaultValue(DayOfWeek.Monday);
             modelBuilder.Entity<Config>().Property(b => b.UnitsType).HasDefaultValue(Measurements.Metric);
             modelBuilder.Entity<Config>().Property(b => b.BucketListPageSize).HasDefaultValue(12);
-            /*modelBuilder.Entity<Config>().Property(b => b.EnduranceTrainingPageSize).HasDefaultValue(20);
+            modelBuilder.Entity<Config>().Property(b => b.EnduranceTrainingPageSize).HasDefaultValue(20);
             modelBuilder.Entity<Config>().Property(b => b.GoalPageSize).HasDefaultValue(20);
             modelBuilder.Entity<Config>().Property(b => b.HabitPageSize).HasDefaultValue(20);
             modelBuilder.Entity<Config>().Property(b => b.JournalPageSize).HasDefaultValue(20);
             modelBuilder.Entity<Config>().Property(b => b.QuotePageSize).HasDefaultValue(20);
             modelBuilder.Entity<Config>().Property(b => b.StrengthTrainingPageSize).HasDefaultValue(20);
-            modelBuilder.Entity<Config>().Property(b => b.TodoPageSize).HasDefaultValue(20);*/
+            modelBuilder.Entity<Config>().Property(b => b.TodoPageSize).HasDefaultValue(20);
             modelBuilder.Entity<Config>().Property(b => b.WeightPageSize).HasDefaultValue(20);
             modelBuilder.Entity<Config>().Property(b => b.FeedToken).HasDefaultValue("ChangeMeInTheConfig");
             modelBuilder.Entity<Config>().Property(b => b.FeedTimeZone).HasDefaultValue("Europe/Berlin");
+            modelBuilder.Entity<Config>().Property(b => b.WeightWarningText).HasDefaultValue("You are gaining weight!");
+            modelBuilder.Entity<Config>().Property(b => b.WeightWarning).HasDefaultValue(1.0);
         }
 
         public void BeginTransaction()

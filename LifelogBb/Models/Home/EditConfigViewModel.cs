@@ -12,8 +12,6 @@ namespace LifelogBb.Models.Home
 
         public int BucketListPageSize { get; set; }
 
-        /*public int EnduranceTrainingPageSize { get; set; }
-
         public int GoalPageSize { get; set; }
 
         public int HabitPageSize { get; set; }
@@ -24,7 +22,9 @@ namespace LifelogBb.Models.Home
 
         public int StrengthTrainingPageSize { get; set; }
 
-        public int TodoPageSize { get; set; }*/
+        public int EnduranceTrainingPageSize { get; set; }
+
+        public int TodoPageSize { get; set; }
 
         public int WeightPageSize { get; set; }
 

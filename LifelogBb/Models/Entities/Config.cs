@@ -21,19 +21,19 @@ namespace LifelogBb.Models.Entities
 
         public int BucketListPageSize { get; set; } = 12;
 
-        /*public int EnduranceTrainingPageSize { get; set; }
+        public int GoalPageSize { get; set; } = 20;
 
-        public int GoalPageSize { get; set; }
+        public int HabitPageSize { get; set; } = 20;
 
-        public int HabitPageSize { get; set; }
+        public int JournalPageSize { get; set; } = 20;
 
-        public int JournalPageSize { get; set; }
+        public int QuotePageSize { get; set; } = 20;
 
-        public int QuotePageSize { get; set; }
+        public int StrengthTrainingPageSize { get; set; } = 20;
 
-        public int StrengthTrainingPageSize { get; set; }
+        public int EnduranceTrainingPageSize { get; set; } = 20;
 
-        public int TodoPageSize { get; set; }*/
+        public int TodoPageSize { get; set; } = 20;
 
         public int WeightPageSize { get; set; } = 20;
 
