@@ -37,7 +37,7 @@ namespace LifelogBb.Controllers
 
         public async Task<IActionResult> Dashboard()
         {
-            var model = new IndexDashboardViewModel();
+            var model = new HomeDashboardViewModel();
 
             var weights = await _context.Weights.OrderByDescending(o => o.CreatedAt).Take(10).ToListAsync();
             model.WeightList = weights.OrderBy(o => o.CreatedAt).ToList();
@@ -55,8 +55,8 @@ namespace LifelogBb.Controllers
             model.RandomQuote = randomQuote;
 
             var journals = await _context.Journals.OrderByDescending(o => o.CreatedAt).Take(5).ToListAsync();
-            var activities = new List<IndexDashboardViewModelActivity>();
-            activities.AddRange(journals.ConvertAll(j => new IndexDashboardViewModelActivity { Type = "J", Text = j.Text.Length > 200 ? j.Text.Substring(0, 200) + "..." : j.Text, Date = j.CreatedAt }));
+            var activities = new List<HomeDashboardViewModelActivity>();
+            activities.AddRange(journals.ConvertAll(j => new HomeDashboardViewModelActivity { Type = "J", Text = j.Text.Length > 200 ? j.Text.Substring(0, 200) + "..." : j.Text, Date = j.CreatedAt }));
             model.Activities = activities;
 
             model.TodoList = await _context.Todos.Where(t => !t.IsCompleted).OrderByDescending(o => o.DueDate).ThenByDescending(o => o.IsImportant).Take(10).ToListAsync();
@@ -113,7 +113,7 @@ namespace LifelogBb.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private static void calculateHabits(IndexDashboardViewModel model, List<Habit> allHabits)
+        private static void calculateHabits(HomeDashboardViewModel model, List<Habit> allHabits)
         {
             model.HabitList = new List<Habit>();
             foreach (var habit in allHabits)

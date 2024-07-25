@@ -2,7 +2,7 @@
 
 namespace LifelogBb.Models.Home
 {
-    public class IndexDashboardViewModelActivity
+    public class HomeDashboardViewModelActivity
     {
         public string Type { get; set; } = string.Empty;
 
@@ -11,7 +11,7 @@ namespace LifelogBb.Models.Home
         public DateTime? Date { get; set; }
     }
 
-    public class IndexDashboardViewModel
+    public class HomeDashboardViewModel
     {
         public List<Weight>? WeightList { get; set; }
 
@@ -29,6 +29,6 @@ namespace LifelogBb.Models.Home
 
         public List<Habit>? HabitList { get; set; }
 
-        public List<IndexDashboardViewModelActivity>? Activities { get; set; }
+        public List<HomeDashboardViewModelActivity>? Activities { get; set; }
     }
 }

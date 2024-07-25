@@ -43,8 +43,9 @@ namespace LifelogBb.Controllers
             var items = from s in _context.BucketLists select s;
             items = items.SortByName(sortOrder, $"{nameof(BucketList.CreatedAt)}_desc");
 
-            int pageSize = Config.GetConfig(_context).BucketListPageSize;
-            return View(await PaginatedList<BucketList>.CreateAsync(items.AsNoTracking(), pageNumber ?? 1, pageSize));
+            var config = Config.GetConfig(_context);
+            var list = await PaginatedList<BucketList>.CreateAsync(items.AsNoTracking(), pageNumber ?? 1, config.BucketListPageSize);
+            return View(new PaginatedListViewModel<BucketList>(list, config));
         }
 
         // GET: BucketLists/Table/
@@ -66,8 +67,9 @@ namespace LifelogBb.Controllers
             var items = from s in _context.BucketLists select s;
             items = items.SortByName(sortOrder, $"{nameof(BucketList.CreatedAt)}_desc");
 
-            int pageSize = Config.GetConfig(_context).BucketListPageSize;
-            return View(await PaginatedList<BucketList>.CreateAsync(items.AsNoTracking(), pageNumber ?? 1, pageSize));
+            var config = Config.GetConfig(_context);
+            var list = await PaginatedList<BucketList>.CreateAsync(items.AsNoTracking(), pageNumber ?? 1, config.BucketListPageSize);
+            return View(new PaginatedListViewModel<BucketList>(list, config));
         }
 
         // GET: /BucketLists/GetImage/2
