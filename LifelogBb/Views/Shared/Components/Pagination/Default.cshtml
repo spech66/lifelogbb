@@ -7,6 +7,9 @@
     var minPage = Model.PageIndex < 5 ? 1 : Model.PageIndex - 4;
     var maxPage = minPage + 8 > Model.TotalPages ? Model.TotalPages : minPage + 8;
     var pageSelects = Enumerable.Range(1, Model.TotalPages).Select(x => new { Value = x, Text = x });
+
+    var controller = ViewContext.RouteData.Values["Controller"];
+    var action = ViewContext.RouteData.Values["Action"];
 }
 
 @if (Model.TotalItems > 0)
@@ -23,7 +26,7 @@ else
 }
 <ul class="pagination m-0 ms-auto d-none d-sm-flex">
     <li class="page-item">
-        <a asp-action="Index"
+        <a asp-action="@action"
            asp-route-sortOrder="@ViewData["CurrentSort"]"
            asp-route-pageNumber="@(Model.PageIndex - 1)"
            asp-route-currentFilter="@ViewData["CurrentFilter"]"
@@ -35,7 +38,7 @@ else
     @for (int i = minPage; i <= maxPage; i++)
     {
         <li class="page-item">
-            <a asp-action="Index"
+            <a asp-action="@action"
            asp-route-sortOrder="@ViewData["CurrentSort"]"
            asp-route-pageNumber="@(i)"
            asp-route-currentFilter="@ViewData["CurrentFilter"]"
@@ -45,7 +48,7 @@ else
         </li>
     }
     <li class="page-item">
-        <a asp-action="Index"
+        <a asp-action="@action"
            asp-route-sortOrder="@ViewData["CurrentSort"]"
            asp-route-pageNumber="@(Model.PageIndex + 1)"
            asp-route-currentFilter="@ViewData["CurrentFilter"]"
@@ -59,6 +62,6 @@ else
     <select id="pageListSelect"
             class="form-control"
             asp-items="@(new SelectList(pageSelects, "Value", "Text", Model.PageIndex))"
-            onchange="location.href='/Weights/?pageNumber='+this.options[this.selectedIndex].value">
+            onchange="location.href='/@controller/@action/?pageNumber='+this.options[this.selectedIndex].value">
     </select>
 </p>
