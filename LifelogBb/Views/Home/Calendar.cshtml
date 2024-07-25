@@ -1,41 +1,62 @@
-﻿@model LifelogBb.Models.Home.HomeCalendarViewModel
+﻿@model LifelogBb.Models.Home.CalendarViewModel
 
 @{
-    ViewData["Title"] = "Calendar";
+    ViewData["Title"] = "Calendar - " + Model.Date.ToShortDateString();
 }
 
-
-<!--
-Buttons for the next 7 days.
-Datepicker.
-
-List of Events in the day we start time and end.
-Show gaps in between.
-Blocks of 30min.
-Use cards for events.
--->
-
 <div class="container-xl">
-    <table>
-        @for (var timeSegment = DateTime.Now.Date; timeSegment < DateTime.Now.AddDays(1).Date.AddTicks(-1); timeSegment = timeSegment.AddHours(1))
-        {
-            <tr>
-                <td>@timeSegment.ToString("HH:mm")</td>
-                <td>
-                    @foreach (var eventItem in Model.Activities)
+    <div class="row row-cards mb-3">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <a asp-action="Calendar" asp-route-date="@DateTime.Now.Date.ToString("yyyy-MM-dd")" style="display: inline">@DateTime.Now.Date.ToShortDateString()</a>
+                    @for(int i = 1; i < 7; i++)
                     {
-                        if (eventItem.Date != null && eventItem.Date.Value.Date == timeSegment.Date && eventItem.Date.Value.Hour == timeSegment.Hour)
-                        {
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">@eventItem.Type</h5>
-                                    <p class="card-text">@eventItem.Text</p>
-                                </div>
-                            </div>
-                        }
+                        <a asp-action="Calendar" asp-route-date="@DateTime.Now.AddDays(i).Date.ToString("yyyy-MM-dd")" style="display: inline">@DateTime.Now.AddDays(i).Date.ToShortDateString()</a>
                     }
-                </td>
-            </tr>
-        }
-    </table>
+                    <form asp-action="Calendar">
+                        <input type="date" name="date" />
+                        <input type="submit" value="Go" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row row-cards">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <table border="0" cellpadding="0" cellspacing="0">
+                        @for (var timeSegment = DateTime.Now.Date; timeSegment < DateTime.Now.AddDays(1).Date.AddTicks(-1); timeSegment = timeSegment.AddHours(1))
+                        {
+                            <tr>
+                                <td valign="top" style="padding-right: 8px">@timeSegment.ToString("HH:mm")</td>
+                                <td>
+                                    @foreach (var eventItem in Model.Events)
+                                    {
+                                        if (eventItem.StartDate != null && eventItem.StartDate.Value.Hour == timeSegment.Hour)
+                                        {
+                                            <div class="card mb-2">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">@eventItem.Type</h5>
+                                                    <h6 class="card-subtitle mb-2 text-muted">
+                                                        @eventItem.StartDate.Value.ToString("HH:mm")
+                                                        @if(eventItem.EndDate != null)
+                                                        {
+                                                            <span>- @eventItem.EndDate.Value.ToString("HH:mm")</span>
+                                                        }
+                                                    </h6>
+                                                    <p class="card-text">@eventItem.Text</p>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

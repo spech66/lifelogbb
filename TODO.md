@@ -31,9 +31,9 @@ Dedicated views and filters (as primary view, keep table as overview for everyth
 - [ ] [Journal date grid](https://github.com/usememos/memos)
 - [ ] Weights
 - [ ] Goals
-- [ ] Bucket list
 - [ ] Strength training
 - [ ] Endurance workout
+- [x] Bucket list
 - [x] Quotes
 
 ### Done :heavy_check_mark:

@@ -37,7 +37,7 @@ namespace LifelogBb.Controllers
 
         public async Task<IActionResult> Dashboard()
         {
-            var model = new HomeDashboardViewModel();
+            var model = new DashboardViewModel();
 
             var weights = await _context.Weights.OrderByDescending(o => o.CreatedAt).Take(10).ToListAsync();
             model.WeightList = weights.OrderBy(o => o.CreatedAt).ToList();
@@ -55,8 +55,8 @@ namespace LifelogBb.Controllers
             model.RandomQuote = randomQuote;
 
             var journals = await _context.Journals.OrderByDescending(o => o.CreatedAt).Take(5).ToListAsync();
-            var activities = new List<HomeDashboardViewModelActivity>();
-            activities.AddRange(journals.ConvertAll(j => new HomeDashboardViewModelActivity { Type = "J", Text = j.Text.Length > 200 ? j.Text.Substring(0, 200) + "..." : j.Text, Date = j.CreatedAt }));
+            var activities = new List<DashboardViewModelActivity>();
+            activities.AddRange(journals.ConvertAll(j => new DashboardViewModelActivity { Type = EntityType.Journal, Text = j.Text.Length > 200 ? j.Text.Substring(0, 200) + "..." : j.Text, Date = j.CreatedAt }));
             model.Activities = activities;
 
             model.TodoList = await _context.Todos.Where(t => !t.IsCompleted).OrderByDescending(o => o.DueDate).ThenByDescending(o => o.IsImportant).Take(10).ToListAsync();
@@ -64,19 +64,25 @@ namespace LifelogBb.Controllers
             model.GoalList = await _context.Goals.Where(t => !t.IsCompleted).OrderByDescending(o => o.EndDate).ThenByDescending(o => o.StartDate).Take(10).ToListAsync();
 
             var allHabits = await _context.Habits.Where(t => !t.IsCompleted && t.RecurrenceRules != null && t.RecurrenceRules != "" && t.StartDate != null && t.EndDate != null).ToListAsync();
-            calculateHabits(model, allHabits);
+            model.HabitList = calculateHabits(allHabits, DateTime.Now, DateTime.Now.AddDays(7));
 
             return View(model);
         }
 
-        public async Task<IActionResult> Calendar()
+        public async Task<IActionResult> Calendar(DateTime? date)
         {
-            var model = new HomeCalendarViewModel();
+            var model = new CalendarViewModel();
+
+            var forDay = date != null ? date.Value.Date : DateTime.Now.Date;
+            model.Date = forDay;
 
             var journals = await _context.Journals.OrderByDescending(o => o.CreatedAt).Take(5).ToListAsync();
-            var activities = new List<HomeCalendarViewModelActivity>();
-            activities.AddRange(journals.ConvertAll(j => new HomeCalendarViewModelActivity { Type = "J", Text = j.Text.Length > 200 ? j.Text.Substring(0, 200) + "..." : j.Text, Date = j.CreatedAt }));
-            model.Activities = activities;
+            var activities = new List<CalendarViewModelEvent>();
+            model.Events = activities;
+
+            var allHabits = await _context.Habits.Where(t => !t.IsCompleted && t.RecurrenceRules != null && t.RecurrenceRules != "" && t.StartDate != null && t.EndDate != null).ToListAsync();
+            var habits = calculateHabits(allHabits, forDay, forDay.AddDays(1).Date.AddTicks(-1));
+            model.Events.AddRange(habits.ConvertAll(h => new CalendarViewModelEvent { Type = EntityType.Habit, Text = h.Name, StartDate = h.StartDate, EndDate = h.EndDate }).OrderBy(s => s.StartDate));
 
             return View(model);
         }
@@ -113,9 +119,9 @@ namespace LifelogBb.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private static void calculateHabits(HomeDashboardViewModel model, List<Habit> allHabits)
+        private static List<Habit> calculateHabits(List<Habit> allHabits, DateTime startDate, DateTime endDate)
         {
-            model.HabitList = new List<Habit>();
+            var habitList = new List<Habit>();
             foreach (var habit in allHabits)
             {
                 var calendar = new Ical.Net.Calendar();
@@ -127,9 +133,9 @@ namespace LifelogBb.Controllers
                     Description = habit.Description,
                     RecurrenceRules = new List<RecurrencePattern> { new RecurrencePattern(habit.RecurrenceRules) }
                 });
-                calendar.GetOccurrences(DateTime.Now, DateTime.Now.AddDays(7)).ToList().ForEach(o =>
+                calendar.GetOccurrences(startDate, endDate).ToList().ForEach(o =>
                 {
-                    model.HabitList.Add(new Habit
+                    habitList.Add(new Habit
                     {
                         Name = habit.Name,
                         Description = habit.Description,
@@ -140,7 +146,8 @@ namespace LifelogBb.Controllers
                     });
                 });
             }
-            model.HabitList = model.HabitList.OrderBy(o => o.StartDate).Take(10).ToList();
+
+            return habitList.OrderBy(o => o.StartDate).Take(10).ToList();
         }
     }
 }

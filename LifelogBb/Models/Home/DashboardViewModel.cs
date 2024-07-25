@@ -1,17 +1,18 @@
 ﻿using LifelogBb.Models.Entities;
+using LifelogBb.Utilities;
 
 namespace LifelogBb.Models.Home
 {
-    public class HomeDashboardViewModelActivity
+    public class DashboardViewModelActivity
     {
-        public string Type { get; set; } = string.Empty;
+        public EntityType Type { get; set; } = EntityType.Unknown;
 
         public string Text { get; set; } = string.Empty;
 
         public DateTime? Date { get; set; }
     }
 
-    public class HomeDashboardViewModel
+    public class DashboardViewModel
     {
         public List<Weight>? WeightList { get; set; }
 
@@ -29,6 +30,6 @@ namespace LifelogBb.Models.Home
 
         public List<Habit>? HabitList { get; set; }
 
-        public List<HomeDashboardViewModelActivity>? Activities { get; set; }
+        public List<DashboardViewModelActivity>? Activities { get; set; }
     }
 }

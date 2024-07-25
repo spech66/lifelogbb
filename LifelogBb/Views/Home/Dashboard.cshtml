@@ -1,4 +1,4 @@
-﻿@model LifelogBb.Models.Home.HomeDashboardViewModel
+﻿@model LifelogBb.Models.Home.DashboardViewModel
 
 @{
     ViewData["Title"] = "Dashboard";
@@ -100,7 +100,7 @@
                                 <div>
                                     <div class="row">
                                         <div class="col-auto">
-                                            <span class="avatar">@item.Type</span>
+                                            <span class="avatar">@item.Type.ToString().Substring(1, 1)</span>
                                         </div>
                                         <div class="col">
                                             <div class="text-truncate">
