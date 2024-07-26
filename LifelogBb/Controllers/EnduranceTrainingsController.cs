@@ -80,8 +80,10 @@ namespace LifelogBb.Controllers
         }
 
         // GET: EnduranceTrainings/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var exercises = await _context.EnduranceTrainings.Select(s => s.Exercise).Distinct().ToListAsync();
+            ViewData["ExerciseList"] = string.Join(",", exercises);
             return View();
         }
 
@@ -97,6 +99,9 @@ namespace LifelogBb.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            var exercises = await _context.EnduranceTrainings.Select(s => s.Exercise).Distinct().ToListAsync();
+            ViewData["ExerciseList"] = string.Join(",", exercises);
             return View(enduranceTraining);
         }
 
