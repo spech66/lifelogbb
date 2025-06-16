@@ -38,9 +38,9 @@ namespace LifelogBb.Utilities
             var prop = query.ElementType.GetProperty(field);
             if (prop == null) { return query; }
 
-            if (prop.GetType() != typeof(string)) { return query; }
+            if (prop.PropertyType != typeof(string)) { return query; }
 
-            return query.Where(e => EF.Property<string>(e, field).Contains(""));
+            return query.Where(e => EF.Property<string>(e, field).Contains(searchString));
         }
 
         public static IQueryable<T> FilterByDoubleProps<T>(this IQueryable<T> query, string field, string searchString, double range)
