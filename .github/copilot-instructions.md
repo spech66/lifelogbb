@@ -2,13 +2,13 @@
 
 ## Project Overview
 
-LifelogBB is a self-hosted, single-user life tracking application built with **ASP.NET Core 7** and **SQLite**. It provides tracking for weight, journal, strength/endurance training, todos, goals, habits, bucket list, quotes, and more. All data is stored in a single SQLite file for portability.
+LifelogBB is a self-hosted, single-user life tracking application built with **ASP.NET Core** and **SQLite**. It provides tracking for weight, journal, strength/endurance training, todos, goals, habits, bucket list, quotes, and more. All data is stored in a single SQLite file for portability.
 
 ## Technology Stack
 
-- **Framework:** ASP.NET Core 7 (MVC + Web API)
-- **Database:** SQLite via Entity Framework Core 7
-- **ORM Mapping:** AutoMapper 12
+- **Framework:** ASP.NET Core (MVC + Web API)
+- **Database:** SQLite via Entity Framework Core
+- **ORM Mapping:** AutoMapper
 - **Authentication:** Cookie (web UI) + JWT Bearer (API), unified via a policy scheme
 - **UI:** Razor Views with [Tabler](https://tabler.io/) frontend
 - **API Docs:** Swagger / OpenAPI (Swashbuckle)
@@ -178,7 +178,7 @@ When adding a new entity, follow these steps in order:
 
 ## Code Style Guidelines
 
-- Use **C# 11 / .NET 7** features where appropriate (nullable reference types are enabled).
+- Use **C#** / **.NET** features where appropriate (nullable reference types are enabled).
 - Follow the existing naming conventions:
   - Entities: `PascalCase` singular (e.g., `StrengthTraining`)
   - Controllers / Services: `PascalCase` plural + suffix (e.g., `StrengthTrainingsApiController`, `StrengthTrainingsService`)
