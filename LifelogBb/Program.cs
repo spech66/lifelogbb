@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using System.Text;
-using AutoMapper;
+using LifelogBb.DTOs;
 using LifelogBb.Interfaces;
 using LifelogBb.ApiServices;
 using LifelogBb.ApiRepositories;
 using LifelogBb.Models;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Microsoft.AspNetCore.HttpOverrides;
 
 namespace LifelogBb
@@ -34,26 +34,15 @@ namespace LifelogBb
                 option.SwaggerDoc("v1", new OpenApiInfo { Title = "LifelogBb API", Version = "v1" });
                 option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    In = ParameterLocation.Header,
-                    Description = "Please enter the JWT.",
-                    Name = "Authorization",
                     Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
                     BearerFormat = "JWT",
-                    Scheme = "Bearer"
+                    Description = "JWT Authorization header using the Bearer scheme."
                 });
-                option.AddSecurityRequirement(new OpenApiSecurityRequirement
+                // Swashbuckle v10+ / Microsoft.OpenApi v2: pass document to OpenApiSecuritySchemeReference so it resolves against the defined scheme
+                option.AddSecurityRequirement(document => new OpenApiSecurityRequirement
                 {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type=ReferenceType.SecurityScheme,
-                                Id="Bearer"
-                            }
-                        },
-                        new string[]{}
-                    }
+                    [new OpenApiSecuritySchemeReference("Bearer", document)] = []
                 });
             }); // Swagger
 
@@ -63,7 +52,8 @@ namespace LifelogBb
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             });
 
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            // AutoMapper v16+: scan the entire assembly for all Profile subclasses
+            services.AddAutoMapper(cfg => { }, typeof(Program));
 
             // Add all Repositories
             services.AddScoped(typeof(IRepository<>), typeof(EntityRepository<>));
