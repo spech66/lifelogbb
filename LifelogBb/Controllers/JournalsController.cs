@@ -59,7 +59,7 @@ namespace LifelogBb.Controllers
             ViewData["CurrentFilter"] = searchString;
 
             var journals = from s in _context.Journals select s;
-            journals = journals.SortByName(sortOrder, $"{nameof(Journal.CreatedAt)}_desc");
+            journals = journals.SortByName(sortOrder, $"{nameof(Journal.Date)}_desc");
 
             var config = Config.GetConfig(_context);
             var list = await PaginatedList<Journal>.CreateAsync(journals.AsNoTracking(), pageNumber ?? 1, config.JournalPageSize);
@@ -133,7 +133,7 @@ namespace LifelogBb.Controllers
         // POST: Journals/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Text,Category,Tags,Id")] EditJournalViewModel journalViewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Text,Category,Tags,Id,Date")] EditJournalViewModel journalViewModel)
         {
             if (id != journalViewModel.Id)
             {
