@@ -26,8 +26,7 @@ ToDos and Features for LifelogBB.
 
 Dedicated views and filters (as primary view, keep table as overview for everything)
 
-- [ ] [Tasks/Todos](https://tabler.io/preview) List: Progress
-- [ ] [Todos/Tasks](https://preview.tabler.io/tasks.html#) Kanban: Upcoming today, next 7 days, ...
+- [x] Todos
 - [x] Habits
 - [x] Journal date grid
 - [x] Weights

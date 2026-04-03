@@ -25,9 +25,36 @@ namespace LifelogBb.Controllers
         }
 
         // GET: Todos
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var now = DateTime.Now;
+            var weekEnd = now.AddDays(7);
+
+            var allActive = await _context.Todos
+                .Where(t => !t.IsCompleted)
+                .OrderByDescending(t => t.IsImportant)
+                .ThenBy(t => t.DueDate == null)
+                .ThenBy(t => t.DueDate)
+                .ToListAsync();
+
+            var recentDone = await _context.Todos
+                .Where(t => t.IsCompleted)
+                .OrderByDescending(t => t.Completed ?? t.UpdatedAt)
+                .Take(10)
+                .ToListAsync();
+
+            var model = new TodoIndexViewModel
+            {
+                TotalActive = allActive.Count,
+                OverdueCount = allActive.Count(t => t.DueDate.HasValue && t.DueDate < now),
+                DueThisWeekCount = allActive.Count(t => t.DueDate.HasValue && t.DueDate >= now && t.DueDate <= weekEnd),
+                CompletedCount = await _context.Todos.CountAsync(t => t.IsCompleted),
+                TodoItems = allActive.Where(t => t.Progress == 0).ToList(),
+                InProgressItems = allActive.Where(t => t.Progress > 0).ToList(),
+                DoneItems = recentDone
+            };
+
+            return View(model);
         }
 
         // GET: Todos/Table

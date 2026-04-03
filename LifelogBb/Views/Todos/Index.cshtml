@@ -1,15 +1,255 @@
+@model LifelogBb.Models.Todos.TodoIndexViewModel
+
 @{
     ViewData["Title"] = "ToDos";
     ViewData["PrimaryAction"] = "create";
     ViewData["SecondaryAction"] = "feed";
+
+    var now = DateTime.Now;
+
+    (string badgeClass, string label) DueBadge(LifelogBb.Models.Entities.Todo t)
+    {
+        if (!t.DueDate.HasValue) return ("", "");
+        var days = (t.DueDate.Value.Date - now.Date).TotalDays;
+        if (days < 0)  return ("bg-red-lt text-red",    $"Overdue {-(int)days}d");
+        if (days == 0) return ("bg-orange-lt text-orange", "Due today");
+        if (days <= 7) return ("bg-yellow-lt text-yellow", $"Due in {(int)days}d");
+        return ("bg-muted-lt text-muted", t.DueDate.Value.ToString("yyyy-MM-dd"));
+    }
 }
 
 <div class="container-xl">
-    <div class="row row-cards">
-        <div class="col-12">
-            <div class="card">
+    <!-- Stat bar -->
+    <div class="row row-deck row-cards mb-3">
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
                 <div class="card-body">
-                    ToDos
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="bg-primary text-white avatar"><i class="fa-solid fa-check-square"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Active</div>
+                            <div class="text-muted"><strong>@Model.TotalActive</strong> open</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="@(Model.OverdueCount > 0 ? "bg-red" : "bg-muted") text-white avatar">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                            </span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Overdue</div>
+                            <div class="@(Model.OverdueCount > 0 ? "text-red" : "text-muted")">
+                                <strong>@Model.OverdueCount</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="@(Model.DueThisWeekCount > 0 ? "bg-yellow" : "bg-muted") text-white avatar">
+                                <i class="fa-solid fa-clock"></i>
+                            </span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Due this week</div>
+                            <div class="@(Model.DueThisWeekCount > 0 ? "text-yellow" : "text-muted")">
+                                <strong>@Model.DueThisWeekCount</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="bg-green text-white avatar"><i class="fa-solid fa-check-double"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Completed</div>
+                            <div class="text-muted"><strong>@Model.CompletedCount</strong> total</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kanban board -->
+    <div class="row row-deck align-items-start">
+
+        <!-- Lane: Todo -->
+        <div class="col-12 col-md-4 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge bg-secondary me-2">@Model.TodoItems.Count</span>
+                    <h3 class="card-title d-inline">Todo</h3>
+                </div>
+                <div class="card-body p-2 d-flex flex-column gap-2 overflow-auto" style="max-height: 70vh;">
+                    @if (Model.TodoItems.Count == 0)
+                    {
+                        <div class="text-muted text-center py-3 small">Nothing here yet.</div>
+                    }
+                    @foreach (var item in Model.TodoItems)
+                    {
+                        var due = DueBadge(item);
+                        <div class="card card-sm mb-0 @(item.DueDate.HasValue && item.DueDate < now ? "border-red" : "")">
+                            <div class="card-body p-2">
+                                <div class="d-flex align-items-start gap-1 mb-1">
+                                    @if (item.IsImportant)
+                                    {
+                                        <i class="fa-solid fa-star text-yellow mt-1 flex-shrink-0" title="Important"></i>
+                                    }
+                                    <a asp-action="Details" asp-route-id="@item.Id"
+                                       class="fw-medium text-reset flex-grow-1 lh-sm">@item.Title</a>
+                                </div>
+                                @if (!string.IsNullOrWhiteSpace(item.Description))
+                                {
+                                    <p class="text-muted small mb-1" style="font-size:0.78rem;">@item.Description</p>
+                                }
+                                <div class="d-flex flex-wrap align-items-center gap-1 mt-1">
+                                    @if (due.label != "")
+                                    {
+                                        <span class="badge @due.badgeClass">@due.label</span>
+                                    }
+                                    @Html.DisplayFor(m => item.Category, "Category")
+                                    @Html.DisplayFor(m => item.Tags, "Tags")
+                                </div>
+                            </div>
+                            <div class="card-footer p-1 d-flex justify-content-end gap-1">
+                                <a asp-action="Edit" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-ghost-secondary py-0">
+                                    <i class="fa-solid fa-pen fa-xs"></i>
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-ghost-secondary py-0">
+                                    <i class="fa-solid fa-arrow-right fa-xs"></i>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="card-footer p-2">
+                    <a asp-action="Create" class="btn btn-sm btn-outline-secondary w-100">
+                        <i class="fa-solid fa-plus me-1"></i>Add todo
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lane: In Progress -->
+        <div class="col-12 col-md-4 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge bg-primary me-2">@Model.InProgressItems.Count</span>
+                    <h3 class="card-title d-inline">In Progress</h3>
+                </div>
+                <div class="card-body p-2 d-flex flex-column gap-2 overflow-auto" style="max-height: 70vh;">
+                    @if (Model.InProgressItems.Count == 0)
+                    {
+                        <div class="text-muted text-center py-3 small">No items in progress.</div>
+                    }
+                    @foreach (var item in Model.InProgressItems)
+                    {
+                        var due = DueBadge(item);
+                        <div class="card card-sm mb-0 @(item.DueDate.HasValue && item.DueDate < now ? "border-red" : "")">
+                            <div class="card-body p-2">
+                                <div class="d-flex align-items-start gap-1 mb-1">
+                                    @if (item.IsImportant)
+                                    {
+                                        <i class="fa-solid fa-star text-yellow mt-1 flex-shrink-0" title="Important"></i>
+                                    }
+                                    <a asp-action="Details" asp-route-id="@item.Id"
+                                       class="fw-medium text-reset flex-grow-1 lh-sm">@item.Title</a>
+                                    <span class="text-muted small flex-shrink-0 ms-1">@item.Progress%</span>
+                                </div>
+                                <div class="progress mb-2" style="height: 5px;">
+                                    <div class="progress-bar @(item.Progress >= 100 ? "bg-green" : "bg-primary")"
+                                         style="width: @item.Progress%"></div>
+                                </div>
+                                @if (!string.IsNullOrWhiteSpace(item.Description))
+                                {
+                                    <p class="text-muted small mb-1" style="font-size:0.78rem;">@item.Description</p>
+                                }
+                                <div class="d-flex flex-wrap align-items-center gap-1 mt-1">
+                                    @if (due.label != "")
+                                    {
+                                        <span class="badge @due.badgeClass">@due.label</span>
+                                    }
+                                    @Html.DisplayFor(m => item.Category, "Category")
+                                    @Html.DisplayFor(m => item.Tags, "Tags")
+                                </div>
+                            </div>
+                            <div class="card-footer p-1 d-flex justify-content-end gap-1">
+                                <a asp-action="Edit" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-ghost-secondary py-0">
+                                    <i class="fa-solid fa-pen fa-xs"></i>
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-ghost-secondary py-0">
+                                    <i class="fa-solid fa-arrow-right fa-xs"></i>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Lane: Done -->
+        <div class="col-12 col-md-4 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge bg-success me-2">@Model.CompletedCount</span>
+                    <h3 class="card-title d-inline">Done</h3>
+                    <span class="ms-auto text-muted small">(last 10)</span>
+                </div>
+                <div class="card-body p-2 d-flex flex-column gap-2 overflow-auto" style="max-height: 70vh;">
+                    @if (Model.DoneItems.Count == 0)
+                    {
+                        <div class="text-muted text-center py-3 small">Nothing completed yet.</div>
+                    }
+                    @foreach (var item in Model.DoneItems)
+                    {
+                        <div class="card card-sm mb-0 opacity-75">
+                            <div class="card-body p-2">
+                                <div class="d-flex align-items-start gap-1 mb-1">
+                                    <i class="fa-solid fa-circle-check text-green mt-1 flex-shrink-0"></i>
+                                    <a asp-action="Details" asp-route-id="@item.Id"
+                                       class="text-reset flex-grow-1 lh-sm" style="text-decoration: line-through;">@item.Title</a>
+                                </div>
+                                @if (item.Completed.HasValue)
+                                {
+                                    <div class="text-muted" style="font-size: 0.75rem;">
+                                        <i class="fa-solid fa-check fa-xs me-1"></i>@item.Completed.Value.ToString("yyyy-MM-dd")
+                                    </div>
+                                }
+                                <div class="d-flex flex-wrap align-items-center gap-1 mt-1">
+                                    @Html.DisplayFor(m => item.Category, "Category")
+                                    @Html.DisplayFor(m => item.Tags, "Tags")
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="card-footer p-2">
+                    <a asp-action="Table" class="btn btn-sm btn-outline-secondary w-100">View all</a>
                 </div>
             </div>
         </div>
