@@ -135,16 +135,18 @@ namespace LifelogBb.Controllers
                 var calendar = new Ical.Net.Calendar();
                 calendar.Events.Add(new Ical.Net.CalendarComponents.CalendarEvent
                 {
-                    DtStart = new CalDateTime(habit.StartDate.Value),
-                    DtEnd = new CalDateTime(habit.EndDate.Value),
+                    DtStart = new CalDateTime(DateTime.SpecifyKind(habit.StartDate.Value, DateTimeKind.Unspecified)),
+                    DtEnd = new CalDateTime(DateTime.SpecifyKind(habit.EndDate.Value, DateTimeKind.Unspecified)),
                     Summary = habit.Name,
                     Description = habit.Description,
                     // Ical.Net 5: RecurrencePattern constructor no longer accepts the "RRULE:" prefix
                     RecurrenceRules = new List<RecurrencePattern> { new RecurrencePattern(RecurrenceRuleHelper.Normalize(habit.RecurrenceRules)) }
                 });
+                var calStartDate = new CalDateTime(DateTime.SpecifyKind(startDate, DateTimeKind.Unspecified));
+                var calEndDate = new CalDateTime(DateTime.SpecifyKind(endDate, DateTimeKind.Unspecified));
                 // Ical.Net 5: GetOccurrences(CalDateTime?, EvaluationOptions?) — filter end date manually
-                calendar.GetOccurrences(new CalDateTime(startDate))
-                    .TakeWhile(o => o.Period.StartTime <= new CalDateTime(endDate))
+                calendar.GetOccurrences(calStartDate)
+                    .TakeWhile(o => o.Period.StartTime <= calEndDate)
                     .ToList().ForEach(o =>
                 {
                     habitList.Add(new Habit
@@ -152,7 +154,7 @@ namespace LifelogBb.Controllers
                         Name = habit.Name,
                         Description = habit.Description,
                         StartDate = o.Period.StartTime.Value,
-                        EndDate = o.Period.EndTime.Value,
+                        EndDate = (o.Period.EndTime ?? o.Period.StartTime).Value, // Use StartTime if EndTime is null (for all-day events)
                         RecurrenceRules = habit.RecurrenceRules,
                         IsCompleted = habit.IsCompleted
                     });
