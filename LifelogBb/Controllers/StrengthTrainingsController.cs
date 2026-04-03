@@ -20,9 +20,36 @@ namespace LifelogBb.Controllers
         }
 
         // GET: StrengthTrainings
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var all = await _context.StrengthTrainings
+                .OrderByDescending(s => s.CreatedAt)
+                .ToListAsync();
+
+            var personalRecords = all
+                .GroupBy(s => s.Exercise)
+                .Select(g => new StrengthTrainingPersonalRecord
+                {
+                    Exercise = g.Key,
+                    MaxWeight = g.Max(s => s.Weight),
+                    MaxReps = g.Max(s => s.Reps),
+                    MaxVolume = g.Max(s => s.Reps * s.Weight),
+                    TotalSessions = g.Count()
+                })
+                .OrderBy(r => r.Exercise)
+                .ToList();
+
+            var model = new StrengthTrainingIndexViewModel
+            {
+                TotalSessions = all.Count,
+                UniqueExerciseCount = personalRecords.Count,
+                TotalVolume = all.Sum(s => s.Reps * s.Weight),
+                LastSession = all.FirstOrDefault(),
+                PersonalRecords = personalRecords,
+                RecentSessions = all.Take(5).ToList()
+            };
+
+            return View(model);
         }
 
         // GET: StrengthTrainings/Table

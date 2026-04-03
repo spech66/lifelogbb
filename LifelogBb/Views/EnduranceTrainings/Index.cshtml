@@ -1,17 +1,194 @@
+@model LifelogBb.Models.EnduranceTrainings.EnduranceTrainingIndexViewModel
+
 @{
     ViewData["Title"] = "Endurance Training";
     ViewData["PrimaryAction"] = "create";
     ViewData["SecondaryAction"] = "graph";
+
+    string FormatPace(double? pace)
+    {
+        if (pace == null) return "—";
+        var mins = (int)pace;
+        var secs = (int)Math.Round((pace.Value - mins) * 60);
+        return $"{mins}:{secs:D2} min/km";
+    }
+
+    string FormatDuration(TimeSpan? ts)
+    {
+        if (ts == null) return "—";
+        return ts.Value.ToString(@"hh\:mm\:ss");
+    }
 }
 
 <div class="container-xl">
-    <div class="row row-cards">
-        <div class="col-12">
-            <div class="card">
+    <!-- Stat cards -->
+    <div class="row row-deck row-cards mb-3">
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
                 <div class="card-body">
-                    Endurance Training
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="bg-primary text-white avatar"><i class="fa-solid fa-person-running"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Total Sessions</div>
+                            <div class="text-muted"><strong>@Model.TotalSessions</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="bg-primary text-white avatar"><i class="fa-solid fa-route"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Total Distance</div>
+                            <div class="text-muted"><strong>@Model.TotalDistance.ToString("N1")</strong> km</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="bg-primary text-white avatar"><i class="fa-solid fa-list-check"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Activities</div>
+                            <div class="text-muted"><strong>@Model.UniqueExerciseCount</strong> unique</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="bg-primary text-white avatar"><i class="fa-solid fa-calendar-day"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Last Session</div>
+                            <div class="text-muted">
+                                @if (Model.LastSession != null)
+                                {
+                                    <a asp-action="Details" asp-route-id="@Model.LastSession.Id">@Model.LastSession.CreatedAt.ToString("yyyy-MM-dd")</a>
+                                }
+                                else
+                                {
+                                    <span>—</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    @if (Model.TotalSessions == 0)
+    {
+        <div class="row row-cards mb-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center text-muted py-5">
+                        No sessions logged yet. <a asp-action="Create">Add your first session</a>.
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Personal Records per activity -->
+        <div class="row row-cards mb-3">
+            @foreach (var pr in Model.PersonalRecords)
+            {
+                <div class="col-sm-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-header border-0">
+                            <h3 class="card-title">
+                                <a asp-action="Graph" asp-route-exercise="@pr.Exercise" class="text-reset">@pr.Exercise</a>
+                            </h3>
+                            <div class="card-options text-muted small">@pr.TotalSessions sessions</div>
+                        </div>
+                        <div class="card-body pt-0">
+                            <div class="row g-2 text-center">
+                                <div class="col-4">
+                                    <div class="text-muted small">Best Distance</div>
+                                    <div class="fw-bold">@pr.BestDistance.ToString("0.##") km</div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="text-muted small">Best Pace</div>
+                                    <div class="fw-bold">@FormatPace(pr.BestPace)</div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="text-muted small">Total Distance</div>
+                                    <div class="fw-bold">@pr.TotalDistance.ToString("N1") km</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a asp-action="Graph" asp-route-exercise="@pr.Exercise" class="btn btn-sm btn-outline-primary w-100">
+                                <i class="fa-solid fa-chart-line me-1"></i>View Graph
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Recent sessions -->
+        <div class="row row-cards">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header border-0">
+                        <h3 class="card-title">Recent Sessions</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table card-table table-vcenter text-nowrap">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Exercise</th>
+                                    <th>Distance</th>
+                                    <th>Duration</th>
+                                    <th>Speed</th>
+                                    <th>Rating</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var s in Model.RecentSessions)
+                                {
+                                    <tr>
+                                        <td><a asp-action="Details" asp-route-id="@s.Id">@s.CreatedAt.ToString("yyyy-MM-dd")</a></td>
+                                        <td><a asp-action="Graph" asp-route-exercise="@s.Exercise">@s.Exercise</a></td>
+                                        <td>@s.Distance.ToString("0.##") km</td>
+                                        <td>@FormatDuration(s.Duration)</td>
+                                        <td>
+                                            @(s.Duration.HasValue && s.Duration.Value.TotalHours > 0
+                                                ? (s.Distance / s.Duration.Value.TotalHours).ToString("0.00") + " km/h"
+                                                : "—")
+                                        </td>
+                                        <td>@Html.DisplayFor(m => s.Rating, "Rating")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-action="Table" class="btn btn-sm btn-outline-secondary w-100">View all sessions</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>

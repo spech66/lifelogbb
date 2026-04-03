@@ -20,9 +20,43 @@ namespace LifelogBb.Controllers
         }
 
         // GET: EnduranceTrainings
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var all = await _context.EnduranceTrainings
+                .OrderByDescending(e => e.CreatedAt)
+                .ToListAsync();
+
+            var personalRecords = all
+                .GroupBy(e => e.Exercise)
+                .Select(g =>
+                {
+                    var paces = g
+                        .Where(e => e.Duration.HasValue && e.Distance > 0)
+                        .Select(e => e.Duration!.Value.TotalMinutes / e.Distance)
+                        .ToList();
+                    return new EnduranceTrainingPersonalRecord
+                    {
+                        Exercise = g.Key,
+                        BestDistance = g.Max(e => e.Distance),
+                        BestPace = paces.Any() ? paces.Min() : (double?)null,
+                        TotalSessions = g.Count(),
+                        TotalDistance = g.Sum(e => e.Distance)
+                    };
+                })
+                .OrderBy(r => r.Exercise)
+                .ToList();
+
+            var model = new EnduranceTrainingIndexViewModel
+            {
+                TotalSessions = all.Count,
+                UniqueExerciseCount = personalRecords.Count,
+                TotalDistance = all.Sum(e => e.Distance),
+                LastSession = all.FirstOrDefault(),
+                PersonalRecords = personalRecords,
+                RecentSessions = all.Take(5).ToList()
+            };
+
+            return View(model);
         }
 
         // GET: EnduranceTrainings/Table
