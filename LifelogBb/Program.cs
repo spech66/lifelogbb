@@ -34,17 +34,15 @@ namespace LifelogBb
                 option.SwaggerDoc("v1", new OpenApiInfo { Title = "LifelogBb API", Version = "v1" });
                 option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    In = ParameterLocation.Header,
-                    Description = "Please enter the JWT.",
-                    Name = "Authorization",
                     Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
                     BearerFormat = "JWT",
-                    Scheme = "Bearer"
+                    Description = "JWT Authorization header using the Bearer scheme."
                 });
-                // Swashbuckle v10+ / Microsoft.OpenApi v2: use Func overload with OpenApiSecuritySchemeReference key
-                option.AddSecurityRequirement(_ => new OpenApiSecurityRequirement
+                // Swashbuckle v10+ / Microsoft.OpenApi v2: pass document to OpenApiSecuritySchemeReference so it resolves against the defined scheme
+                option.AddSecurityRequirement(document => new OpenApiSecurityRequirement
                 {
-                    { new OpenApiSecuritySchemeReference("Bearer"), new List<string>() }
+                    [new OpenApiSecuritySchemeReference("Bearer", document)] = []
                 });
             }); // Swagger
 
