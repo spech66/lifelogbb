@@ -57,10 +57,11 @@
       ]
     },
     {
-      "library": "fabric.js@5.2.4",
+      "provider": "unpkg",
+      "library": "fabric@6.0.2",
       "destination": "wwwroot/lib/fabricjs/",
       "files": [
-        "fabric.min.js"
+        "dist/index.min.js"
       ]
     },
     {
