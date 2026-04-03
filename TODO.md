@@ -4,14 +4,10 @@ ToDos and Features for LifelogBB.
 
 ### Todo
 
-- [ ] Daily view with all modules
-- [ ] Weekly view with all modules
-- [ ] Monthly view with all modules
-- [ ] Yearly view with all modules
-- [ ] Life timeline (Description @places/context #tags), Ranges, Dates, ...
 - [ ] Text search in all tables (e.g. in Journal, ...)
 - [ ] ChatGPT (LLaMA, ... ?) [integration](https://www.nuget.org/packages/Azure.AI.OpenAI/)
 - [ ] Habits - Track habits
+- [ ] Strength training plan: Allow creating plans and show them as fast selection in the strength training module, keep free exercise selection as well
 - [ ] iCal Alarms
 - [ ] [Globalization and localization](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization?view=aspnetcore-6.0)
 
@@ -24,17 +20,12 @@ ToDos and Features for LifelogBB.
 
 ### In Progress :construction:
 
-Dedicated views and filters (as primary view, keep table as overview for everything)
-
-- [x] Todos
-- [x] Habits
-- [x] Journal date grid
-- [x] Weights
-- [x] Goals
-- [x] Strength training
-- [x] Endurance workout
-- [x] Bucket list
-- [x] Quotes
+- [ ] Rework Dashboard
+- [ ] Daily view with all modules
+- [ ] Weekly view with all modules
+- [ ] Monthly view with all modules
+- [ ] Yearly view with all modules
+- [ ] Life timeline (Description @places/context #tags), Ranges, Dates, ...
 
 ### Done :heavy_check_mark:
 
