@@ -149,7 +149,7 @@
                                             @if (!string.IsNullOrWhiteSpace(habit.RecurrenceRules))
                                             {
                                                 <span class="badge bg-blue-lt text-blue small font-monospace">
-                                                    <i class="fa-solid fa-rotate me-1"></i>@habit.RecurrenceRules
+                                                    <i class="fa-solid fa-rotate me-1"></i><span class="rrule">@habit.RecurrenceRules</span>
                                                 </span>
                                             }
                                         </div>
@@ -279,3 +279,9 @@
         }
     }
 </div>
+
+@section Scripts
+{
+    <script src="~/lib/rrule/dist/es5/rrule.min.js"></script>
+    <script src="~/js/rrulereplacer.js"></script>
+}
