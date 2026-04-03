@@ -141,7 +141,10 @@ namespace LifelogBb.Controllers
                     Description = habit.Description,
                     RecurrenceRules = new List<RecurrencePattern> { new RecurrencePattern(habit.RecurrenceRules) }
                 });
-                calendar.GetOccurrences(startDate, endDate).ToList().ForEach(o =>
+                // Ical.Net 5: GetOccurrences(CalDateTime?, EvaluationOptions?) — filter end date manually
+                calendar.GetOccurrences(new CalDateTime(startDate))
+                    .TakeWhile(o => o.Period.StartTime <= new CalDateTime(endDate))
+                    .ToList().ForEach(o =>
                 {
                     habitList.Add(new Habit
                     {

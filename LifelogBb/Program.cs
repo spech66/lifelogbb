@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using System.Text;
-using AutoMapper;
+using LifelogBb.DTOs;
 using LifelogBb.Interfaces;
 using LifelogBb.ApiServices;
 using LifelogBb.ApiRepositories;
 using LifelogBb.Models;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Microsoft.AspNetCore.HttpOverrides;
 
 namespace LifelogBb
@@ -41,19 +41,10 @@ namespace LifelogBb
                     BearerFormat = "JWT",
                     Scheme = "Bearer"
                 });
-                option.AddSecurityRequirement(new OpenApiSecurityRequirement
+                // Swashbuckle v10+ / Microsoft.OpenApi v2: use Func overload with OpenApiSecuritySchemeReference key
+                option.AddSecurityRequirement(_ => new OpenApiSecurityRequirement
                 {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type=ReferenceType.SecurityScheme,
-                                Id="Bearer"
-                            }
-                        },
-                        new string[]{}
-                    }
+                    { new OpenApiSecuritySchemeReference("Bearer"), new List<string>() }
                 });
             }); // Swagger
 
@@ -63,7 +54,12 @@ namespace LifelogBb
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             });
 
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            // AutoMapper v16+: register all profiles explicitly
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.AddProfile<LifelogBb.DTOs.AutoMapperProfile>();
+                cfg.AddProfile<LifelogBb.Models.AutoMapperProfile>();
+            });
 
             // Add all Repositories
             services.AddScoped(typeof(IRepository<>), typeof(EntityRepository<>));

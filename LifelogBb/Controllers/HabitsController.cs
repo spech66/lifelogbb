@@ -218,9 +218,11 @@ namespace LifelogBb.Controllers
                     Summary = habit.Name,
                     Description = habit.Description,
                     LastModified = new CalDateTime(habit.UpdatedAt),
-                    Start = habit.StartDate.HasValue ? new CalDateTime(habit.StartDate.Value) : null,
+                    // Ical.Net 5: IsAllDay is derived from HasTime; use date-only CalDateTime (hasTime=false) for all-day events
+                    Start = habit.StartDate.HasValue
+                        ? new CalDateTime(habit.StartDate.Value, hasTime: habit.EndDate.HasValue)
+                        : null,
                     End = habit.EndDate.HasValue ? new CalDateTime(habit.EndDate.Value) : null,
-                    IsAllDay = !habit.EndDate.HasValue,
                 };
 
                 if (habit.RecurrenceRules != null)
