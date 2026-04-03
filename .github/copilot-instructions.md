@@ -165,6 +165,17 @@ When adding a new entity, follow these steps in order:
 - View models live in `Models/<FeatureArea>/` and are separate from API DTOs.
 - Use the existing Tabler UI components to keep the look-and-feel consistent.
 
+#### Responsive UI / Mobile-First Input
+
+The application is used across both desktop and mobile devices with distinct usage patterns:
+
+- **Data entry and quick overviews** (Create, Edit, Home/dashboard views) are primarily used on **mobile**. Always use large (`-lg`) variants of form components to ensure comfortable touch targets:
+  - Inputs: `form-control form-control-lg`
+  - Selects: `form-select form-select-lg`
+  - Buttons: `btn btn-lg`
+- **Data viewing** (Index, Details, report views) is used on both desktop and mobile; standard-sized components are acceptable there.
+- Views must work well on both mobile and desktop regardless of the primary use case.
+
 ---
 
 ### 6. Authentication
