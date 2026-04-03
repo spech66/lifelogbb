@@ -134,13 +134,13 @@
                                         {
                                             <div class="col-auto">
                                                 <span class="text-muted">@item.DueDate.Value.ToShortDateString() @item.DueDate.Value.ToShortTimeString()</span>
-                                                <div class="badge bg-red"><span class="fas fa-clock"></span></div>
+                                                <div class="badge text-bg-red"><span class="fas fa-clock"></span></div>
                                             </div>
                                         }
                                         @if (item.IsImportant)
                                         {
                                             <div class="col-auto align-self-center">
-                                                <div class="badge bg-red">!</div>
+                                                <div class="badge text-bg-red">!</div>
                                             </div>
                                         }
                                     </div>
