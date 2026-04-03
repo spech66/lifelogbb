@@ -31,7 +31,7 @@ Dedicated views and filters (as primary view, keep table as overview for everyth
 - [ ] Habits: Timeline
 - [x] Journal date grid
 - [x] Weights
-- [ ] Goals
+- [x] Goals
 - [ ] Strength training
 - [ ] Endurance workout
 - [x] Bucket list

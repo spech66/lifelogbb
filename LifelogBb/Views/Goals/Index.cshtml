@@ -1,17 +1,238 @@
+@model LifelogBb.Models.Goals.GoalIndexViewModel
+
 @{
     ViewData["Title"] = "Goals";
     ViewData["PrimaryAction"] = "create";
     ViewData["SecondaryAction"] = "feed";
+
+    var now = DateTime.Now;
+
+    int? CalcProgress(LifelogBb.Models.Entities.Goal g)
+    {
+        if (g.TargetValue == null || g.CurrentValue == null || g.InitialValue == null) return null;
+        var diffTarget = g.TargetValue < g.InitialValue
+            ? g.InitialValue.Value - g.TargetValue.Value
+            : g.TargetValue.Value - g.InitialValue.Value;
+        if (diffTarget == 0) return null;
+        var diffCurrent = g.TargetValue < g.InitialValue
+            ? g.InitialValue.Value - g.CurrentValue.Value
+            : g.CurrentValue.Value - g.InitialValue.Value;
+        return (int)Math.Round(Math.Clamp((diffCurrent / diffTarget) * 100, 0, 100));
+    }
+
+    (string cssClass, string label, string icon) DueDateInfo(LifelogBb.Models.Entities.Goal g)
+    {
+        if (g.EndDate == null) return ("text-muted", "No due date", "fa-calendar");
+        var days = (g.EndDate.Value.Date - now.Date).TotalDays;
+        if (days < 0)  return ("text-red",    $"Overdue by {-(int)days}d",  "fa-circle-exclamation");
+        if (days == 0) return ("text-orange",  "Due today",                  "fa-clock");
+        if (days <= 7) return ("text-yellow",  $"Due in {(int)days}d",       "fa-clock");
+        return ("text-muted", g.EndDate.Value.ToString("yyyy-MM-dd"),         "fa-calendar");
+    }
 }
 
 <div class="container-xl">
-    <div class="row row-cards">
-        <div class="col-12">
-            <div class="card">
+    <!-- Stat cards -->
+    <div class="row row-deck row-cards mb-3">
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
                 <div class="card-body">
-                    Goals
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="bg-primary text-white avatar"><i class="fa-solid fa-bullseye"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Total</div>
+                            <div class="text-muted"><strong>@Model.TotalCount</strong> goals</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="bg-azure text-white avatar"><i class="fa-solid fa-spinner"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Active</div>
+                            <div class="text-muted"><strong>@Model.ActiveCount</strong> in progress</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="bg-green text-white avatar"><i class="fa-solid fa-check"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Completed</div>
+                            <div class="text-muted">
+                                <strong>@Model.CompletedCount</strong>
+                                @if (Model.TotalCount > 0)
+                                {
+                                    <span class="ms-1">(@(Math.Round((double)Model.CompletedCount / Model.TotalCount * 100))%)</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="@(Model.OverdueCount > 0 ? "bg-red" : "bg-muted") text-white avatar">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                            </span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Overdue</div>
+                            <div class="@(Model.OverdueCount > 0 ? "text-red" : "text-muted")">
+                                <strong>@Model.OverdueCount</strong> past due date
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Active goals -->
+    @if (Model.ActiveGoals.Count == 0)
+    {
+        <div class="row row-cards mb-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center text-muted py-5">
+                        No active goals. <a asp-action="Create">Add your first goal</a>.
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row row-cards mb-3">
+            @foreach (var item in Model.ActiveGoals)
+            {
+                var progress = CalcProgress(item);
+                var due = DueDateInfo(item);
+
+                <div class="col-sm-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-start justify-content-between mb-2">
+                                <h4 class="card-title mb-0">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="text-reset">@item.Name</a>
+                                </h4>
+                                <span class="ms-2 @due.cssClass text-nowrap small">
+                                    <i class="fa-solid @due.icon me-1"></i>@due.label
+                                </span>
+                            </div>
+                            @if (!string.IsNullOrWhiteSpace(item.Description))
+                            {
+                                <p class="text-muted small mb-2">@item.Description</p>
+                            }
+                            @if (progress.HasValue)
+                            {
+                                <div class="mb-1 d-flex justify-content-between small text-muted">
+                                    <span>@item.InitialValue?.ToString("0.##") → @item.TargetValue?.ToString("0.##")</span>
+                                    <span>@item.CurrentValue?.ToString("0.##") (@progress%)</span>
+                                </div>
+                                <div class="progress mb-2" style="height: 6px;">
+                                    <div class="progress-bar @(progress >= 100 ? "bg-green" : "bg-primary")"
+                                         role="progressbar"
+                                         style="width: @progress%"
+                                         aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="100">
+                                    </div>
+                                </div>
+                            }
+                            <div class="mt-auto">
+                                @Html.DisplayFor(m => item.Category, "Category")
+                                @Html.DisplayFor(m => item.Tags, "Tags")
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex gap-2">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary flex-fill">
+                                <i class="fa-solid fa-pen me-1"></i>Edit
+                            </a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary flex-fill">
+                                <i class="fa-solid fa-list-alt me-1"></i>Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <!-- Recently completed -->
+    @if (Model.RecentlyCompleted.Count > 0)
+    {
+        <div class="row row-cards">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header border-0">
+                        <h3 class="card-title">Recently Completed</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table card-table table-vcenter text-nowrap">
+                            <thead>
+                                <tr>
+                                    <th>Goal</th>
+                                    <th>Progress</th>
+                                    <th>Completed</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.RecentlyCompleted)
+                                {
+                                    var progress = CalcProgress(item);
+                                    <tr>
+                                        <td>
+                                            <a asp-action="Details" asp-route-id="@item.Id">@item.Name</a>
+                                            <div class="text-muted small">
+                                                @Html.DisplayFor(m => item.Category, "Category")
+                                                @Html.DisplayFor(m => item.Tags, "Tags")
+                                            </div>
+                                        </td>
+                                        <td style="min-width: 120px;">
+                                            @if (progress.HasValue)
+                                            {
+                                                <div class="progress" style="height: 6px;">
+                                                    <div class="progress-bar bg-green" style="width: @progress%"></div>
+                                                </div>
+                                                <div class="text-muted small mt-1">@progress%</div>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-green"><i class="fa-solid fa-check"></i></span>
+                                            }
+                                        </td>
+                                        <td class="text-muted">@item.UpdatedAt.ToString("yyyy-MM-dd")</td>
+                                        <td class="text-end">
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Details</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-action="Table" class="btn btn-sm btn-outline-secondary w-100">View all goals</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>

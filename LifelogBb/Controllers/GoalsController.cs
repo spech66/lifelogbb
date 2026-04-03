@@ -25,9 +25,27 @@ namespace LifelogBb.Controllers
         }
 
         // GET: Goals
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var now = DateTime.Now;
+
+            var allGoals = await _context.Goals.OrderBy(g => g.EndDate).ThenBy(g => g.Name).ToListAsync();
+
+            var model = new GoalIndexViewModel
+            {
+                TotalCount = allGoals.Count,
+                ActiveCount = allGoals.Count(g => !g.IsCompleted),
+                CompletedCount = allGoals.Count(g => g.IsCompleted),
+                OverdueCount = allGoals.Count(g => !g.IsCompleted && g.EndDate != null && g.EndDate < now),
+                ActiveGoals = allGoals.Where(g => !g.IsCompleted).ToList(),
+                RecentlyCompleted = allGoals
+                    .Where(g => g.IsCompleted)
+                    .OrderByDescending(g => g.UpdatedAt)
+                    .Take(5)
+                    .ToList()
+            };
+
+            return View(model);
         }
 
         // GET: Goals/Table
