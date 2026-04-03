@@ -139,7 +139,8 @@ namespace LifelogBb.Controllers
                     DtEnd = new CalDateTime(habit.EndDate.Value),
                     Summary = habit.Name,
                     Description = habit.Description,
-                    RecurrenceRules = new List<RecurrencePattern> { new RecurrencePattern(habit.RecurrenceRules) }
+                    // Ical.Net 5: RecurrencePattern constructor no longer accepts the "RRULE:" prefix
+                    RecurrenceRules = new List<RecurrencePattern> { new RecurrencePattern(RecurrenceRuleHelper.Normalize(habit.RecurrenceRules)) }
                 });
                 // Ical.Net 5: GetOccurrences(CalDateTime?, EvaluationOptions?) — filter end date manually
                 calendar.GetOccurrences(new CalDateTime(startDate))

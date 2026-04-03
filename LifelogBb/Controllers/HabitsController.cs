@@ -227,7 +227,8 @@ namespace LifelogBb.Controllers
 
                 if (habit.RecurrenceRules != null)
                 {
-                    RecurrencePattern recurrenceRule = new RecurrencePattern(habit.RecurrenceRules);
+                    // Ical.Net 5: RecurrencePattern constructor no longer accepts the "RRULE:" prefix
+                    RecurrencePattern recurrenceRule = new RecurrencePattern(RecurrenceRuleHelper.Normalize(habit.RecurrenceRules));
                     calEvent.RecurrenceRules = new List<RecurrencePattern>() { recurrenceRule };
                 }
 
