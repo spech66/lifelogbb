@@ -52,12 +52,8 @@ namespace LifelogBb
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             });
 
-            // AutoMapper v16+: register all profiles explicitly
-            services.AddAutoMapper(cfg =>
-            {
-                cfg.AddProfile<LifelogBb.DTOs.AutoMapperProfile>();
-                cfg.AddProfile<LifelogBb.Models.AutoMapperProfile>();
-            });
+            // AutoMapper v16+: scan the entire assembly for all Profile subclasses
+            services.AddAutoMapper(cfg => { }, typeof(Program));
 
             // Add all Repositories
             services.AddScoped(typeof(IRepository<>), typeof(EntityRepository<>));
