@@ -20,9 +20,47 @@ namespace LifelogBb.Controllers
         }
 
         // GET: Weights
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var config = Config.GetConfig(_context);
+
+            var latest = await _context.Weights.OrderByDescending(o => o.CreatedAt).FirstOrDefaultAsync();
+            var previous = await _context.Weights.OrderByDescending(o => o.CreatedAt).Skip(1).FirstOrDefaultAsync();
+
+            double? change30Days = null;
+            if (latest != null)
+            {
+                var cutoff30 = latest.CreatedAt.AddDays(-30);
+                var entry30 = await _context.Weights
+                    .Where(w => w.CreatedAt <= cutoff30)
+                    .OrderByDescending(w => w.CreatedAt)
+                    .FirstOrDefaultAsync();
+                if (entry30 != null)
+                {
+                    change30Days = Math.Round(latest.BodyWeight - entry30.BodyWeight, 1);
+                }
+            }
+
+            var allTimeMin = await _context.Weights.MinAsync(w => (double?)w.BodyWeight);
+            var allTimeMax = await _context.Weights.MaxAsync(w => (double?)w.BodyWeight);
+
+            var recentEntries = await _context.Weights
+                .OrderByDescending(o => o.CreatedAt)
+                .Take(5)
+                .ToListAsync();
+
+            var model = new WeightIndexViewModel
+            {
+                Latest = latest,
+                Previous = previous,
+                Change30Days = change30Days,
+                AllTimeMin = allTimeMin,
+                AllTimeMax = allTimeMax,
+                RecentEntries = recentEntries,
+                Config = config
+            };
+
+            return View(model);
         }
 
         // GET: Weights/Table

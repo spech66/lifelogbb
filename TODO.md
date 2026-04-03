@@ -30,7 +30,7 @@ Dedicated views and filters (as primary view, keep table as overview for everyth
 - [ ] [Todos/Tasks](https://preview.tabler.io/tasks.html#) Kanban: Upcoming today, next 7 days, ...
 - [ ] Habits: Timeline
 - [x] Journal date grid
-- [ ] Weights
+- [x] Weights
 - [ ] Goals
 - [ ] Strength training
 - [ ] Endurance workout

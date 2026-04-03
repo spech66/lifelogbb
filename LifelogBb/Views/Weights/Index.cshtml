@@ -1,17 +1,235 @@
+@using LifelogBb.Models.Entities;
+@model LifelogBb.Models.Weights.WeightIndexViewModel
+
 @{
     ViewData["Title"] = "Weight";
     ViewData["PrimaryAction"] = "create";
     ViewData["SecondaryAction"] = "graph";
+
+    var unitWeight = Model.Config.UnitsType == Measurements.Metric ? "kg" : "lb";
+    var unitHeight = Model.Config.UnitsType == Measurements.Metric ? "cm" : "in";
+
+    string BmiColorClass(double bmi)
+    {
+        if (bmi < 18.5) return "text-azure";
+        if (bmi < 25.0) return "text-lime";
+        if (bmi < 30.0) return "text-yellow";
+        if (bmi < 35.0) return "text-orange";
+        return "text-red";
+    }
+
+    string BmiLabel(double bmi)
+    {
+        if (bmi < 18.5) return "Underweight";
+        if (bmi < 25.0) return "Normal";
+        if (bmi < 30.0) return "Overweight";
+        if (bmi < 35.0) return "Obese I";
+        return "Obese II+";
+    }
 }
 
 <div class="container-xl">
-    <div class="row row-cards">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    Weight
+    @if (Model.Latest == null)
+    {
+        <div class="row row-cards">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center text-muted py-5">
+                        No weight entries yet. <a asp-action="Create">Add your first entry</a>.
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    }
+    else
+    {
+        <!-- Stat cards -->
+        <div class="row row-deck row-cards mb-3">
+            <div class="col-sm-6 col-lg-3">
+                <div class="card card-sm">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <span class="bg-primary text-white avatar"><i class="fa-solid fa-weight-scale"></i></span>
+                            </div>
+                            <div class="col">
+                                <div class="font-weight-medium">Latest Weight</div>
+                                <div class="text-muted">
+                                    @if (Model.Previous != null)
+                                    {
+                                        @if (Model.Latest.BodyWeight > Model.Previous.BodyWeight)
+                                        {
+                                            <i class="fa-solid fa-arrow-up text-red"></i>
+                                        }
+                                        else if (Model.Latest.BodyWeight < Model.Previous.BodyWeight)
+                                        {
+                                            <i class="fa-solid fa-arrow-down text-green"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fa-solid fa-minus text-muted"></i>
+                                        }
+                                    }
+                                    <strong>@Model.Latest.BodyWeight.ToString("0.0")</strong> @unitWeight
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="card card-sm">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <span class="bg-primary text-white avatar"><i class="fa-solid fa-heart-pulse"></i></span>
+                            </div>
+                            <div class="col">
+                                <div class="font-weight-medium">Current BMI</div>
+                                <div class="@BmiColorClass(Model.Latest.Bmi)">
+                                    <strong>@Model.Latest.Bmi.ToString("0.00")</strong>
+                                    <span class="text-muted ms-1">@BmiLabel(Model.Latest.Bmi)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="card card-sm">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <span class="bg-primary text-white avatar"><i class="fa-solid fa-chart-line"></i></span>
+                            </div>
+                            <div class="col">
+                                <div class="font-weight-medium">30-Day Change</div>
+                                <div class="text-muted">
+                                    @if (Model.Change30Days.HasValue)
+                                    {
+                                        @if (Model.Change30Days.Value > 0)
+                                        {
+                                            <span class="text-red"><i class="fa-solid fa-arrow-up"></i> +@Model.Change30Days.Value.ToString("0.0")</span>
+                                        }
+                                        else if (Model.Change30Days.Value < 0)
+                                        {
+                                            <span class="text-green"><i class="fa-solid fa-arrow-down"></i> @Model.Change30Days.Value.ToString("0.0")</span>
+                                        }
+                                        else
+                                        {
+                                            <span><i class="fa-solid fa-minus"></i> 0.0</span>
+                                        }
+                                        <span class="ms-1">@unitWeight</span>
+                                    }
+                                    else
+                                    {
+                                        <span>—</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="card card-sm">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <span class="bg-primary text-white avatar"><i class="fa-solid fa-trophy"></i></span>
+                            </div>
+                            <div class="col">
+                                <div class="font-weight-medium">All-Time Range</div>
+                                <div class="text-muted">
+                                    <i class="fa-solid fa-arrow-down text-green"></i> @Model.AllTimeMin?.ToString("0.0")
+                                    &ndash;
+                                    <i class="fa-solid fa-arrow-up text-red"></i> @Model.AllTimeMax?.ToString("0.0")
+                                    @unitWeight
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart + Recent entries -->
+        <div class="row row-deck row-cards">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header border-0">
+                        <h3 class="card-title">Last 60 Days</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="weightIndexChart"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header border-0">
+                        <h3 class="card-title">Recent Entries</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table card-table table-vcenter text-nowrap">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Weight</th>
+                                    <th>BMI</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var entry in Model.RecentEntries)
+                                {
+                                    <tr>
+                                        <td><a asp-action="Details" asp-route-id="@entry.Id">@entry.CreatedAt.ToString("yyyy-MM-dd")</a></td>
+                                        <td>@entry.BodyWeight.ToString("0.0") @unitWeight</td>
+                                        <td class="@BmiColorClass(entry.Bmi)">@entry.Bmi.ToString("0.00")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-action="Table" class="btn btn-sm btn-outline-secondary w-100">View all entries</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>
+
+@section Scripts {
+    @if (Model.Latest != null)
+    {
+        <script src="~/lib/tabler/core/dist/libs/apexcharts/dist/apexcharts.min.js"></script>
+        <script type="text/javascript">
+            (async function () {
+                const resp = await fetch('/api/weights');
+                if (!resp.ok) return;
+                const data = await resp.json();
+
+                const cutoff = new Date();
+                cutoff.setDate(cutoff.getDate() - 60);
+
+                const series = data
+                    .filter(d => new Date(d.createdAt) >= cutoff)
+                    .map(d => ({ x: d.createdAt, y: parseFloat(d.bodyWeight).toFixed(1) }))
+                    .sort((a, b) => new Date(a.x) - new Date(b.x));
+
+                var options = {
+                    chart: { type: 'line', height: 220, toolbar: { show: false } },
+                    stroke: { curve: 'smooth', width: 2 },
+                    colors: ['#4c79b3'],
+                    series: [{ name: 'Weight', data: series }],
+                    xaxis: { type: 'datetime' },
+                    yaxis: { labels: { formatter: v => parseFloat(v).toFixed(1) } },
+                    tooltip: { x: { format: 'yyyy-MM-dd' } }
+                };
+
+                new ApexCharts(document.querySelector('#weightIndexChart'), options).render();
+            })();
+        </script>
+    }
+}
