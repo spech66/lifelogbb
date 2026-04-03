@@ -1,17 +1,281 @@
+@model LifelogBb.Models.Habits.HabitIndexViewModel
+
 @{
     ViewData["Title"] = "Habits";
     ViewData["PrimaryAction"] = "create";
     ViewData["SecondaryAction"] = "feed";
+
+    var today = DateTime.Today;
+
+    // Build a set of habit IDs that occur today for quick lookup
+    var todayHabitIds = Model.UpcomingOccurrences
+        .Where(o => o.StartDate.Date == today)
+        .Select(o => o.HabitId)
+        .ToHashSet();
 }
 
 <div class="container-xl">
-    <div class="row row-cards">
-        <div class="col-12">
-            <div class="card">
+    <!-- Stat cards -->
+    <div class="row row-deck row-cards mb-3">
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
                 <div class="card-body">
-                    Habits
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="bg-primary text-white avatar"><i class="fa-solid fa-arrows-spin"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Total Habits</div>
+                            <div class="text-muted"><strong>@Model.TotalCount</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="bg-azure text-white avatar"><i class="fa-solid fa-spinner"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Active</div>
+                            <div class="text-muted"><strong>@Model.ActiveCount</strong> in progress</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="bg-green text-white avatar"><i class="fa-solid fa-check"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Completed</div>
+                            <div class="text-muted">
+                                <strong>@Model.CompletedCount</strong>
+                                @if (Model.TotalCount > 0)
+                                {
+                                    <span class="ms-1">(@(Math.Round((double)Model.CompletedCount / Model.TotalCount * 100))%)</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="@(Model.TodayCount > 0 ? "bg-yellow" : "bg-muted") text-white avatar">
+                                <i class="fa-solid fa-calendar-day"></i>
+                            </span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Today</div>
+                            <div class="@(Model.TodayCount > 0 ? "text-yellow" : "text-muted")">
+                                <strong>@Model.TodayCount</strong> scheduled
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    @if (Model.TotalCount == 0)
+    {
+        <div class="row row-cards">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center text-muted py-5">
+                        No habits yet. <a asp-action="Create">Add your first habit</a>.
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row row-deck row-cards mb-3">
+            <!-- Active habits -->
+            <div class="col-lg-8">
+                @if (Model.ActiveHabits.Count == 0)
+                {
+                    <div class="card">
+                        <div class="card-body text-center text-muted py-4">
+                            No active habits. <a asp-action="Create">Add one</a>.
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row row-cards">
+                        @foreach (var habit in Model.ActiveHabits)
+                        {
+                            var isToday = todayHabitIds.Contains(habit.Id);
+                            <div class="col-sm-6">
+                                <div class="card h-100 @(isToday ? "border-yellow" : "")">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-start justify-content-between mb-1">
+                                            <h4 class="card-title mb-0">
+                                                <a asp-action="Details" asp-route-id="@habit.Id" class="text-reset">@habit.Name</a>
+                                            </h4>
+                                            @if (isToday)
+                                            {
+                                                <span class="badge bg-yellow-lt ms-2 text-nowrap">Today</span>
+                                            }
+                                        </div>
+                                        @if (!string.IsNullOrWhiteSpace(habit.Description))
+                                        {
+                                            <p class="text-muted small mb-2">@habit.Description</p>
+                                        }
+                                        <div class="d-flex flex-wrap gap-1 mb-2">
+                                            @if (habit.StartDate.HasValue || habit.EndDate.HasValue)
+                                            {
+                                                <span class="badge bg-muted-lt text-muted small">
+                                                    <i class="fa-solid fa-calendar-range me-1"></i>
+                                                    @(habit.StartDate?.ToString("yyyy-MM-dd") ?? "?")
+                                                    &nbsp;–&nbsp;
+                                                    @(habit.EndDate?.ToString("yyyy-MM-dd") ?? "?")
+                                                </span>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(habit.RecurrenceRules))
+                                            {
+                                                <span class="badge bg-blue-lt text-blue small font-monospace">
+                                                    <i class="fa-solid fa-rotate me-1"></i>@habit.RecurrenceRules
+                                                </span>
+                                            }
+                                        </div>
+                                        <div>
+                                            @Html.DisplayFor(m => habit.Category, "Category")
+                                            @Html.DisplayFor(m => habit.Tags, "Tags")
+                                        </div>
+                                    </div>
+                                    <div class="card-footer d-flex gap-2">
+                                        <a asp-action="Edit" asp-route-id="@habit.Id" class="btn btn-sm btn-outline-secondary flex-fill">
+                                            <i class="fa-solid fa-pen me-1"></i>Edit
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@habit.Id" class="btn btn-sm btn-primary flex-fill">
+                                            <i class="fa-solid fa-list-alt me-1"></i>Details
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Upcoming 7 days -->
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header border-0">
+                        <h3 class="card-title">Next 7 Days</h3>
+                    </div>
+                    @if (Model.UpcomingOccurrences.Count == 0)
+                    {
+                        <div class="card-body text-muted">No scheduled occurrences.</div>
+                    }
+                    else
+                    {
+                        <div class="list-group list-group-flush overflow-auto" style="max-height: 520px;">
+                            @{
+                                var lastDay = (DateTime?)null;
+                            }
+                            @foreach (var occ in Model.UpcomingOccurrences)
+                            {
+                                var occDay = occ.StartDate.Date;
+                                if (lastDay != occDay)
+                                {
+                                    lastDay = occDay;
+                                    var dayLabel = occDay == today ? "Today"
+                                        : occDay == today.AddDays(1) ? "Tomorrow"
+                                        : occDay.ToString("ddd, MMM d");
+                                    <div class="list-group-item bg-muted-lt text-muted small fw-bold py-1 px-3">
+                                        @dayLabel
+                                    </div>
+                                }
+                                <a asp-action="Details" asp-route-id="@occ.HabitId"
+                                   class="list-group-item list-group-item-action py-2 px-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="@(occDay == today ? "text-yellow" : "text-muted")">
+                                            <i class="fa-solid fa-circle-dot fa-xs"></i>
+                                        </span>
+                                        <div>
+                                            <div class="small fw-medium">@occ.Name</div>
+                                            @if (occ.StartDate.TimeOfDay != TimeSpan.Zero)
+                                            {
+                                                <div class="text-muted" style="font-size: 0.75rem;">
+                                                    @occ.StartDate.ToString("HH:mm") – @occ.EndDate.ToString("HH:mm")
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </a>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Recently completed -->
+        @if (Model.RecentlyCompleted.Count > 0)
+        {
+            <div class="row row-cards">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header border-0">
+                            <h3 class="card-title">Recently Completed</h3>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table card-table table-vcenter text-nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>Habit</th>
+                                        <th>Date Range</th>
+                                        <th>Completed</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var habit in Model.RecentlyCompleted)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <a asp-action="Details" asp-route-id="@habit.Id">@habit.Name</a>
+                                                <div class="text-muted small">
+                                                    @Html.DisplayFor(m => habit.Category, "Category")
+                                                    @Html.DisplayFor(m => habit.Tags, "Tags")
+                                                </div>
+                                            </td>
+                                            <td class="text-muted">
+                                                @(habit.StartDate?.ToString("yyyy-MM-dd") ?? "—")
+                                                &nbsp;–&nbsp;
+                                                @(habit.EndDate?.ToString("yyyy-MM-dd") ?? "—")
+                                            </td>
+                                            <td class="text-muted">@habit.UpdatedAt.ToString("yyyy-MM-dd")</td>
+                                            <td class="text-end">
+                                                <a asp-action="Details" asp-route-id="@habit.Id" class="btn btn-sm btn-outline-secondary">Details</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer">
+                            <a asp-action="Table" class="btn btn-sm btn-outline-secondary w-100">View all habits</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
 </div>

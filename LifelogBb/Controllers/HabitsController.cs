@@ -26,9 +26,69 @@ namespace LifelogBb.Controllers
         }
 
         // GET: Habits
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var now = DateTime.Now;
+            var windowEnd = now.Date.AddDays(8).AddTicks(-1); // next 7 full days
+
+            var allHabits = await _context.Habits.OrderBy(h => h.Name).ToListAsync();
+
+            var schedulable = allHabits
+                .Where(h => !h.IsCompleted
+                    && !string.IsNullOrEmpty(h.RecurrenceRules)
+                    && h.StartDate != null
+                    && h.EndDate != null)
+                .ToList();
+
+            var upcomingOccurrences = new List<HabitOccurrenceViewModel>();
+            foreach (var habit in schedulable)
+            {
+                var calendar = new Calendar();
+                calendar.Events.Add(new CalendarEvent
+                {
+                    DtStart = new CalDateTime(DateTime.SpecifyKind(habit.StartDate!.Value, DateTimeKind.Unspecified)),
+                    DtEnd = new CalDateTime(DateTime.SpecifyKind(habit.EndDate!.Value, DateTimeKind.Unspecified)),
+                    RecurrenceRules = new List<RecurrencePattern>
+                    {
+                        new RecurrencePattern(RecurrenceRuleHelper.Normalize(habit.RecurrenceRules!))
+                    }
+                });
+
+                var calStart = new CalDateTime(DateTime.SpecifyKind(now.Date, DateTimeKind.Unspecified));
+                var calEnd = new CalDateTime(DateTime.SpecifyKind(windowEnd, DateTimeKind.Unspecified));
+
+                calendar.GetOccurrences(calStart)
+                    .TakeWhile(o => o.Period.StartTime <= calEnd)
+                    .ToList()
+                    .ForEach(o => upcomingOccurrences.Add(new HabitOccurrenceViewModel
+                    {
+                        HabitId = habit.Id,
+                        Name = habit.Name,
+                        Description = habit.Description,
+                        StartDate = o.Period.StartTime.Value,
+                        EndDate = (o.Period.EndTime ?? o.Period.StartTime).Value
+                    }));
+            }
+
+            upcomingOccurrences = upcomingOccurrences.OrderBy(o => o.StartDate).ToList();
+            var todayCount = upcomingOccurrences.Count(o => o.StartDate.Date == now.Date);
+
+            var model = new HabitIndexViewModel
+            {
+                TotalCount = allHabits.Count,
+                ActiveCount = allHabits.Count(h => !h.IsCompleted),
+                CompletedCount = allHabits.Count(h => h.IsCompleted),
+                TodayCount = todayCount,
+                ActiveHabits = allHabits.Where(h => !h.IsCompleted).ToList(),
+                RecentlyCompleted = allHabits
+                    .Where(h => h.IsCompleted)
+                    .OrderByDescending(h => h.UpdatedAt)
+                    .Take(5)
+                    .ToList(),
+                UpcomingOccurrences = upcomingOccurrences
+            };
+
+            return View(model);
         }
 
         // GET: Habits/Table
