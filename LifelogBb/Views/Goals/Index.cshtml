@@ -1,6 +1,3 @@
-﻿@using LifelogBb.Utilities;
-@model PaginatedListViewModel<LifelogBb.Models.Entities.Goal>
-
 @{
     ViewData["Title"] = "Goals";
     ViewData["PrimaryAction"] = "create";
@@ -11,113 +8,8 @@
     <div class="row row-cards">
         <div class="col-12">
             <div class="card">
-                <div class="table-responsive">
-                    <table class="table card-table table-vcenter text-nowrap datatable">
-                        <thead>
-                            <tr>
-                                <th class="w-1">
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "CreatedAt")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")">Date</a>
-                                </th>
-                                <th>
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Name")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Name")">Name</a>
-                                </th>
-                                <th>
-                                    Description
-                                </th>
-                                <th>                                    
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "InitialValue")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "InitialValue")">Initial Value</a>
-                                </th>
-                                <th>
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "TargetValue")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "TargetValue")">Target Value</a>
-                                </th>
-                                <th>
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "CurrentValue")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CurrentValue")">Current Value</a>
-                                </th>
-                                <th>
-                                    Progress
-                                </th>
-                                <th>
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "StartDate")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "StartDate")">Start Date</a>
-                                </th>
-                                <th>
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "EndDate")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "EndDate")">End Date</a>
-                                </th>
-                                <th>
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "IsCompleted")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "IsCompleted")">Is Completed</a>
-                                </th>
-                                <th>
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Category")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Category")">Category</a>
-                                </th>
-                                <th>
-                                    Tags
-                                </th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.List)
-                            {
-                                <tr>
-                                    <th scope="row">
-                                        <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
-                                    </th>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Name)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Description)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.InitialValue)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.TargetValue)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.CurrentValue)
-                                    </td>
-                                    <td>
-                                        @if (item.TargetValue != null && item.CurrentValue != null && item.InitialValue != null && item.CurrentValue != 0)
-                                        {
-                                            var diffTarget = item.TargetValue < item.InitialValue ? item.InitialValue.Value - item.TargetValue.Value : item.TargetValue.Value - item.InitialValue.Value;
-                                            var diffCurrent = item.TargetValue < item.InitialValue ? item.InitialValue.Value - item.CurrentValue.Value : item.CurrentValue.Value - item.InitialValue.Value;
-                                            var percentage = Math.Round((diffCurrent / diffTarget) * 100);
-                                            <div class="progress progress-xs">
-                                                <div class="progress-bar bg-primary" style="width: @percentage%"></div>
-                                            </div>
-                                        }
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.StartDate)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.EndDate)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.IsCompleted)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Category, "Category")
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Tags, "Tags")
-                                    </td>
-                                    <td class="text-end">
-                                        <div class="dropdown">
-                                            <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                                                <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-                <div class="card-footer d-flex align-items-center">
-                    @await Component.InvokeAsync("Pagination", Model.List)
+                <div class="card-body">
+                    Goals
                 </div>
             </div>
         </div>

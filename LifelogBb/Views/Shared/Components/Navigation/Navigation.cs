@@ -22,33 +22,39 @@ namespace LifelogBb.Views.Shared.Components.Navigation
                 {
                     new NavItem("Weights", "Index", "Weight", "fas fa-weight-scale"),
                     new NavItem("Weights", "Graph", "Graph", "fas fa-chart-line"),
-                    // new NavItem("Weights", "Create", "Create", "fas fa-plus")
+                    new NavItem("Weights", "Table", "Table", "fas fa-table"),
                 }),
                 new NavItem("Journals", "fas fa-pencil", new List<NavItem>
                 {
                     new NavItem("Journals", "Index", "Journal", "fas fa-pencil"),
+                    new NavItem("Journals", "Table", "Journal", "fas fa-table"),
                 }),
                 new NavItem("Strength training", "fas fa-dumbbell", new List<NavItem>
                 {
                     new NavItem("StrengthTrainings", "Index", "Strength training", "fas fa-dumbbell"),
                     new NavItem("StrengthTrainings", "Graph", "Graph", "fas fa-chart-line"),
+                    new NavItem("StrengthTrainings", "Table", "Table", "fas fa-table"),
                 }),
                 new NavItem("Endurance training", "fas fa-running", new List <NavItem>
                 {
                     new NavItem("EnduranceTrainings", "Index", "Endurance training", "fas fa-running"),
                     new NavItem("EnduranceTrainings", "Graph", "Graph", "fas fa-chart-line"),
+                    new NavItem("EnduranceTrainings", "Table", "Table", "fas fa-table"),
                 }),
                 new NavItem("Todos", "fas fa-check", new List<NavItem>
                 {
                     new NavItem("Todos", "Index", "Todos", "fas fa-check"),
+                    new NavItem("Todos", "Table", "Table", "fas fa-table"),
                 }),
                 new NavItem("Goals", "fas fa-bullseye", new List<NavItem>
                 {
                     new NavItem("Goals", "Index", "Goals", "fas fa-bullseye"),
+                    new NavItem("Goals", "Table", "Table", "fas fa-table"),
                 }),
                 new NavItem("Habits", "fas fa-arrows-spin", new List<NavItem>
                 {
                     new NavItem("Habits", "Index", "Habits", "fas fa-arrows-spin"),
+                    new NavItem("Habits", "Table", "Table", "fas fa-table"),
                 }),
                 new NavItem("Bucket list", "fas fa-tent", new List <NavItem>
                 {

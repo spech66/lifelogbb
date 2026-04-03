@@ -1,6 +1,3 @@
-﻿@using LifelogBb.Utilities;
-@model PaginatedListViewModel<LifelogBb.Models.Entities.StrengthTraining>
-
 @{
     ViewData["Title"] = "Strength Training";
     ViewData["PrimaryAction"] = "create";
@@ -11,75 +8,8 @@
     <div class="row row-cards">
         <div class="col-12">
             <div class="card">
-                <div class="table-responsive">
-                    <table class="table card-table table-vcenter text-nowrap datatable">
-                        <thead>
-                            <tr>
-                                <th class="w-1">
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "CreatedAt")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")">Date</a>
-                                </th>
-                                <th>
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Exercise")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Exercise")">Exercise</a>
-                                </th>
-                                <th>
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Reps")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Reps")">Reps</a>
-                                </th>
-                                <th>
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Weight")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Weight")">Weight</a>
-                                </th>
-                                <th>
-                                    Total
-                                </th>
-                                <th>
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Rating")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Rating")">Rating</a>
-                                </th>
-                                <th>
-                                    Notes
-                                </th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.List)
-                            {
-                                <tr>
-                                    <th scope="row">
-                                        <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
-                                    </th>
-                                    <td>
-                                        <a asp-action="Graph" asp-route-exercise="@item.Exercise">@Html.DisplayFor(modelItem => item.Exercise)</a>
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Reps)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Weight)
-                                    </td>
-                                    <td>
-                                        @(string.Format("{0:0.00}", item.Reps * item.Weight))
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Rating, "Rating")
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Notes)
-                                    </td>
-                                    <td class="text-end">
-                                        <div class="dropdown">
-                                            <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                                                <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-                <div class="card-footer d-flex align-items-center">
-                    @await Component.InvokeAsync("Pagination", Model.List)
+                <div class="card-body">
+                    Strength Training
                 </div>
             </div>
         </div>

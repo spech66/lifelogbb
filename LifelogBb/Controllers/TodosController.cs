@@ -25,7 +25,13 @@ namespace LifelogBb.Controllers
         }
 
         // GET: Todos
-        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        // GET: Todos/Table
+        public async Task<IActionResult> Table(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
             ViewData["CurrentSort"] = sortOrder;
 

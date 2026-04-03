@@ -1,8 +1,8 @@
 @using LifelogBb.Utilities;
-@model PaginatedListViewModel<LifelogBb.Models.Entities.Quote>
+@model PaginatedListViewModel<LifelogBb.Models.Entities.Journal>
 
 @{
-    ViewData["Title"] = "Quotes";
+    ViewData["Title"] = "Journal";
     ViewData["PrimaryAction"] = "create";
 }
 
@@ -16,12 +16,6 @@
                             <tr>
                                 <th class="w-1">
                                     <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "CreatedAt")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")">Date</a>
-                                </th>
-                                <th>
-                                    Text
-                                </th>
-                                <th>
-                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Author")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Author")">Author</a>
                                 </th>
                                 <th>
                                     <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Category")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Category")">Category</a>
@@ -39,12 +33,6 @@
                                     <th scope="row">
                                         <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
                                     </th>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Text)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Author)
-                                    </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.Category, "Category")
                                     </td>

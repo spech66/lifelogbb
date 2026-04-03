@@ -1,0 +1,134 @@
+@using LifelogBb.Utilities;
+@model PaginatedListViewModel<LifelogBb.Models.Entities.Todo>
+
+@{
+    ViewData["Title"] = "ToDos";
+    ViewData["PrimaryAction"] = "create";
+    ViewData["SecondaryAction"] = "feed";
+}
+
+@functions {
+    string DateToColor(LifelogBb.Models.Entities.Todo item)
+    {
+        if (!item.DueDate.HasValue)
+        {
+            return "text-lime";
+        }
+
+        DateTime now = DateTime.Now;
+        DateTime days7 = item.DueDate.Value.AddDays(-7);
+        if (item.DueDate < now)
+        {
+            return "text-red";
+        }
+        else if (days7 < now)
+        {
+            return "text-yellow";
+        }
+
+        return "text-lime";
+    }
+}
+
+<div class="container-xl">
+    <div class="row row-cards">
+        <div class="col-12">
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter text-nowrap datatable">
+                        <thead>
+                            <tr>
+                                <th class="w-1">
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "CreatedAt")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")">Date</a>
+                                </th>
+                                <th>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Title")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Title")">Title</a>
+                                </th>
+                                <th>
+                                    Description
+                                </th>
+                                <th>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "StartDate")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "StartDate")">Start</a>
+                                </th>
+                                <th>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "DueDate")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "DueDate")">Due Date</a>
+                                </th>
+                                <th>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "IsCompleted")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "IsCompleted")">Is Completed</a>
+                                </th>
+                                <th>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Completed")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Completed")">Completed Date</a>
+                                </th>
+                                <th>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Progress")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Progress")">Progress</a>
+                                </th>
+                                <th>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "IsImportant")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "IsImportant")">Is Important</a>
+                                </th>
+                                <th>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Category")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Category")">Category</a>
+                                </th>
+                                <th>
+                                    Tags
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.List)
+                            {
+                                <tr>
+                                    <th scope="row">
+                                        <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
+                                    </th>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Title)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Description)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.StartDate)
+                                    </td>
+                                    <td class="@DateToColor(item)">
+                                        @Html.DisplayFor(modelItem => item.DueDate)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.IsCompleted)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Completed)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Progress)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.IsImportant)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Category, "Category")
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Tags, "Tags")
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="dropdown">
+                                            <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                                <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer d-flex align-items-center">
+                    @await Component.InvokeAsync("Pagination", Model.List)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

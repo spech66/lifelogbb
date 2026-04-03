@@ -1,9 +1,10 @@
 @using LifelogBb.Utilities;
-@model PaginatedListViewModel<LifelogBb.Models.Entities.Quote>
+@model PaginatedListViewModel<LifelogBb.Models.Entities.EnduranceTraining>
 
 @{
-    ViewData["Title"] = "Quotes";
+    ViewData["Title"] = "Endurance Training";
     ViewData["PrimaryAction"] = "create";
+    ViewData["SecondaryAction"] = "graph";
 }
 
 <div class="container-xl">
@@ -18,16 +19,25 @@
                                     <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "CreatedAt")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")">Date</a>
                                 </th>
                                 <th>
-                                    Text
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Exercise")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Exercise")">Exercise</a>
                                 </th>
                                 <th>
-                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Author")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Author")">Author</a>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Distance")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Distance")">Distance</a>
                                 </th>
                                 <th>
-                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Category")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Category")">Category</a>
+                                    Duration
                                 </th>
                                 <th>
-                                    Tags
+                                    Speed (km/h)
+                                </th>
+                                <th>
+                                    Pace (min/km)
+                                </th>
+                                <th>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Rating")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Rating")">Rating</a>
+                                </th>
+                                <th>
+                                    Notes
                                 </th>
                                 <th></th>
                             </tr>
@@ -40,16 +50,25 @@
                                         <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
                                     </th>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.Text)
+                                        <a asp-action="Graph" asp-route-exercise="@item.Exercise">@Html.DisplayFor(modelItem => item.Exercise)</a>
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.Author)
+                                        @Html.DisplayFor(modelItem => item.Distance)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.Category, "Category")
+                                        @Html.DisplayFor(modelItem => item.Duration)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.Tags, "Tags")
+                                        @(item.Duration.HasValue ? string.Format("{0:0.00}", item.Distance / item.Duration.Value.TotalHours) : "")
+                                    </td>
+                                    <td>
+                                        @(item.Duration.HasValue ? string.Format("{0:0.00}", item.Duration.Value.TotalMinutes / item.Distance) : "")
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Rating, "Rating")
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Notes)
                                     </td>
                                     <td class="text-end">
                                         <div class="dropdown">

@@ -1,9 +1,10 @@
 @using LifelogBb.Utilities;
-@model PaginatedListViewModel<LifelogBb.Models.Entities.Quote>
+@model PaginatedListViewModel<LifelogBb.Models.Entities.Habit>
 
 @{
-    ViewData["Title"] = "Quotes";
+    ViewData["Title"] = "Habits";
     ViewData["PrimaryAction"] = "create";
+    ViewData["SecondaryAction"] = "feed";
 }
 
 <div class="container-xl">
@@ -18,10 +19,22 @@
                                     <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "CreatedAt")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")">Date</a>
                                 </th>
                                 <th>
-                                    Text
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Name")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Name")">Name</a>
                                 </th>
                                 <th>
-                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Author")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Author")">Author</a>
+                                    Description
+                                </th>
+                                <th>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "StartDate")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "StartDate")">Start Date</a>
+                                </th>
+                                <th>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "EndDate")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "EndDate")">End Date</a>
+                                </th>
+                                <th>
+                                    Recurrence Rules
+                                </th>
+                                <th>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "IsCompleted")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "IsCompleted")">Is Completed</a>
                                 </th>
                                 <th>
                                     <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Category")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Category")">Category</a>
@@ -40,10 +53,22 @@
                                         <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
                                     </th>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.Text)
+                                        @Html.DisplayFor(modelItem => item.Name)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.Author)
+                                        @Html.DisplayFor(modelItem => item.Description)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.StartDate)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.EndDate)
+                                    </td>
+                                    <td class="rrule">
+                                        @Html.DisplayFor(modelItem => item.RecurrenceRules)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.IsCompleted)
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.Category, "Category")
@@ -72,3 +97,9 @@
         </div>
     </div>
 </div>
+
+@section Scripts
+{
+    <script src="~/lib/rrule/dist/es5/rrule.min.js"></script>
+    <script src="~/js/rrulereplacer.js"></script>
+}

@@ -1,119 +1,15 @@
-﻿@using LifelogBb.Models.Entities;
-@using LifelogBb.Utilities;
-@model PaginatedListViewModel<LifelogBb.Models.Entities.Weight>
-
 @{
     ViewData["Title"] = "Weight";
     ViewData["PrimaryAction"] = "create";
     ViewData["SecondaryAction"] = "graph";
 }
 
-@functions {
-    string GetBmiColorClass(LifelogBb.Models.Entities.Weight weight)
-    {
-        if (weight.Bmi < 18.5)
-        { // < 18,49
-            return "text-azure";
-        }
-        else if (weight.Bmi < 25.0)
-        { // 18,50–24,99
-            return "text-lime";
-        }
-        else if (weight.Bmi < 30.0)
-        { // 25,00–29,99
-            return "text-yellow";
-        }
-        else if (weight.Bmi < 35.0)
-        { // 30,00–34,99
-            return "text-orange";
-        }
-        else
-        { // ≥ 35,00
-            return "text-red";
-        }
-    }
-}
-
 <div class="container-xl">
     <div class="row row-cards">
-        @if (Model.List.Count > 0 && Model.List.PageIndex == 1 && Model.List.First().BodyWeight > Model.Config.WeightWarning)
-        {
-            <div class="col-12">
-                <div class="alert alert-warning alert-dismissible">
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    <div class="d-flex">
-                        <div class="alert-message">
-                            <strong>Warning!</strong> @Model.Config.WeightWarningText
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
         <div class="col-12">
             <div class="card">
-                <div class="card-body border-bottom py-3">
-                    <div class="d-flex">
-                        <div class="ms-auto text-muted">
-                            Search weight (+/- 1):
-                            <div class="ms-2 d-inline-block">
-                                <form asp-action="Index" method="get">
-                                    <input type="text" class="form-control form-control-sm" aria-label="Search" name="searchString">
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="table card-table table-vcenter text-nowrap datatable">
-                        <thead>
-                            <tr>
-                                <th class="w-1">
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "CreatedAt")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")">Date</a>
-                                </th>
-                                <th>
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "BodyWeight")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "BodyWeight")">BodyWeight</a>
-                                </th>
-                                <th>
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Height")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Height")">Height</a>
-                                </th>
-                                <th>
-                                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Bmi")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Bmi")">Bmi</a>
-                                </th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.List)
-                            {
-                                <tr>
-                                    <th scope="row">
-                                        <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CreatedAt)</a>
-                                    </th>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.BodyWeight) @(Model.Config.UnitsType == Measurements.Metric ? "kg" : "lb")
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Height) @(Model.Config.UnitsType == Measurements.Metric ? "cm" : "in")
-                                    </td>
-                                    <td class="@GetBmiColorClass(item)">
-                                        @Html.DisplayFor(modelItem => item.Bmi)
-                                    </td>
-                                    <td class="text-end">
-                                        <div class="dropdown">
-                                            <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                                                <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-                <div class="card-footer d-flex align-items-center">
-                    @await Component.InvokeAsync("Pagination", Model.List)
+                <div class="card-body">
+                    Weight
                 </div>
             </div>
         </div>
