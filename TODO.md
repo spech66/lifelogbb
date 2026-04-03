@@ -4,15 +4,16 @@ ToDos and Features for LifelogBB.
 
 ### Todo
 
-- [ ] [Globalization and localization](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization?view=aspnetcore-6.0)
-- [ ] iCal Alarms
-- [ ] ChatGPT (LLaMA, ... ?) [integration](https://www.nuget.org/packages/Azure.AI.OpenAI/)
-- [ ] Habits - Track habits
-- [ ] Life timeline (Description @places/context #tags), Ranges, Dates, ...
 - [ ] Daily view with all modules
 - [ ] Weekly view with all modules
 - [ ] Monthly view with all modules
 - [ ] Yearly view with all modules
+- [ ] Life timeline (Description @places/context #tags), Ranges, Dates, ...
+- [ ] Text search in all tables (e.g. in Journal, ...)
+- [ ] ChatGPT (LLaMA, ... ?) [integration](https://www.nuget.org/packages/Azure.AI.OpenAI/)
+- [ ] Habits - Track habits
+- [ ] iCal Alarms
+- [ ] [Globalization and localization](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization?view=aspnetcore-6.0)
 
 #### External tools
 
