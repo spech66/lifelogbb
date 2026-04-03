@@ -1,4 +1,6 @@
-﻿namespace LifelogBb.Models.Journals
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace LifelogBb.Models.Journals
 {
     public class EditJournalViewModel
     {
@@ -9,5 +11,8 @@
         public string? Category { get; set; }
 
         public string? Tags { get; set; }
+
+        [DataType(DataType.Date)]
+        public DateTime Date { get; set; }
     }
 }

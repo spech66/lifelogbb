@@ -25,6 +25,20 @@ namespace LifelogBb.Controllers
             return View();
         }
 
+        // GET: Journals/CalendarEvents
+        public async Task<IActionResult> CalendarEvents()
+        {
+            var events = await _context.Journals
+                .Select(j => new
+                {
+                    start = j.Date.ToString("yyyy-MM-dd"),
+                    entryId = j.Id
+                })
+                .ToListAsync();
+
+            return Json(events);
+        }
+
         // GET: Journals/Table
         public async Task<IActionResult> Table(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
@@ -42,7 +56,7 @@ namespace LifelogBb.Controllers
             ViewData["CurrentFilter"] = searchString;
 
             var journals = from s in _context.Journals select s;
-            journals = journals.SortByName(sortOrder, $"{nameof(Journal.CreatedAt)}_desc");
+            journals = journals.SortByName(sortOrder, $"{nameof(Journal.Date)}_desc");
 
             var config = Config.GetConfig(_context);
             var list = await PaginatedList<Journal>.CreateAsync(journals.AsNoTracking(), pageNumber ?? 1, config.JournalPageSize);
@@ -68,18 +82,27 @@ namespace LifelogBb.Controllers
         }
 
         // GET: Journals/Create
-        public IActionResult Create()
+        public IActionResult Create(string? date = null)
         {
             this.AddCategoriesToViewData(_context);
             this.AddTagsToViewData(_context);
-            return View();
+            var defaultDate = date != null && DateTime.TryParse(date, out var parsedDate)
+                ? parsedDate
+                : DateTime.UtcNow.Date;
+            return View(new Journal { Date = defaultDate });
         }
 
         // POST: Journals/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Text,Category,Tags")] Journal journal)
+        public async Task<IActionResult> Create([Bind("Text,Category,Tags,Date")] Journal journal)
         {
+            var existing = await _context.Journals.FirstOrDefaultAsync(j => j.Date == journal.Date);
+            if (existing != null)
+            {
+                return RedirectToAction(nameof(Edit), new { id = existing.Id });
+            }
+
             if (ModelState.IsValid)
             {
                 journal.SetCreateFields();
@@ -116,7 +139,7 @@ namespace LifelogBb.Controllers
         // POST: Journals/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Text,Category,Tags,Id")] EditJournalViewModel journalViewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Text,Category,Tags,Id,Date")] EditJournalViewModel journalViewModel)
         {
             if (id != journalViewModel.Id)
             {
