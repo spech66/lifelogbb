@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Weight";
     ViewData["Pretitle"] = "Graph";
 }
@@ -67,7 +67,7 @@
             this.date = data.createdAt;
             this.weight = data.bodyWeight;
             this.height = data.height;
-            this.bmi = (parseFloat(data.bmi).toFixed(1));
+            this.bmi = Number.parseFloat(Number(data.bmi).toFixed(1));
             this.bmioverweight = data.bmiOverweight;
             this.bmiunderweight = data.bmiUnderweight;
         }
@@ -180,8 +180,8 @@
 
         $(function () {
             $.getJSON("/api/weights", function (data) {
-                data = data.value;
-                data = data.sort((a, b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0)); // Ascending!
+                data = Array.isArray(data) ? data : (data?.value ?? []);
+                data = data.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
                 var mappedMeasurements = $.map(data, function (item) { return new Measurement(item) });
 
                 var twoMonth = (new Date()).setMonth((new Date()).getMonth() - 2); // 2 months ago
@@ -221,3 +221,4 @@
         });
     </script>
 }
+

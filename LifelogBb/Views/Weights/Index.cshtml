@@ -208,14 +208,16 @@
             (async function () {
                 const resp = await fetch('/api/weights');
                 if (!resp.ok) return;
-                const data = await resp.json();
+
+                const payload = await resp.json();
+                const data = Array.isArray(payload) ? payload : (payload?.value ?? []);
 
                 const cutoff = new Date();
                 cutoff.setDate(cutoff.getDate() - 60);
 
                 const series = data
-                    .filter(d => new Date(d.createdAt) >= cutoff)
-                    .map(d => ({ x: d.createdAt, y: parseFloat(d.bodyWeight).toFixed(1) }))
+                    .filter(d => d.createdAt && d.bodyWeight != null && new Date(d.createdAt) >= cutoff)
+                    .map(d => ({ x: d.createdAt, y: Number.parseFloat(Number(d.bodyWeight).toFixed(1)) }))
                     .sort((a, b) => new Date(a.x) - new Date(b.x));
 
                 var options = {
@@ -225,7 +227,8 @@
                     series: [{ name: 'Weight', data: series }],
                     xaxis: { type: 'datetime' },
                     yaxis: { labels: { formatter: v => parseFloat(v).toFixed(1) } },
-                    tooltip: { x: { format: 'yyyy-MM-dd' } }
+                    tooltip: { x: { format: 'yyyy-MM-dd' } },
+                    noData: { text: 'No recent entries' }
                 };
 
                 new ApexCharts(document.querySelector('#weightIndexChart'), options).render();
