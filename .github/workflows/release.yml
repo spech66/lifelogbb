@@ -9,7 +9,7 @@ on:
     types: [published]
 
 env:
-  DOTNET_VERSION: '7.0.x'
+  DOTNET_VERSION: '10.0.x'
 
 jobs:
   release:
@@ -29,10 +29,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
     
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
@@ -43,7 +43,7 @@ jobs:
           release_name="lifelogbb-$tag-${{ matrix.target }}"
 
           # Build everything
-          dotnet publish --framework net7.0 --runtime "${{ matrix.target }}" -c Release --property:PublishDir="$release_name"
+          dotnet publish --framework net10.0 --runtime "${{ matrix.target }}" -c Release --property:PublishDir="$release_name"
     
           dotnet tool install --global dotnet-ef
           # Build migration bundle https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/applying?tabs=dotnet-core-cli
@@ -64,7 +64,7 @@ jobs:
           rm -r "./LifelogBb/$release_name"
 
       - name: Publish
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: "lifelogbb*"
         env:
