@@ -64,7 +64,7 @@ docker run -v lifelogbbdatabase:/database -p 80:80 -p 443:443 lifelogbb
 
 ## Build and run from source
 
-* Install [dotnet](https://dotnet.microsoft.com/download) SDK 7.0 on [Linux](https://learn.microsoft.com/en-us/dotnet/core/install/linux?WT.mc_id=dotnet-35129-website) or [Windows](https://learn.microsoft.com/en-us/dotnet/core/install/windows?tabs=net70).
+* Install [dotnet](https://dotnet.microsoft.com/download) SDK
 * Install dotnet-ef for migrations `dotnet tool install --global dotnet-ef`
 * Checkout code (see below) or download the [latest release](https://github.com/spech66/lifelogbb/releases)
 * Adjust `appsettings.Production.json` to your needs
@@ -95,7 +95,7 @@ dotnet tool install --global dotnet-ef | echo "already installed"
 
 ## Dependencies
 
-* [.NET 7.0](https://dotnet.microsoft.com/en-us/) - .NET is a free, cross-platform, open source developer platform for building many different types of applications.
+* [.NET](https://dotnet.microsoft.com/en-us/) - .NET is a free, cross-platform, open source developer platform for building many different types of applications.
 * [SQLite](https://www.sqlite.org/index.html) - SQLite is a C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine. SQLite is the most used database engine in the world.
 
 ## Helpful tools
