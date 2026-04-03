@@ -29,7 +29,7 @@ namespace LifelogBb.Controllers
         public async Task<IActionResult> CalendarEvents()
         {
             var dates = await _context.Journals
-                .Select(j => j.Date.Date)
+                .Select(j => j.Date)
                 .Distinct()
                 .ToListAsync();
 
@@ -89,7 +89,7 @@ namespace LifelogBb.Controllers
         {
             this.AddCategoriesToViewData(_context);
             this.AddTagsToViewData(_context);
-            return View(new Journal { Date = DateTime.Today });
+            return View(new Journal { Date = DateTime.UtcNow.Date });
         }
 
         // POST: Journals/Create
