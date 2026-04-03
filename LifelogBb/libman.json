@@ -91,6 +91,15 @@
       "files": [
         "dist/es5/rrule.min.js"
       ]
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "fullcalendar@6.1.15",
+      "destination": "wwwroot/lib/fullcalendar/",
+      "files": [
+        "index.global.min.js",
+        "index.global.min.css"
+      ]
     }
   ]
 }

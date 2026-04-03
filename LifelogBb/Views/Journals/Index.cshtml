@@ -7,10 +7,74 @@
     <div class="row row-cards">
         <div class="col-12">
             <div class="card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-outline-secondary btn-sm" id="btn-prev-year">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <h3 class="card-title mb-0" id="calendar-year-title"></h3>
+                        <button class="btn btn-outline-secondary btn-sm" id="btn-next-year">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        <button class="btn btn-outline-primary btn-sm ms-2" id="btn-today-year">Today</button>
+                    </div>
+                </div>
                 <div class="card-body">
-                    Journal
+                    <div id="journal-calendar"></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/fullcalendar/index.global.min.css" />
+    <style>
+        #journal-calendar .fc-multimonth-daygrid-table .fc-day-today {
+            background-color: rgba(var(--tblr-primary-rgb), 0.1);
+        }
+        #journal-calendar .fc-event {
+            cursor: pointer;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="~/lib/fullcalendar/index.global.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('journal-calendar');
+            var yearTitle = document.getElementById('calendar-year-title');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'multiMonthYear',
+                multiMonthMaxColumns: 3,
+                headerToolbar: false,
+                height: 'auto',
+                events: '/Journals/CalendarEvents',
+                eventDisplay: 'background',
+                eventColor: 'var(--tblr-primary)',
+                eventDidMount: function (info) {
+                    info.el.setAttribute('title', 'Journal entry');
+                },
+                datesSet: function (info) {
+                    yearTitle.textContent = info.view.currentStart.getFullYear();
+                }
+            });
+
+            calendar.render();
+
+            document.getElementById('btn-prev-year').addEventListener('click', function () {
+                calendar.prev();
+            });
+
+            document.getElementById('btn-next-year').addEventListener('click', function () {
+                calendar.next();
+            });
+
+            document.getElementById('btn-today-year').addEventListener('click', function () {
+                calendar.today();
+            });
+        });
+    </script>
+}

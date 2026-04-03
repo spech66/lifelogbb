@@ -25,6 +25,23 @@ namespace LifelogBb.Controllers
             return View();
         }
 
+        // GET: Journals/CalendarEvents
+        public async Task<IActionResult> CalendarEvents()
+        {
+            var dates = await _context.Journals
+                .Select(j => j.Date.Date)
+                .Distinct()
+                .ToListAsync();
+
+            var events = dates.Select(d => new
+            {
+                start = d.ToString("yyyy-MM-dd"),
+                url = "/Journals/Table?searchString=" + d.ToString("yyyy-MM-dd")
+            });
+
+            return Json(events);
+        }
+
         // GET: Journals/Table
         public async Task<IActionResult> Table(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
@@ -72,13 +89,13 @@ namespace LifelogBb.Controllers
         {
             this.AddCategoriesToViewData(_context);
             this.AddTagsToViewData(_context);
-            return View();
+            return View(new Journal { Date = DateTime.Today });
         }
 
         // POST: Journals/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Text,Category,Tags")] Journal journal)
+        public async Task<IActionResult> Create([Bind("Text,Category,Tags,Date")] Journal journal)
         {
             if (ModelState.IsValid)
             {

@@ -8,6 +8,9 @@ namespace LifelogBb.Models.Entities
         [MinLength(1)]
         public string Text { get; set; } = string.Empty;
 
+        [DataType(DataType.Date)]
+        public DateTime Date { get; set; }
+
         public Journal()
         {
             // Default constructor

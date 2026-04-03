@@ -11,5 +11,8 @@ namespace LifelogBb.ApiDTOs.Journals
         public string? Category { get; set; }
 
         public string? Tags { get; set; }
+
+        [DataType(DataType.Date)]
+        public DateTime? Date { get; set; }
     }
 }
