@@ -28,16 +28,13 @@ namespace LifelogBb.Controllers
         // GET: Journals/CalendarEvents
         public async Task<IActionResult> CalendarEvents()
         {
-            var dates = await _context.Journals
-                .Select(j => j.Date)
-                .Distinct()
+            var events = await _context.Journals
+                .Select(j => new
+                {
+                    start = j.Date.ToString("yyyy-MM-dd"),
+                    entryId = j.Id
+                })
                 .ToListAsync();
-
-            var events = dates.Select(d => new
-            {
-                start = d.ToString("yyyy-MM-dd"),
-                url = "/Journals/Table?searchString=" + d.ToString("yyyy-MM-dd")
-            });
 
             return Json(events);
         }
@@ -85,11 +82,14 @@ namespace LifelogBb.Controllers
         }
 
         // GET: Journals/Create
-        public IActionResult Create()
+        public IActionResult Create(string? date = null)
         {
             this.AddCategoriesToViewData(_context);
             this.AddTagsToViewData(_context);
-            return View(new Journal { Date = DateTime.UtcNow.Date });
+            var defaultDate = date != null && DateTime.TryParse(date, out var parsedDate)
+                ? parsedDate
+                : DateTime.UtcNow.Date;
+            return View(new Journal { Date = defaultDate });
         }
 
         // POST: Journals/Create
@@ -97,6 +97,12 @@ namespace LifelogBb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Text,Category,Tags,Date")] Journal journal)
         {
+            var existing = await _context.Journals.FirstOrDefaultAsync(j => j.Date == journal.Date);
+            if (existing != null)
+            {
+                return RedirectToAction(nameof(Edit), new { id = existing.Id });
+            }
+
             if (ModelState.IsValid)
             {
                 journal.SetCreateFields();

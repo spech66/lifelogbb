@@ -97,8 +97,7 @@
       "library": "fullcalendar@6.1.15",
       "destination": "wwwroot/lib/fullcalendar/",
       "files": [
-        "index.global.min.js",
-        "index.global.min.css"
+        "index.global.min.js"
       ]
     }
   ]

@@ -28,12 +28,14 @@
 </div>
 
 @section Styles {
-    <link rel="stylesheet" href="~/lib/fullcalendar/index.global.min.css" />
     <style>
         #journal-calendar .fc-multimonth-daygrid-table .fc-day-today {
             background-color: rgba(var(--tblr-primary-rgb), 0.1);
         }
         #journal-calendar .fc-event {
+            cursor: pointer;
+        }
+        #journal-calendar .fc-day {
             cursor: pointer;
         }
     </style>
@@ -46,6 +48,8 @@
             var calendarEl = document.getElementById('journal-calendar');
             var yearTitle = document.getElementById('calendar-year-title');
 
+            var entryMap = new Map();
+
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'multiMonthYear',
                 multiMonthMaxColumns: 3,
@@ -56,6 +60,20 @@
                 eventColor: 'var(--tblr-primary)',
                 eventDidMount: function (info) {
                     info.el.setAttribute('title', 'Journal entry');
+                },
+                eventsSet: function (events) {
+                    entryMap.clear();
+                    events.forEach(function (event) {
+                        entryMap.set(event.startStr, event.extendedProps.entryId ?? null);
+                    });
+                },
+                dateClick: function (info) {
+                    var entryId = entryMap.get(info.dateStr);
+                    if (entryId) {
+                        window.location.href = '/Journals/Details/' + entryId;
+                    } else {
+                        window.location.href = '/Journals/Create?date=' + info.dateStr;
+                    }
                 },
                 datesSet: function (info) {
                     yearTitle.textContent = info.view.currentStart.getFullYear();
