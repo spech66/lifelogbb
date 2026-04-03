@@ -2,6 +2,11 @@
     --tblr-navbar-brand-font-size: 2rem;
 }
 
+.navbar-vertical[data-bs-theme="dark"] {
+    --tblr-navbar-bg: #1d273b;
+    --tblr-navbar-border-color: #243049;
+}
+
 .bigbtn {
     min-width: 100%;
     margin-top: 10px;
