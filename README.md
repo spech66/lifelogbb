@@ -3,8 +3,6 @@
 ![Dotnet Workflow](https://github.com/spech66/lifelogbb/actions/workflows/dotnet.yml/badge.svg)
 ![CodeQL Workflow](https://github.com/spech66/lifelogbb/actions/workflows/codeql.yml/badge.svg)
 
-> **AI Disclaimer:** The entire codebase up to April 2026 — including the overall architecture, design decisions, and implementation — was written by **humans**. Future features and refactorings may be assisted by LLMs (e.g. GitHub Copilot); however, all changes are reviewed and approved by the project owner before being merged.
-
 Lifelog - All your life related things in one place. **Journal, weight, Strength training, endurance training tracker, Bucket list, Vision board, ...**.
 
 This service is build for a **single user**. **Password authentication** is included for the sites and API endpoints.
@@ -230,3 +228,5 @@ Apply migrations using `Update-Database`.
 * Hosting a [secure app](https://learn.microsoft.com/en-us/aspnet/core/security/docker-https?view=aspnetcore-6.0).
 * [Combining Bearer Token and Cookie Authentication in ASP.NET](https://weblog.west-wind.com/posts/2022/Mar/29/Combining-Bearer-Token-and-Cookie-Auth-in-ASPNET)
 * [Import a CSV File Into an SQLite Table](https://www.sqlitetutorial.net/sqlite-import-csv/) - Migrate from lifelogspd to LifelogBB
+
+> **AI Disclaimer:** The entire codebase up to April 2026 - including the overall architecture, design decisions, and implementation - was written by **humans**. Future features and refactorings may be assisted by LLMs (e.g. GitHub Copilot); however, all changes are reviewed and approved by the project owner before being merged.
