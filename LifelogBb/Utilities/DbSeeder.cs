@@ -6,6 +6,10 @@ namespace LifelogBb.Utilities
 {
     public static class DbSeeder
     {
+        private static readonly string[] Categories = new[] { "Health", "Fitness", "Personal Development", "Work", "Hobbies" };
+
+        private static readonly string[] Tags = new[] { "Motivation", "Progress", "Challenges", "Reflection", "Dancing", "Cooking", "Travel", "Learning", "Relaxation" };
+
         /// <summary>
         /// Generate some test data.
         /// Uses the current data and generates some data for older years to make the app look more alive.
@@ -55,7 +59,35 @@ namespace LifelogBb.Utilities
 
         private static void AddTestJournal(LifelogBbContext context)
         {
-            // TODO: Add test data for Journal
+            var doggoIpsum = "Doggo ipsum porgo. Blep big ol pupper very good spot long bois, fat boi heckin good boys and girls. what a nice floof you are doing me a frighten. Heckin good boys and girls stop it fren big ol much ruin diet porgo very taste wow puggo mlem, waggy wags ur givin me a spook big ol aqua doggo heck. Big ol pupper sub woofer puggo very jealous pupper floofs, wow such tempt bork. wow very biscit smol borking doggo with a long snoot for pats. Blep big ol noodle horse puggo, fat boi. Doggorino pupperino waggy wags heckin, bork. You are doing me a frighten h*ck doing me a frighten wow very biscit fluffer, length boy shibe. Many pats smol borking doggo with a long snoot for pats corgo pats, much ruin diet borkdrive. Big ol very good spot noodle horse, heck. Mlem long doggo wow very biscit, dat tungg tho.\r\n\r\nBorkdrive floofs very jealous pupper doge much ruin diet stop it fren such treat, I am bekom fat boof very hand that feed shibe adorable doggo noodle horse. Pupperino aqua doggo ruff, waggy wags. Smol borking doggo with a long snoot for pats very hand that feed shibe the neighborhood pupper long bois, waggy wags. Snoot you are doing me a frighten floofs corgo pupper very hand that feed shibe, woofer pats lotsa pats most angery pupper I have ever seen. Thicc maximum borkdrive shibe smol floofs noodle horse what a nice floof, you are doing me the shock blep porgo I am bekom fat. Heckin angery woofer borkf you are doing me a frighten corgo, shooberino. Blop super chub what a nice floof smol borking doggo with a long snoot for pats length boy snoot wow very biscit, doggorino bork floofs long water shoob.  Floofs long water shoob vvv length boy snoot, bork porgo.\r\n\r\nyou are doing me the shock boof. Heckin good boys pats long bois very good spot doggorino, aqua doggo I am bekom fat doing me a frighten aqua doggo thicc, aqua doggo he made many woofs bork. Very hand that feed shibe aqua doggo you are doing me the shock shoob heckin wow such tempt very hand that feed shibe, very good spot long bois smol very good spot. Heckin angery woofer ruff yapper length boy, heckin angery woofer vvv.";
+
+            var currentYear = DateTime.Now.Year;
+            for (int year = currentYear - 5; year <= currentYear; year++)
+            {
+                for(int i = 0; i < 20; i++)
+                {
+                    var month = new Random().Next(1, 13);
+                    var day = new Random().Next(1, 28);
+                    var journalEntry = new Journal
+                    {
+                        Text = doggoIpsum.Substring(0, new Random().Next(100, doggoIpsum.Length)),
+                        Date = new DateTime(year, month, day),
+                        CreatedAt = new DateTime(year, month, day),
+                        UpdatedAt = new DateTime(year, month, day),
+                        Category = Categories[new Random().Next(Categories.Length)],
+                        Tags = String.Join(",", new List<string> { Tags[new Random().Next(Tags.Length)], Tags[new Random().Next(Tags.Length)] }),
+                    };
+
+                    // Make sure that date has no duplicate entries
+                    if(context.Journals.Any(j => j.Date.Date == journalEntry.Date.Date))
+                    {
+                        continue;
+                    }
+                    context.Journals.Add(journalEntry);
+                }
+            }
+
+            context.SaveChanges();
         }
 
         private static void AddTestQuote(LifelogBbContext context)
@@ -73,10 +105,6 @@ namespace LifelogBb.Utilities
             // TODO: Add test data for Todo
         }
 
-        /// <summary>
-        /// Weight loss, gain, loss over 5 years. Tracking on several days a month.
-        /// </summary>
-        /// <param name="context"></param>
         private static void AddTestWeights(LifelogBbContext context)
         {
             var currentYear = DateTime.Now.Year;
@@ -95,7 +123,8 @@ namespace LifelogBb.Utilities
                     var weightEntry = new Weight(height, weightValue)
                     {
                         Bmi = (weightValue * 1.0) / (((height * 0.01) * height) * 0.01), // Metric BMI calculation
-                        CreatedAt = new DateTime(year, month, day)
+                        CreatedAt = new DateTime(year, month, day),
+                        UpdatedAt = new DateTime(year, month, day)                        
                     };
                     context.Weights.Add(weightEntry);
                 }
