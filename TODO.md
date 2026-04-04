@@ -20,7 +20,6 @@ ToDos and Features for LifelogBB.
 
 ### In Progress :construction:
 
-- [x] Rework Dashboard
 - [ ] Daily view with all modules
 - [ ] Weekly view with all modules
 - [ ] Monthly view with all modules
@@ -42,7 +41,8 @@ ToDos and Features for LifelogBB.
 - [x] [Paginations](https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/advanced?view=aspnetcore-7.0#use-dynamic-linq-to-simplify-code)
 - [x] [Tabler](https://github.com/tabler)
 - [x] [ApexCharts](https://apexcharts.com/) from Tabler libs
-- [x] Bucket list (cards + images)
+- [x] [FullCalendar](https://fullcalendar.io/)
+- [x] Bucket list with images
 - [x] Vision board from bucket list
 - [x] Strength training chart
 - [x] Endurance workout chart
