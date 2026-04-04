@@ -344,7 +344,33 @@ namespace LifelogBb.Utilities
 
         private static void AddTestStrengthTraining(LifelogBbContext context)
         {
-            // TODO: Add test data for StrengthTraining
+            var now = DateTime.Now;
+            var trainings = new List<StrengthTraining>();
+            for (int i = 0; i < 5; i++)
+            {
+                trainings.Add(new StrengthTraining
+                {
+                    Exercise = "Squats",
+                    Reps = 5 + new Random().Next(-1, 2),
+                    Weight = 90.0 + 5 * new Random().Next(-2, 2),
+                    Notes = "Training Ipsum",                    
+                    Rating = new Random().Next(1, 5),
+                    CreatedAt = now.AddDays(-i),
+                    UpdatedAt = now.AddDays(-i)
+                });
+                trainings.Add(new StrengthTraining
+                {
+                    Exercise = "Squats",
+                    Reps = 5 + new Random().Next(-1, 2),
+                    Weight = 90.0 + 5 * new Random().Next(-2, 2),
+                    Notes = "Training Ipsum",
+                    Rating = new Random().Next(1, 5),
+                    CreatedAt = now.AddDays(-i).AddMinutes(4), // Hopefully no one calls this before midnight
+                    UpdatedAt = now.AddDays(-i).AddMinutes(4),
+                });
+            }
+            context.StrengthTrainings.AddRange(trainings);
+            context.SaveChanges();
         }
 
         private static void AddTestTodo(LifelogBbContext context)

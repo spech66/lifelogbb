@@ -20,7 +20,7 @@ ToDos and Features for LifelogBB.
 
 ### In Progress :construction:
 
-- [ ] More demo data
+- [x] More demo data
 
 ### Done :heavy_check_mark:
 
