@@ -27,7 +27,7 @@ namespace LifelogBb.Views.Shared.Components.Navigation
                 new NavItem("Journals", "fas fa-pencil", new List<NavItem>
                 {
                     new NavItem("Journals", "Index", "Journal", "fas fa-pencil"),
-                    new NavItem("Journals", "Table", "Journal", "fas fa-table"),
+                    new NavItem("Journals", "Table", "Table", "fas fa-table"),
                 }),
                 new NavItem("Strength training", "fas fa-dumbbell", new List<NavItem>
                 {
