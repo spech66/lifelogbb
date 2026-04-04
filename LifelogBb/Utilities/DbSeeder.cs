@@ -41,9 +41,37 @@ namespace LifelogBb.Utilities
 
         private static void AddTestBucketList(LifelogBbContext context)
         {
-            // TODO: Add test data for BucketList
+            var imageIds = new[]
+            {
+                "5edae359-8204-4111-900f-eef627c78188",
+                "5fabdab9-b303-42cf-8bf5-87ca51a04268",
+                "70940846-5101-406f-a3a3-8b1afbc83f78",
+                "734e2d81-ec5a-46c3-b8cc-34a8c4f89ee3"
+            };
 
-            // "586657 5edae359-8204-4111-900f-eef627c78188", "454272 5fabdab9-b303-42cf-8bf5-87ca51a04268", "881828 70940846-5101-406f-a3a3-8b1afbc83f78", "1399375 734e2d81-ec5a-46c3-b8cc-34a8c4f89ee3"
+            var bucketListItems = new List<BucketList>();
+            var now = DateTime.Now;
+            var statuses = Enum.GetValues(typeof(BucketListStatus));
+            var rand = new Random();
+            for (int i = 0; i < 10; i++)
+            {
+                var item = new BucketList
+                {
+                    Title = $"Bucket List Item {i + 1}",
+                    Description = DoggoIpsum.Substring(0, rand.Next(50, Math.Min(200, DoggoIpsum.Length))),
+                    CreatedAt = now.AddDays(-i * 30),
+                    UpdatedAt = now.AddDays(-i * 30),
+                    Category = Categories[rand.Next(Categories.Length)],
+                    Tags = string.Join(",", new List<string> { Tags[rand.Next(Tags.Length)], Tags[rand.Next(Tags.Length)] }),
+                    Status = (BucketListStatus)statuses.GetValue(rand.Next(statuses.Length))!,
+                    ImageFileName = i < imageIds.Length ? imageIds[i] : null,
+                    ImageName = i < imageIds.Length ? "test.png" : null,
+                };
+                bucketListItems.Add(item);
+            }
+
+            context.BucketLists.AddRange(bucketListItems);
+            context.SaveChanges();
         }
 
         private static void AddTestEnduranceTraining(LifelogBbContext context)
