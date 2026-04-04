@@ -22,6 +22,14 @@ namespace LifelogBb.Utilities
                 return;
             }
 
+            // BucketList
+            // EnduranceTraining
+            // Goal
+            // Habit
+            // Journal
+            // Quote
+            // StrengthTraining
+            // Todo
             AddTestWeights(context);
         }
 
