@@ -1,16 +1,17 @@
+using LifelogBb.ApiRepositories;
+using LifelogBb.ApiServices;
+using LifelogBb.DTOs;
+using LifelogBb.Interfaces;
+using LifelogBb.Models;
+using LifelogBb.Utilities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
-using System.Text;
-using LifelogBb.DTOs;
-using LifelogBb.Interfaces;
-using LifelogBb.ApiServices;
-using LifelogBb.ApiRepositories;
-using LifelogBb.Models;
 using Microsoft.OpenApi;
-using Microsoft.AspNetCore.HttpOverrides;
+using System.Text;
 
 namespace LifelogBb
 {
@@ -80,6 +81,16 @@ namespace LifelogBb
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 // app.UseHsts();
+            }
+
+            // Seed demo data in development
+            if (app.Environment.IsDevelopment())
+            {
+                using (var scope = app.Services.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<LifelogBbContext>();
+                    DbSeeder.Seed(db);
+                }
             }
 
             // app.UseHttpsRedirection(); // Let nginx reverse proxy handle this
