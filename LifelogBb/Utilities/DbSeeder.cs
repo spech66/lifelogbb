@@ -76,7 +76,64 @@ namespace LifelogBb.Utilities
 
         private static void AddTestEnduranceTraining(LifelogBbContext context)
         {
-            // TODO: Add test data for EnduranceTraining
+            var now = DateTime.Now;
+            var rand = new Random();
+            var enduranceList = new List<EnduranceTraining>
+            {
+                new EnduranceTraining
+                {
+                    Exercise = "Running",
+                    Distance = 5.0,
+                    Duration = TimeSpan.FromMinutes(28),
+                    Notes = "Morning run in the park.",
+                    Rating = 4,
+                    CreatedAt = now.AddDays(-10),
+                    UpdatedAt = now.AddDays(-10)
+                },
+                new EnduranceTraining
+                {
+                    Exercise = "Cycling",
+                    Distance = 20.5,
+                    Duration = TimeSpan.FromMinutes(65),
+                    Notes = "Road cycling with friends.",
+                    Rating = 5,
+                    CreatedAt = now.AddDays(-7),
+                    UpdatedAt = now.AddDays(-7)
+                },
+                new EnduranceTraining
+                {
+                    Exercise = "Swimming",
+                    Distance = 1.2,
+                    Duration = TimeSpan.FromMinutes(35),
+                    Notes = "Indoor pool laps.",
+                    Rating = 3,
+                    CreatedAt = now.AddDays(-5),
+                    UpdatedAt = now.AddDays(-5)
+                },
+                new EnduranceTraining
+                {
+                    Exercise = "Walking",
+                    Distance = 3.0,
+                    Duration = TimeSpan.FromMinutes(40),
+                    Notes = "Evening walk with dog.",
+                    Rating = 4,
+                    CreatedAt = now.AddDays(-3),
+                    UpdatedAt = now.AddDays(-3)
+                },
+                new EnduranceTraining
+                {
+                    Exercise = "Running",
+                    Distance = 10.0,
+                    Duration = TimeSpan.FromMinutes(60),
+                    Notes = "Long run, felt great!",
+                    Rating = 5,
+                    CreatedAt = now.AddDays(-1),
+                    UpdatedAt = now.AddDays(-1)
+                }
+            };
+
+            context.EnduranceTrainings.AddRange(enduranceList);
+            context.SaveChanges();
         }
 
         private static void AddTestGoal(LifelogBbContext context)
