@@ -81,7 +81,89 @@ namespace LifelogBb.Utilities
 
         private static void AddTestGoal(LifelogBbContext context)
         {
-            // TODO: Add test data for Goal
+            var now = DateTime.Now;
+            var rand = new Random();
+            var goals = new List<Goal>
+            {
+                // Not started
+                new Goal
+                {
+                    Name = "Run a Marathon",
+                    Description = "Train to run a full marathon.",
+                    InitialValue = 0,
+                    TargetValue = 42.195,
+                    CurrentValue = 0,
+                    StartDate = now.AddDays(5),
+                    EndDate = now.AddMonths(6),
+                    IsCompleted = false,
+                    Category = Categories[rand.Next(Categories.Length)],
+                    Tags = string.Join(",", new List<string> { Tags[rand.Next(Tags.Length)], Tags[rand.Next(Tags.Length)] })
+                },
+                // In progress
+                new Goal
+                {
+                    Name = "Read 12 Books",
+                    Description = "Read one book per month.",
+                    InitialValue = 0,
+                    TargetValue = 12,
+                    CurrentValue = 5,
+                    StartDate = now.AddMonths(-5),
+                    EndDate = now.AddMonths(7),
+                    IsCompleted = false,
+                    Category = Categories[rand.Next(Categories.Length)],
+                    Tags = string.Join(",", new List<string> { Tags[rand.Next(Tags.Length)], Tags[rand.Next(Tags.Length)] })
+                },
+                // Completed
+                new Goal
+                {
+                    Name = "Lose 10 Kg",
+                    Description = "Reach target weight.",
+                    InitialValue = 95,
+                    TargetValue = 85,
+                    CurrentValue = 85,
+                    StartDate = now.AddMonths(-12),
+                    EndDate = now.AddMonths(-6),
+                    IsCompleted = true,
+                    Category = Categories[rand.Next(Categories.Length)],
+                    Tags = string.Join(",", new List<string> { Tags[rand.Next(Tags.Length)], Tags[rand.Next(Tags.Length)] })
+                },
+                // Overdue
+                new Goal
+                {
+                    Name = "Save $5000",
+                    Description = "Save up for a vacation.",
+                    InitialValue = 0,
+                    TargetValue = 5000,
+                    CurrentValue = 2000,
+                    StartDate = now.AddMonths(-8),
+                    EndDate = now.AddMonths(-1),
+                    IsCompleted = false,
+                    Category = Categories[rand.Next(Categories.Length)],
+                    Tags = string.Join(",", new List<string> { Tags[rand.Next(Tags.Length)], Tags[rand.Next(Tags.Length)] })
+                },
+                // Nearly finished
+                new Goal
+                {
+                    Name = "Write a Blog Series",
+                    Description = "Publish 10 blog posts.",
+                    InitialValue = 0,
+                    TargetValue = 10,
+                    CurrentValue = 9,
+                    StartDate = now.AddMonths(-2),
+                    EndDate = now.AddMonths(1),
+                    IsCompleted = false,
+                    Category = Categories[rand.Next(Categories.Length)],
+                    Tags = string.Join(",", new List<string> { Tags[rand.Next(Tags.Length)], Tags[rand.Next(Tags.Length)] })
+                }
+            };
+
+            foreach(var goal in goals)
+            {
+                goal.SetCreateFields();
+            }
+
+            context.Goals.AddRange(goals);
+            context.SaveChanges();
         }
 
         private static void AddTestHabit(LifelogBbContext context)
