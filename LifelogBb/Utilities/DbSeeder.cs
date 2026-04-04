@@ -22,15 +22,55 @@ namespace LifelogBb.Utilities
                 return;
             }
 
-            // BucketList
-            // EnduranceTraining
-            // Goal
-            // Habit
-            // Journal
-            // Quote
-            // StrengthTraining
-            // Todo
+            AddTestBucketList(context);
+            AddTestEnduranceTraining(context);
+            AddTestGoal(context);
+            AddTestHabit(context);
+            AddTestJournal(context);
+            AddTestQuote(context);
+            AddTestStrengthTraining(context);
+            AddTestTodo(context);
             AddTestWeights(context);
+        }
+
+        private static void AddTestBucketList(LifelogBbContext context)
+        {
+            // TODO: Add test data for BucketList
+        }
+
+        private static void AddTestEnduranceTraining(LifelogBbContext context)
+        {
+            // TODO: Add test data for EnduranceTraining
+        }
+
+        private static void AddTestGoal(LifelogBbContext context)
+        {
+            // TODO: Add test data for Goal
+        }
+
+        private static void AddTestHabit(LifelogBbContext context)
+        {
+            // TODO: Add test data for Habit
+        }
+
+        private static void AddTestJournal(LifelogBbContext context)
+        {
+            // TODO: Add test data for Journal
+        }
+
+        private static void AddTestQuote(LifelogBbContext context)
+        {
+            // TODO: Add test data for Quote
+        }
+
+        private static void AddTestStrengthTraining(LifelogBbContext context)
+        {
+            // TODO: Add test data for StrengthTraining
+        }
+
+        private static void AddTestTodo(LifelogBbContext context)
+        {
+            // TODO: Add test data for Todo
         }
 
         /// <summary>
@@ -60,7 +100,6 @@ namespace LifelogBb.Utilities
                     context.Weights.Add(weightEntry);
                 }
             }
-
 
             context.SaveChanges();
         }
