@@ -68,6 +68,15 @@
                                             <a class="btn btn-success btn-icon" asp-action="Feed" asp-route-token="@ViewData["FeedToken"]" role="button"><i class="fa-regular fa-calendar-plus icon"></i></a>
                                         </span>
                                     }
+                                    else if (ViewData.TryGetValue("SecondaryAction", out action) && action is string && (string)action == "random")
+                                    {
+                                        <span class="d-none d-sm-inline">
+                                            <a class="btn btn-success" asp-action="Random" role="button"><i class="fa-solid fa-shuffle icon"></i>Random</a>
+                                        </span>
+                                        <span class="d-sm-none">
+                                            <a class="btn btn-success btn-icon" asp-action="Random" role="button"><i class="fa-solid fa-shuffle icon"></i></a>
+                                        </span>
+                                    }
                                 }
                                 @if (ViewData.ContainsKey("PrimaryAction"))
                                 {

@@ -1,75 +1,186 @@
-﻿@using LifelogBb.Utilities;
-@model PaginatedListViewModel<LifelogBb.Models.Entities.BucketList>
+﻿@using LifelogBb.Models.Entities;
+@using LifelogBb.Utilities;
+@model LifelogBb.Models.BucketLists.BucketListIndexViewModel
 
 @{
     ViewData["Title"] = "Bucket list";
     ViewData["PrimaryAction"] = "create";
     ViewData["SecondaryAction"] = "vision";
+
+    string StatusClass(BucketListStatus status) => status switch
+    {
+        BucketListStatus.Reached => "bg-green-lt text-green",
+        BucketListStatus.InProgress => "bg-yellow-lt text-yellow",
+        _ => "bg-azure-lt text-azure"
+    };
+
+    string StatusIcon(BucketListStatus status) => status switch
+    {
+        BucketListStatus.Reached => "fa-circle-check",
+        BucketListStatus.InProgress => "fa-spinner",
+        _ => "fa-star"
+    };
+
+    string SortButtonClass(string fieldName)
+        => RazorPageExtensions.GetSortOrder(ViewData, fieldName) == ""
+            ? "btn-outline-secondary"
+            : "btn-outline-primary";
+
+    string Excerpt(string? text, int maxLength = 140)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return string.Empty;
+        text = text.Trim();
+        return text.Length <= maxLength ? text : $"{text[..maxLength].TrimEnd()}…";
+    }
 }
 
 <div class="container-xl">
-    <div class="row row-cards mb-3">
-        <div class="col">
-            <div class="card">
+    <div class="row row-deck row-cards mb-3">
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
                 <div class="card-body">
-                    Sort by
-                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "CreatedAt")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")" style="display: inline">Date</a>,
-                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Title")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Title")" style="display: inline">Title</a>,
-                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Status")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Status")" style="display: inline">Status</a>,
-                    <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Category")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Category")" style="display: inline">Category</a>.
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="bg-primary text-white avatar"><i class="fa-solid fa-tent"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Total</div>
+                            <div class="text-muted"><strong>@Model.TotalCount</strong> dreams</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="bg-azure text-white avatar"><i class="fa-solid fa-star"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Wishlist</div>
+                            <div class="text-muted"><strong>@Model.WishCount</strong> ideas</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="@(Model.InProgressCount > 0 ? "bg-yellow" : "bg-muted") text-white avatar"><i class="fa-solid fa-spinner"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">In Progress</div>
+                            <div class="@(Model.InProgressCount > 0 ? "text-yellow" : "text-muted")"><strong>@Model.InProgressCount</strong> underway</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="bg-green text-white avatar"><i class="fa-solid fa-check"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Reached</div>
+                            <div class="text-muted"><strong>@Model.ReachedCount</strong> completed</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row row-cards">
-        @foreach (var item in Model.List)
-        {
-            <div class="col-sm-6 col-lg-4">
-                <div class="card card-sm h-100">
-                    @if (item.ImageName != null)
-                    {
-                        <a asp-action="Details" asp-route-id="@item.Id" class="d-block"><img src="@Url.Action("GetImage", "BucketLists", new { id = item.Id })" class="card-img-top" alt="@Html.DisplayFor(modelItem => item.Title)" /></a>
-                    }
-                    <div class="card-body">
-                        <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
-                        <div class="d-flex align-items-center">
-                            <div>
-                                @if (item.Status == LifelogBb.Models.Entities.BucketListStatus.Reached)
-                                {
-                                    <span class="badge text-bg-success">@Html.DisplayFor(modelItem => item.Status)</span>
-                                }
-                                else if (item.Status == LifelogBb.Models.Entities.BucketListStatus.InProgress)
-                                {
-                                    <span class="badge text-bg-warning">@Html.DisplayFor(modelItem => item.Status)</span>
-                                }
-                                else
-                                {
-                                    <span class="badge text-bg-azure">@Html.DisplayFor(modelItem => item.Status)</span>
-                                }
+
+    @if (Model.TotalCount == 0)
+    {
+        <div class="row row-cards">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center text-muted py-5">
+                        No bucket list items yet. <a asp-action="Create">Add your first dream</a>.
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row row-cards mb-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body d-flex flex-column flex-md-row align-items-md-center gap-2">
+                        <div class="text-muted me-md-2">Sort by</div>
+                        <div class="btn-list flex-wrap">
+                            <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "CreatedAt")" class="btn btn-sm @SortButtonClass("CreatedAt")">Date</a>
+                            <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Title")" class="btn btn-sm @SortButtonClass("Title")">Title</a>
+                            <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Status")" class="btn btn-sm @SortButtonClass("Status")">Status</a>
+                            <a asp-action="Index" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Category")" class="btn btn-sm @SortButtonClass("Category")">Category</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row row-cards">
+            @foreach (var item in Model.List)
+            {
+                <div class="col-sm-6 col-lg-4">
+                    <div class="card h-100">
+                        @if (!string.IsNullOrWhiteSpace(item.ImageName))
+                        {
+                            <a asp-action="Details" asp-route-id="@item.Id" class="d-block">
+                                <img src="@Url.Action("GetImage", "BucketLists", new { id = item.Id })" class="card-img-top" alt="@item.Title" />
+                            </a>
+                        }
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                                <h4 class="card-title mb-0">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="text-reset">@item.Title</a>
+                                </h4>
+                                <span class="badge @StatusClass(item.Status) text-nowrap">
+                                    <i class="fa-solid @StatusIcon(item.Status) me-1"></i>@item.Status
+                                </span>
                             </div>
-                            <div class="ms-auto">
-                                @Html.DisplayFor(modelItem => item.Category, "Category")
-                                @Html.DisplayFor(modelItem => item.Tags, "Tags")
+                            @if (!string.IsNullOrWhiteSpace(item.Description))
+                            {
+                                <p class="text-muted small mb-3">@Excerpt(item.Description)</p>
+                            }
+                            <div class="small text-muted mb-2">
+                                <i class="fa-regular fa-calendar me-1"></i>Added @item.CreatedAt.ToString("yyyy-MM-dd")
+                            </div>
+                            <div class="mt-auto">
+                                @Html.DisplayFor(m => item.Category, "Category")
+                                @Html.DisplayFor(m => item.Tags, "Tags")
                             </div>
                         </div>
-                        <p class="card-text">
-                            @Html.DisplayFor(modelItem => item.Description)
-                        </p>
-                    </div>
-                    <div class="card-footer">
-                        <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id"><i class="fas fa-list-alt icon"></i>Details</a>
+                        <div class="card-footer d-flex gap-2">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary flex-fill">
+                                <i class="fa-solid fa-pen me-1"></i>Edit
+                            </a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary flex-fill">
+                                <i class="fa-solid fa-list-alt me-1"></i>Details
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
-    <div class="row row-cards mt-3">
-        <div class="col">
-            <div class="card">
-                <div class="card-body d-flex align-items-center">
-                    @await Component.InvokeAsync("Pagination", Model.List)
+            }
+        </div>
+
+        <div class="row row-cards mt-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center">
+                        @await Component.InvokeAsync("Pagination", Model.List)
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    }
 </div>

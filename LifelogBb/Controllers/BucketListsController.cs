@@ -28,24 +28,26 @@ namespace LifelogBb.Controllers
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
             ViewData["CurrentSort"] = sortOrder;
+            ViewData["CurrentFilter"] = currentFilter;
 
-            if (searchString != null)
-            {
-                pageNumber = 1;
-            }
-            else
-            {
-                searchString = currentFilter;
-            }
-
-            ViewData["CurrentFilter"] = searchString;
+            var statsItems = await _context.BucketLists.AsNoTracking().ToListAsync();
 
             var items = from s in _context.BucketLists select s;
             items = items.SortByName(sortOrder, $"{nameof(BucketList.CreatedAt)}_desc");
 
             var config = Config.GetConfig(_context);
             var list = await PaginatedList<BucketList>.CreateAsync(items.AsNoTracking(), pageNumber ?? 1, config.BucketListPageSize);
-            return View(new PaginatedListViewModel<BucketList>(list, config));
+
+            var model = new BucketListIndexViewModel
+            {
+                TotalCount = statsItems.Count,
+                WishCount = statsItems.Count(b => b.Status == BucketListStatus.Wish),
+                InProgressCount = statsItems.Count(b => b.Status == BucketListStatus.InProgress),
+                ReachedCount = statsItems.Count(b => b.Status == BucketListStatus.Reached),
+                List = list
+            };
+
+            return View(model);
         }
 
         // GET: BucketLists/Table/

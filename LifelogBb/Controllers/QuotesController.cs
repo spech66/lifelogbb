@@ -23,24 +23,33 @@ namespace LifelogBb.Controllers
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
             ViewData["CurrentSort"] = sortOrder;
+            ViewData["CurrentFilter"] = currentFilter;
 
-            if (searchString != null)
-            {
-                pageNumber = 1;
-            }
-            else
-            {
-                searchString = currentFilter;
-            }
-
-            ViewData["CurrentFilter"] = searchString;
+            var allQuotes = await _context.Quotes.AsNoTracking().ToListAsync();
 
             var quotes = from s in _context.Quotes select s;
             quotes = quotes.SortByName(sortOrder, $"{nameof(Quote.CreatedAt)}_desc");
 
             var config = Config.GetConfig(_context);
             var list = await PaginatedList<Quote>.CreateAsync(quotes.AsNoTracking(), pageNumber ?? 1, config.QuotePageSize);
-            return View(new PaginatedListViewModel<Quote>(list, config));
+
+            var authorGroups = allQuotes
+                .Where(q => !string.IsNullOrWhiteSpace(q.Author))
+                .GroupBy(q => q.Author!.Trim())
+                .OrderByDescending(g => g.Count())
+                .ThenBy(g => g.Key)
+                .ToList();
+
+            var model = new QuoteIndexViewModel
+            {
+                TotalCount = allQuotes.Count,
+                WithAuthorCount = allQuotes.Count(q => !string.IsNullOrWhiteSpace(q.Author)),
+                UniqueAuthorsCount = authorGroups.Count,
+                TaggedCount = allQuotes.Count(q => !string.IsNullOrWhiteSpace(q.Tags)),
+                List = list
+            };
+
+            return View(model);
         }
 
         // GET: Quotes/Table/
