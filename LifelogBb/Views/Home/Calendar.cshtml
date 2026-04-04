@@ -3,77 +3,183 @@
 
 @{
     ViewData["Title"] = "Calendar - " + Model.Date.ToShortDateString();
+
+    var quickDays = Enumerable.Range(-3, 7)
+        .Select(offset => Model.Date.AddDays(offset).Date)
+        .ToList();
+
+    var orderedEvents = Model.Events
+        .Where(e => e.StartDate.HasValue)
+        .OrderBy(e => e.StartDate)
+        .ThenBy(e => e.EndDate)
+        .ToList();
 }
 
-
 @functions {
-    public string GetCardColor(EntityType type)
+    public string GetBadgeClass(EntityType type)
     {
         return type switch
         {
-            EntityType.Habit => "text-bg-info",
-            EntityType.Todo => "text-bg-danger",
-            EntityType.Goal => "text-bg-warning",
-            _ => "text-bg-secondary"
+            EntityType.Habit => "bg-azure-lt text-azure",
+            EntityType.Todo => "bg-red-lt text-red",
+            EntityType.Goal => "bg-yellow-lt text-yellow",
+            _ => "bg-muted-lt text-muted"
+        };
+    }
+
+    public string GetBorderClass(EntityType type)
+    {
+        return type switch
+        {
+            EntityType.Habit => "border-azure",
+            EntityType.Todo => "border-red",
+            EntityType.Goal => "border-yellow",
+            _ => "border-muted"
+        };
+    }
+
+    public string GetIcon(EntityType type)
+    {
+        return type switch
+        {
+            EntityType.Habit => "fa-arrows-spin",
+            EntityType.Todo => "fa-list-check",
+            EntityType.Goal => "fa-bullseye",
+            _ => "fa-calendar-day"
+        };
+    }
+
+    public string GetTypeLabel(EntityType type)
+    {
+        return type switch
+        {
+            EntityType.Habit => "Habit",
+            EntityType.Todo => "Todo",
+            EntityType.Goal => "Goal",
+            _ => type.ToString()
         };
     }
 }
 
 <div class="container-xl">
     <div class="row row-cards mb-3">
-        <div class="col">
+        <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <a asp-action="Calendar" asp-route-date="@DateTime.Now.Date.ToString("yyyy-MM-dd")" style="display: inline">@DateTime.Now.Date.ToString("ddd dd.MM.yyyy")</a>
-                    @for(int i = 1; i < 7; i++)
-                    {
-                        <span>-</span> <a asp-action="Calendar" asp-route-date="@DateTime.Now.AddDays(i).Date.ToString("yyyy-MM-dd")" style="display: inline">@DateTime.Now.AddDays(i).Date.ToString("ddd dd.MM.yyyy")</a>
-                    }
-                    <form asp-action="Calendar">
-                        <div class="input-group mb-2">
-                            <input type="date" class="form-control" name="date" value="@Model.Date.ToString("yyyy-MM-dd")">
-                            <button class="btn" type="submit">Go</button>
+                    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-3">
+                        <div>
+                            <div class="text-muted text-uppercase small fw-bold">Day view</div>
+                            <h3 class="card-title mb-0">@Model.Date.ToString("dddd, dd MMMM yyyy")</h3>
                         </div>
-                    </form>
+                        <div class="btn-list">
+                            <a asp-action="Calendar" asp-route-date="@Model.Date.AddDays(-1).ToString("yyyy-MM-dd")" class="btn btn-outline-secondary">
+                                <i class="fa-solid fa-chevron-left me-1"></i>Previous
+                            </a>
+                            <a asp-action="Calendar" asp-route-date="@DateTime.Today.ToString("yyyy-MM-dd")" class="btn btn-outline-primary">
+                                <i class="fa-solid fa-calendar-day me-1"></i>Today
+                            </a>
+                            <a asp-action="Calendar" asp-route-date="@Model.Date.AddDays(1).ToString("yyyy-MM-dd")" class="btn btn-outline-secondary">
+                                Next<i class="fa-solid fa-chevron-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-xl-row gap-3 align-items-xl-center justify-content-between">
+                        <div class="btn-list flex-wrap">
+                            @foreach (var day in quickDays)
+                            {
+                                var isActive = day == Model.Date.Date;
+                                <a asp-action="Calendar"
+                                   asp-route-date="@day.ToString("yyyy-MM-dd")"
+                                   class="btn btn-sm @(isActive ? "btn-primary" : "btn-outline-secondary")">
+                                    <span class="d-block text-start lh-sm">
+                                        <span class="d-block">@day.ToString("ddd")</span>
+                                        <span class="small">@day.ToString("dd.MM")</span>
+                                    </span>
+                                </a>
+                            }
+                        </div>
+
+                        <form asp-action="Calendar" class="m-0">
+                            <div class="input-group">
+                                <input type="date" class="form-control" name="date" value="@Model.Date.ToString("yyyy-MM-dd")" />
+                                <button class="btn btn-outline-secondary" type="submit">
+                                    <i class="fa-solid fa-arrow-right me-1"></i>Go
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
     <div class="row row-cards">
-        <div class="col">
+        <div class="col-12">
             <div class="card">
-                <div class="card-body">
-                    <table class="table">
-                        @for (var timeSegment = DateTime.Now.Date; timeSegment < DateTime.Now.AddDays(1).Date.AddTicks(-1); timeSegment = timeSegment.AddHours(1))
-                        {
-                            <tr>
-                                <td valign="top" style="padding-right: 8px">@timeSegment.ToString("HH:mm")</td>
-                                <td>
-                                    @foreach (var eventItem in Model.Events)
-                                    {
-                                        if (eventItem.StartDate != null && eventItem.StartDate.Value.Hour == timeSegment.Hour)
-                                        {
-                                            <div class="card mb-2">
-                                                <div class="card-status-start @GetCardColor(eventItem.Type)"></div>
-                                                <div class="card-body">
-                                                    <h5 class="card-title mb-2">
-                                                        @eventItem.StartDate.Value.ToString("HH:mm")
-                                                        @if(eventItem.EndDate != null)
-                                                        {
-                                                            <span>- @eventItem.EndDate.Value.ToString("HH:mm")</span>
-                                                        }
-                                                        <!-- @eventItem.Type -->
-                                                    </h5>
-                                                    <p class="card-text">@eventItem.Text</p>
-                                                </div>
-                                            </div>
-                                        }
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </table>
+                <div class="card-header border-0">
+                    <h3 class="card-title">Schedule</h3>
                 </div>
+                @if (orderedEvents.Count == 0)
+                {
+                    <div class="card-body text-center text-muted py-5">
+                        No items planned for this day.
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table card-table table-vcenter">
+                            <tbody>
+                                @for (var timeSegment = Model.Date.Date; timeSegment < Model.Date.Date.AddDays(1); timeSegment = timeSegment.AddHours(1))
+                                {
+                                    var hourEvents = orderedEvents
+                                        .Where(e => e.StartDate.HasValue && e.StartDate.Value.Hour == timeSegment.Hour)
+                                        .ToList();
+
+                                    <tr>
+                                        <td class="text-muted text-nowrap align-top" style="width: 92px;">@timeSegment.ToString("HH:mm")</td>
+                                        <td>
+                                            @if (hourEvents.Count == 0)
+                                            {
+                                                <div class="py-2 text-muted small">&nbsp;</div>
+                                            }
+                                            else
+                                            {
+                                                <div class="d-flex flex-column gap-2 py-1">
+                                                    @foreach (var eventItem in hourEvents)
+                                                    {
+                                                        <div class="card card-sm @GetBorderClass(eventItem.Type)">
+                                                            <div class="card-body py-3">
+                                                                <div class="d-flex flex-column flex-md-row align-items-md-start justify-content-between gap-2">
+                                                                    <div>
+                                                                        <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
+                                                                            <span class="badge @GetBadgeClass(eventItem.Type)">
+                                                                                <i class="fa-solid @GetIcon(eventItem.Type) me-1"></i>@GetTypeLabel(eventItem.Type)
+                                                                            </span>
+                                                                            <span class="text-muted small">
+                                                                                @eventItem.StartDate?.ToString("HH:mm")
+                                                                                @if (eventItem.EndDate != null)
+                                                                                {
+                                                                                    <text> - @eventItem.EndDate.Value.ToString("HH:mm")</text>
+                                                                                }
+                                                                            </span>
+                                                                        </div>
+                                                                        <div class="fw-medium">@eventItem.Text</div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
             </div>
         </div>
     </div>
