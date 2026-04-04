@@ -10,6 +10,8 @@ namespace LifelogBb.Utilities
 
         private static readonly string[] Tags = new[] { "Motivation", "Progress", "Challenges", "Reflection", "Dancing", "Cooking", "Travel", "Learning", "Relaxation" };
 
+        private static readonly string DoggoIpsum = "Doggo ipsum porgo. Blep big ol pupper very good spot long bois, fat boi heckin good boys and girls. what a nice floof you are doing me a frighten. Heckin good boys and girls stop it fren big ol much ruin diet porgo very taste wow puggo mlem, waggy wags ur givin me a spook big ol aqua doggo heck. Big ol pupper sub woofer puggo very jealous pupper floofs, wow such tempt bork. wow very biscit smol borking doggo with a long snoot for pats. Blep big ol noodle horse puggo, fat boi. Doggorino pupperino waggy wags heckin, bork. You are doing me a frighten h*ck doing me a frighten wow very biscit fluffer, length boy shibe. Many pats smol borking doggo with a long snoot for pats corgo pats, much ruin diet borkdrive. Big ol very good spot noodle horse, heck. Mlem long doggo wow very biscit, dat tungg tho.\r\n\r\nBorkdrive floofs very jealous pupper doge much ruin diet stop it fren such treat, I am bekom fat boof very hand that feed shibe adorable doggo noodle horse. Pupperino aqua doggo ruff, waggy wags. Smol borking doggo with a long snoot for pats very hand that feed shibe the neighborhood pupper long bois, waggy wags. Snoot you are doing me a frighten floofs corgo pupper very hand that feed shibe, woofer pats lotsa pats most angery pupper I have ever seen. Thicc maximum borkdrive shibe smol floofs noodle horse what a nice floof, you are doing me the shock blep porgo I am bekom fat. Heckin angery woofer borkf you are doing me a frighten corgo, shooberino. Blop super chub what a nice floof smol borking doggo with a long snoot for pats length boy snoot wow very biscit, doggorino bork floofs long water shoob.  Floofs long water shoob vvv length boy snoot, bork porgo.\r\n\r\nyou are doing me the shock boof. Heckin good boys pats long bois very good spot doggorino, aqua doggo I am bekom fat doing me a frighten aqua doggo thicc, aqua doggo he made many woofs bork. Very hand that feed shibe aqua doggo you are doing me the shock shoob heckin wow such tempt very hand that feed shibe, very good spot long bois smol very good spot. Heckin angery woofer ruff yapper length boy, heckin angery woofer vvv.";
+
         /// <summary>
         /// Generate some test data.
         /// Uses the current data and generates some data for older years to make the app look more alive.
@@ -40,6 +42,8 @@ namespace LifelogBb.Utilities
         private static void AddTestBucketList(LifelogBbContext context)
         {
             // TODO: Add test data for BucketList
+
+            // "586657 5edae359-8204-4111-900f-eef627c78188", "454272 5fabdab9-b303-42cf-8bf5-87ca51a04268", "881828 70940846-5101-406f-a3a3-8b1afbc83f78", "1399375 734e2d81-ec5a-46c3-b8cc-34a8c4f89ee3"
         }
 
         private static void AddTestEnduranceTraining(LifelogBbContext context)
@@ -59,8 +63,6 @@ namespace LifelogBb.Utilities
 
         private static void AddTestJournal(LifelogBbContext context)
         {
-            var doggoIpsum = "Doggo ipsum porgo. Blep big ol pupper very good spot long bois, fat boi heckin good boys and girls. what a nice floof you are doing me a frighten. Heckin good boys and girls stop it fren big ol much ruin diet porgo very taste wow puggo mlem, waggy wags ur givin me a spook big ol aqua doggo heck. Big ol pupper sub woofer puggo very jealous pupper floofs, wow such tempt bork. wow very biscit smol borking doggo with a long snoot for pats. Blep big ol noodle horse puggo, fat boi. Doggorino pupperino waggy wags heckin, bork. You are doing me a frighten h*ck doing me a frighten wow very biscit fluffer, length boy shibe. Many pats smol borking doggo with a long snoot for pats corgo pats, much ruin diet borkdrive. Big ol very good spot noodle horse, heck. Mlem long doggo wow very biscit, dat tungg tho.\r\n\r\nBorkdrive floofs very jealous pupper doge much ruin diet stop it fren such treat, I am bekom fat boof very hand that feed shibe adorable doggo noodle horse. Pupperino aqua doggo ruff, waggy wags. Smol borking doggo with a long snoot for pats very hand that feed shibe the neighborhood pupper long bois, waggy wags. Snoot you are doing me a frighten floofs corgo pupper very hand that feed shibe, woofer pats lotsa pats most angery pupper I have ever seen. Thicc maximum borkdrive shibe smol floofs noodle horse what a nice floof, you are doing me the shock blep porgo I am bekom fat. Heckin angery woofer borkf you are doing me a frighten corgo, shooberino. Blop super chub what a nice floof smol borking doggo with a long snoot for pats length boy snoot wow very biscit, doggorino bork floofs long water shoob.  Floofs long water shoob vvv length boy snoot, bork porgo.\r\n\r\nyou are doing me the shock boof. Heckin good boys pats long bois very good spot doggorino, aqua doggo I am bekom fat doing me a frighten aqua doggo thicc, aqua doggo he made many woofs bork. Very hand that feed shibe aqua doggo you are doing me the shock shoob heckin wow such tempt very hand that feed shibe, very good spot long bois smol very good spot. Heckin angery woofer ruff yapper length boy, heckin angery woofer vvv.";
-
             var currentYear = DateTime.Now.Year;
             for (int year = currentYear - 5; year <= currentYear; year++)
             {
@@ -70,7 +72,7 @@ namespace LifelogBb.Utilities
                     var day = new Random().Next(1, 28);
                     var journalEntry = new Journal
                     {
-                        Text = doggoIpsum.Substring(0, new Random().Next(100, doggoIpsum.Length)),
+                        Text = DoggoIpsum.Substring(0, new Random().Next(100, DoggoIpsum.Length)),
                         Date = new DateTime(year, month, day),
                         CreatedAt = new DateTime(year, month, day),
                         UpdatedAt = new DateTime(year, month, day),
@@ -92,7 +94,23 @@ namespace LifelogBb.Utilities
 
         private static void AddTestQuote(LifelogBbContext context)
         {
-            // TODO: Add test data for Quote
+            var quotes = new List<Quote>
+            {
+                new Quote { Text = "The only way to do great work is to love what you do.", Author = "Steve Jobs", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+                new Quote { Text = "Success is not the key to happiness. Happiness is the key to success. If you love what you are doing, you will be successful.", Author = "Albert Schweitzer", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+                new Quote { Text = "Don't watch the clock; do what it does. Keep going.", Author = "Sam Levenson", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+                new Quote { Text = "The future belongs to those who believe in the beauty of their dreams.", Author = "Eleanor Roosevelt", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+                new Quote { Text = "It does not matter how slowly you go as long as you do not stop.", Author = "Confucius", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+            };
+
+            foreach (var quote in quotes)
+            {
+                quote.Category = Categories[new Random().Next(Categories.Length)];
+                quote.Tags = String.Join(",", new List<string> { Tags[new Random().Next(Tags.Length)], Tags[new Random().Next(Tags.Length)] });
+            }
+
+            context.Quotes.AddRange(quotes);
+            context.SaveChanges();
         }
 
         private static void AddTestStrengthTraining(LifelogBbContext context)
@@ -102,7 +120,24 @@ namespace LifelogBb.Utilities
 
         private static void AddTestTodo(LifelogBbContext context)
         {
-            // TODO: Add test data for Todo
+            var todos = new List<Todo>
+            {
+                new Todo { Title = "Go for a run", IsCompleted = false, StartDate = DateTime.Now, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+                new Todo { Title = "Read a book", IsCompleted = true, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+                new Todo { Title = "Cook a new recipe", IsCompleted = false, Progress = 10, StartDate = DateTime.Now, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+                new Todo { Title = "Meditate for 10 minutes", IsCompleted = true, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+                new Todo { Title = "Call a friend", IsCompleted = false, IsImportant = true, DueDate = DateTime.Now.AddDays(-2), CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+            };
+
+            foreach (var todo in todos)
+            {
+                todo.Description = DoggoIpsum.Substring(0, new Random().Next(50, DoggoIpsum.Length));
+                todo.Category = Categories[new Random().Next(Categories.Length)];
+                todo.Tags = String.Join(",", new List<string> { Tags[new Random().Next(Tags.Length)], Tags[new Random().Next(Tags.Length)] });
+            }
+
+            context.Todos.AddRange(todos);
+            context.SaveChanges();
         }
 
         private static void AddTestWeights(LifelogBbContext context)
