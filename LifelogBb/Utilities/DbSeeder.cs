@@ -86,7 +86,69 @@ namespace LifelogBb.Utilities
 
         private static void AddTestHabit(LifelogBbContext context)
         {
-            // TODO: Add test data for Habit
+            var now = DateTime.Now;
+            var rand = new Random();
+            var habits = new List<Habit>
+            {
+                new Habit
+                {
+                    Name = "Drink Water",
+                    Description = "Drink at least 2 liters of water.",
+                    StartDate = now.AddDays(-30),
+                    EndDate = now.AddDays(-30).AddMinutes(5),
+                    RecurrenceRules = "FREQ=DAILY",
+                    Category = Categories[rand.Next(Categories.Length)],
+                    Tags = string.Join(",", new List<string> { Tags[rand.Next(Tags.Length)], Tags[rand.Next(Tags.Length)] })
+                },
+                new Habit
+                {
+                    Name = "Morning Walk",
+                    Description = "Go for a 20-minute walk every morning.",
+                    StartDate = now.AddDays(-20),
+                    EndDate = now.AddDays(-20).AddMinutes(20),
+                    RecurrenceRules = "FREQ=DAILY",
+                    Category = Categories[rand.Next(Categories.Length)],
+                    Tags = string.Join(",", new List<string> { Tags[rand.Next(Tags.Length)], Tags[rand.Next(Tags.Length)] })
+                },
+                new Habit
+                {
+                    Name = "Read a Book",
+                    Description = "Read at least 10 pages.",
+                    StartDate = now.AddDays(-10),
+                    EndDate = now.AddDays(-10).AddMinutes(30),
+                    RecurrenceRules = "FREQ=DAILY",
+                    Category = Categories[rand.Next(Categories.Length)],
+                    Tags = string.Join(",", new List<string> { Tags[rand.Next(Tags.Length)], Tags[rand.Next(Tags.Length)] })
+                },
+                new Habit
+                {
+                    Name = "Weekly Review",
+                    Description = "Review your week and plan ahead.",
+                    StartDate = now.AddDays(-21),
+                    EndDate = now.AddDays(-21).AddMinutes(30),
+                    RecurrenceRules = "FREQ=WEEKLY",
+                    Category = Categories[rand.Next(Categories.Length)],
+                    Tags = string.Join(",", new List<string> { Tags[rand.Next(Tags.Length)], Tags[rand.Next(Tags.Length)] })
+                },
+                new Habit
+                {
+                    Name = "Call Family",
+                    Description = "Call a family member every other day.",
+                    StartDate = now.AddDays(-14),
+                    EndDate = now.AddDays(-14).AddMinutes(20),
+                    RecurrenceRules = "FREQ=DAILY;INTERVAL=2",
+                    Category = Categories[rand.Next(Categories.Length)],
+                    Tags = string.Join(",", new List<string> { Tags[rand.Next(Tags.Length)], Tags[rand.Next(Tags.Length)] })
+                }
+            };
+
+            foreach(var habit in habits)
+            {
+                habit.SetCreateFields();
+            }
+
+            context.Habits.AddRange(habits);
+            context.SaveChanges();
         }
 
         private static void AddTestJournal(LifelogBbContext context)
