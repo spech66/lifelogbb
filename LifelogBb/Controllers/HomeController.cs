@@ -69,6 +69,132 @@ namespace LifelogBb.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Summary(SummaryGranularity? granularity, DateTime? start, DateTime? end)
+        {
+            var model = new SummaryViewModel
+            {
+                Granularity = granularity ?? SummaryGranularity.Day
+            };
+
+            var today = DateTime.Today;
+            var anchor = (start ?? today).Date;
+
+            switch (model.Granularity)
+            {
+                case SummaryGranularity.Day:
+                    model.Start = anchor;
+                    model.End = anchor;
+                    break;
+                case SummaryGranularity.Week:
+                    model.Start = anchor.AddDays(-(int)anchor.DayOfWeek);
+                    model.End = model.Start.AddDays(6);
+                    break;
+                case SummaryGranularity.Month:
+                    model.Start = new DateTime(anchor.Year, anchor.Month, 1);
+                    model.End = model.Start.AddMonths(1).AddDays(-1);
+                    break;
+                case SummaryGranularity.Year:
+                    model.Start = new DateTime(anchor.Year, 1, 1);
+                    model.End = model.Start.AddYears(1).AddDays(-1);
+                    break;
+                case SummaryGranularity.All:
+                    model.Start = today;
+                    model.End = today;
+                    break;
+                case SummaryGranularity.Custom:
+                    model.Start = (start ?? today).Date;
+                    model.End = (end ?? model.Start).Date;
+                    if (model.End < model.Start)
+                    {
+                        (model.Start, model.End) = (model.End, model.Start);
+                    }
+                    break;
+            }
+
+            var queryStart = model.Granularity == SummaryGranularity.All ? DateTime.MinValue : model.Start.Date;
+            var queryEndExclusive = model.Granularity == SummaryGranularity.All ? DateTime.MaxValue : model.End.Date.AddDays(1);
+
+            model.Weights = await _context.Weights
+                .Where(w => w.CreatedAt >= queryStart && w.CreatedAt < queryEndExclusive)
+                .OrderBy(w => w.CreatedAt)
+                .ToListAsync();
+            model.Todos = await _context.Todos
+                .Where(t => t.CreatedAt >= queryStart && t.CreatedAt < queryEndExclusive)
+                .OrderByDescending(t => t.IsImportant)
+                .ThenBy(t => t.DueDate ?? DateTime.MaxValue)
+                .ToListAsync();
+            model.Goals = await _context.Goals
+                .Where(g => g.CreatedAt >= queryStart && g.CreatedAt < queryEndExclusive)
+                .OrderBy(g => g.EndDate ?? DateTime.MaxValue)
+                .ThenBy(g => g.Name)
+                .ToListAsync();
+            model.Habits = await _context.Habits
+                .Where(h => h.CreatedAt >= queryStart && h.CreatedAt < queryEndExclusive)
+                .OrderBy(h => h.StartDate ?? h.CreatedAt)
+                .ThenBy(h => h.Name)
+                .ToListAsync();
+            model.StrengthTrainings = await _context.StrengthTrainings
+                .Where(s => s.CreatedAt >= queryStart && s.CreatedAt < queryEndExclusive)
+                .OrderByDescending(s => s.CreatedAt)
+                .ToListAsync();
+            model.EnduranceTrainings = await _context.EnduranceTrainings
+                .Where(e => e.CreatedAt >= queryStart && e.CreatedAt < queryEndExclusive)
+                .OrderByDescending(e => e.CreatedAt)
+                .ToListAsync();
+            model.BucketLists = await _context.BucketLists
+                .Where(b => b.CreatedAt >= queryStart && b.CreatedAt < queryEndExclusive)
+                .OrderByDescending(b => b.CreatedAt)
+                .ToListAsync();
+            model.Quotes = await _context.Quotes
+                .Where(q => q.CreatedAt >= queryStart && q.CreatedAt < queryEndExclusive)
+                .OrderByDescending(q => q.CreatedAt)
+                .ToListAsync();
+            model.Journals = await _context.Journals
+                .Where(j => j.CreatedAt >= queryStart && j.CreatedAt < queryEndExclusive)
+                .OrderByDescending(j => j.Date)
+                .ToListAsync();
+
+            if (model.Granularity == SummaryGranularity.All)
+            {
+                var allDates = model.Weights.Select(x => x.CreatedAt)
+                    .Concat(model.Todos.Select(x => x.CreatedAt))
+                    .Concat(model.Goals.Select(x => x.CreatedAt))
+                    .Concat(model.Habits.Select(x => x.CreatedAt))
+                    .Concat(model.StrengthTrainings.Select(x => x.CreatedAt))
+                    .Concat(model.EnduranceTrainings.Select(x => x.CreatedAt))
+                    .Concat(model.BucketLists.Select(x => x.CreatedAt))
+                    .Concat(model.Quotes.Select(x => x.CreatedAt))
+                    .Concat(model.Journals.Select(x => x.CreatedAt))
+                    .ToList();
+
+                if (allDates.Count > 0)
+                {
+                    model.Start = allDates.Min().Date;
+                    model.End = allDates.Max().Date;
+                }
+            }
+
+            model.WorkoutsCount = model.StrengthTrainings.Count + model.EnduranceTrainings.Count;
+            model.OpenTodosCount = model.Todos.Count(t => !t.IsCompleted);
+            model.CompletedTodosCount = model.Todos.Count(t => t.IsCompleted);
+            model.ActiveGoalsCount = model.Goals.Count(g => !g.IsCompleted);
+            model.CompletedGoalsCount = model.Goals.Count(g => g.IsCompleted);
+            model.TotalEntries = model.Weights.Count + model.Todos.Count + model.Goals.Count + model.Habits.Count + model.StrengthTrainings.Count + model.EnduranceTrainings.Count + model.BucketLists.Count + model.Quotes.Count + model.Journals.Count;
+
+            model.RangeLabel = model.Granularity switch
+            {
+                SummaryGranularity.Day => model.Start.ToString("dddd, dd MMMM yyyy"),
+                SummaryGranularity.Week => $"Week of {model.Start:yyyy-MM-dd}",
+                SummaryGranularity.Month => model.Start.ToString("MMMM yyyy"),
+                SummaryGranularity.Year => model.Start.ToString("yyyy"),
+                SummaryGranularity.All => model.TotalEntries == 0 ? "All time" : $"All time · {model.Start:yyyy-MM-dd} to {model.End:yyyy-MM-dd}",
+                _ => $"{model.Start:yyyy-MM-dd} to {model.End:yyyy-MM-dd}"
+            };
+
+            return View(model);
+        }
+
         public async Task<IActionResult> Calendar(DateTime? date)
         {
             var model = new CalendarViewModel();

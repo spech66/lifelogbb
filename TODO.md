@@ -20,11 +20,6 @@ ToDos and Features for LifelogBB.
 
 ### In Progress :construction:
 
-- [ ] Daily view with all modules
-- [ ] Weekly view with all modules
-- [ ] Monthly view with all modules
-- [ ] Yearly view with all modules
-- [ ] Life timeline (Description @places/context #tags), Ranges, Dates, ...
 - [ ] More demo data
 
 ### Done :heavy_check_mark:
