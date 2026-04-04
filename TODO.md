@@ -20,7 +20,7 @@ ToDos and Features for LifelogBB.
 
 ### In Progress :construction:
 
-- [ ] Rework Dashboard
+- [x] Rework Dashboard
 - [ ] Daily view with all modules
 - [ ] Weekly view with all modules
 - [ ] Monthly view with all modules
