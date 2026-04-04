@@ -2,316 +2,450 @@
 
 @{
     ViewData["Title"] = "Dashboard";
+
+    var today = DateTime.Today;
+    var latestWeight = Model.WeightList?.LastOrDefault();
+    var previousWeight = Model.WeightList != null && Model.WeightList.Count > 1 ? Model.WeightList[^2] : null;
+    var allTodos = Model.TodoList ?? new List<LifelogBb.Models.Entities.Todo>();
+    var allHabits = Model.HabitList ?? new List<LifelogBb.Models.Entities.Habit>();
+
+    var urgentTodos = allTodos
+        .OrderByDescending(t => t.IsImportant)
+        .ThenBy(t => t.DueDate ?? DateTime.MaxValue)
+        .Take(5)
+        .ToList();
+    var overdueTodosCount = allTodos.Count(t => t.DueDate.HasValue && t.DueDate.Value < DateTime.Now);
+    var dueTodayTodosCount = allTodos.Count(t => t.DueDate.HasValue && t.DueDate.Value.Date == today);
+
+    var todayHabits = allHabits
+        .Where(h => h.StartDate.HasValue && h.StartDate.Value.Date == today)
+        .Take(5)
+        .ToList();
+    var upcomingHabits = allHabits
+        .Where(h => h.StartDate.HasValue && h.StartDate.Value.Date > today)
+        .Take(3)
+        .ToList();
+
+    var focusGoal = (Model.GoalList ?? new List<LifelogBb.Models.Entities.Goal>())
+        .OrderBy(g => g.EndDate ?? DateTime.MaxValue)
+        .FirstOrDefault();
+
+    var lastWorkoutType = "No training yet";
+    DateTime? lastWorkoutDate = null;
+    if (Model.LastStrengthTraining?.CreatedAt != null || Model.LastEnduranceTraining?.CreatedAt != null)
+    {
+        if (Model.LastStrengthTraining?.CreatedAt >= Model.LastEnduranceTraining?.CreatedAt)
+        {
+            lastWorkoutType = "Strength training";
+            lastWorkoutDate = Model.LastStrengthTraining?.CreatedAt;
+        }
+        else
+        {
+            lastWorkoutType = "Endurance workout";
+            lastWorkoutDate = Model.LastEnduranceTraining?.CreatedAt;
+        }
+    }
+
+    string TodoDueClass(LifelogBb.Models.Entities.Todo todo)
+    {
+        if (!todo.DueDate.HasValue) return "bg-muted-lt text-muted";
+        if (todo.DueDate.Value < DateTime.Now) return "bg-red-lt text-red";
+        if (todo.DueDate.Value.Date == today) return "bg-orange-lt text-orange";
+        return "bg-yellow-lt text-yellow";
+    }
+
+    string TodoDueText(LifelogBb.Models.Entities.Todo todo)
+    {
+        if (!todo.DueDate.HasValue) return "No due date";
+        if (todo.DueDate.Value < DateTime.Now) return $"Overdue · {todo.DueDate.Value:HH:mm}";
+        if (todo.DueDate.Value.Date == today) return $"Today · {todo.DueDate.Value:HH:mm}";
+        return todo.DueDate.Value.ToString("yyyy-MM-dd HH:mm");
+    }
+
+    int? GoalProgress(LifelogBb.Models.Entities.Goal goal)
+    {
+        if (goal.TargetValue == null || goal.CurrentValue == null || goal.InitialValue == null) return null;
+        var diffTarget = goal.TargetValue < goal.InitialValue
+            ? goal.InitialValue.Value - goal.TargetValue.Value
+            : goal.TargetValue.Value - goal.InitialValue.Value;
+        if (diffTarget == 0) return null;
+        var diffCurrent = goal.TargetValue < goal.InitialValue
+            ? goal.InitialValue.Value - goal.CurrentValue.Value
+            : goal.CurrentValue.Value - goal.InitialValue.Value;
+        return (int)Math.Round(Math.Clamp((diffCurrent / diffTarget) * 100, 0, 100));
+    }
+
+    string GoalDueText(LifelogBb.Models.Entities.Goal goal)
+    {
+        if (!goal.EndDate.HasValue) return "No due date";
+        var days = (goal.EndDate.Value.Date - today).TotalDays;
+        if (days < 0) return $"Overdue by {-(int)days}d";
+        if (days == 0) return "Due today";
+        if (days <= 7) return $"Due in {(int)days}d";
+        return goal.EndDate.Value.ToString("yyyy-MM-dd");
+    }
 }
 
 <div class="container-xl">
-    <div class="row row-deck row-cards">
-        @if (Model.WeightList != null && Model.WeightList.Count > 0)
-        {
-            <div class="col-sm-6 col-lg-3">
-                <div class="card card-sm">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-auto"><span class="bg-primary text-white avatar"><i class="fa-solid fa-weight-scale icon icon-tabler icon-tabler-weight"></i></span></div>
-                            <div class="col">
-                                <div class="font-weight-medium">Last Weight</div>
-                                <div class="text-muted">
-                                    @if(Model.WeightList.Count > 1)
+    <div class="row row-deck row-cards mb-3">
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm h-100">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="bg-primary text-white avatar"><i class="fa-solid fa-weight-scale"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Latest Weight</div>
+                            <div class="text-muted">
+                                @if (latestWeight != null)
+                                {
+                                    @if (previousWeight != null)
                                     {
-                                        @if (Model.WeightList.Last().BodyWeight > Model.WeightList.First().BodyWeight)
+                                        @if (latestWeight.BodyWeight > previousWeight.BodyWeight)
                                         {
                                             <i class="fa-solid fa-arrow-up text-red"></i>
                                         }
-                                        else if (Model.WeightList.Last().BodyWeight < Model.WeightList.First().BodyWeight)
+                                        else if (latestWeight.BodyWeight < previousWeight.BodyWeight)
                                         {
                                             <i class="fa-solid fa-arrow-down text-green"></i>
                                         }
                                         else
                                         {
-                                            <i class="fa-solid fa-minus"></i>
+                                            <i class="fa-solid fa-minus text-muted"></i>
                                         }
                                     }
-                                    @Model.WeightList.Last().BodyWeight
-                                </div>
+                                    <strong>@latestWeight.BodyWeight.ToString("0.0")</strong>
+                                }
+                                else
+                                {
+                                    <span>—</span>
+                                }
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        }
-        @if (Model.WeightList != null && Model.WeightList.Count > 1)
-        {
-            <div class="col-sm-6 col-lg-3">
-                <div class="card card-sm">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-auto"><span class="bg-primary text-white avatar"><i class="fa-solid fa-weight-scale icon icon-tabler icon-tabler-weight"></i></span></div>
-                            <div class="col">
-                                <div class="text-muted">
-                                    <div id="weightChart"></div>
-                                </div>
-                            </div>
+                    @if (Model.WeightList != null && Model.WeightList.Count > 1)
+                    {
+                        <div class="mt-3">
+                            <div id="weightChart"></div>
                         </div>
-                    </div>
+                    }
                 </div>
             </div>
-        }
-        @if (Model.LastStrengthTraining != null)
-        {
-            <div class="col-sm-6 col-lg-3">
-                <div class="card card-sm">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-auto"><span class="bg-primary text-white avatar"><i class="fa-solid fa-dumbbell icon icon-tabler icon-tabler-weight"></i></span></div>
-                            <div class="col">
-                                <div class="font-weight-medium">Last Strength Training</div>
-                                <div class="text-muted">@Model.LastStrengthTraining.CreatedAt.ToLongDateString()</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-        @if (Model.LastEnduranceTraining != null)
-        {
-            <div class="col-sm-6 col-lg-3">
-                <div class="card card-sm">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-auto"><span class="bg-primary text-white avatar"><i class="fa-solid fa-running icon icon-tabler icon-tabler-weight"></i></span></div>
-                            <div class="col">
-                                <div class="font-weight-medium">Last Endurance Training</div>
-                                <div class="text-muted">@Model.LastEnduranceTraining.CreatedAt.ToLongDateString()</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
+        </div>
 
-        @if (Model.Activities != null)
-        {
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="divide-y">
-                            @foreach (var item in Model.Activities)
-                            {
-                                <div>
-                                    <div class="row">
-                                        <div class="col-auto">
-                                            <span class="avatar">@item.Type.ToString().Substring(1, 1)</span>
-                                        </div>
-                                        <div class="col">
-                                            <div class="text-truncate">
-                                                @item.Text
-                                            </div>
-                                            <div class="text-muted">@item.Date.ToString()</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm h-100">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="@((overdueTodosCount > 0 || dueTodayTodosCount > 0) ? "bg-orange" : "bg-muted") text-white avatar"><i class="fa-solid fa-list-check"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Today's Todos</div>
+                            <div class="text-muted"><strong>@dueTodayTodosCount</strong> due today</div>
+                            <div class="@(overdueTodosCount > 0 ? "text-red" : "text-muted") small"><strong>@overdueTodosCount</strong> overdue</div>
                         </div>
                     </div>
                 </div>
             </div>
-        }
+        </div>
 
-        @if (Model.TodoList != null)
-        {
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="divide-y">
-                            @foreach (var item in Model.TodoList)
-                            {
-                                <div>
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="text-truncate">@item.Title</div>
-                                        </div>
-                                        @if (item.DueDate != null)
-                                        {
-                                            <div class="col-auto">
-                                                <span class="text-muted">@item.DueDate.Value.ToShortDateString() @item.DueDate.Value.ToShortTimeString()</span>
-                                                <div class="badge text-bg-red"><span class="fas fa-clock"></span></div>
-                                            </div>
-                                        }
-                                        @if (item.IsImportant)
-                                        {
-                                            <div class="col-auto align-self-center">
-                                                <div class="badge text-bg-red">!</div>
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-                            }
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm h-100">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="@(todayHabits.Count > 0 ? "bg-yellow" : "bg-muted") text-white avatar"><i class="fa-solid fa-calendar-day"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Today's Habits</div>
+                            <div class="text-muted"><strong>@todayHabits.Count</strong> scheduled</div>
+                            <div class="text-muted small">@upcomingHabits.Count upcoming</div>
                         </div>
                     </div>
                 </div>
             </div>
-        }
+        </div>
 
-        @if (Model.GoalList != null)
-        {
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="divide-y">
-                            @foreach (var item in Model.GoalList)
-                            {
-                                <div>
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="text-truncate">@item.Name</div>
-                                        </div>
-                                        @if (item.CurrentValue != null)
-                                        {
-                                            <div class="col-auto">
-                                                <span class="fas fa-clock"></span> @item.CurrentValue.Value.ToString()
-                                            </div>
-                                        }
-                                        @if (item.TargetValue != null)
-                                        {
-                                            <div class="col-auto">
-                                                <span class="fas fa-bullseye"></span> @item.TargetValue.Value.ToString()
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-                            }
+        <div class="col-6 col-lg-3">
+            <div class="card card-sm h-100">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="bg-azure text-white avatar"><i class="fa-solid fa-dumbbell"></i></span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Last Workout</div>
+                            <div class="text-muted">@lastWorkoutType</div>
+                            <div class="text-muted small">@(lastWorkoutDate?.ToString("yyyy-MM-dd") ?? "No entry")</div>
                         </div>
                     </div>
                 </div>
             </div>
-        }
-
-        @if (Model.HabitList != null)
-        {
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="divide-y">
-                            @foreach (var item in Model.HabitList)
-                            {
-                                <div>
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="text-truncate">@item.Name</div>
-                                        </div>
-                                        @if (item.StartDate != null)
-                                        {
-                                            <div class="col-auto">
-                                                <span class="fas fa-clock"></span> @item.StartDate.Value.ToShortDateString() @item.StartDate.Value.ToShortTimeString()
-                                            </div>
-                                        }
-                                        @if (item.EndDate != null)
-                                        {
-                                            <div class="col-auto">
-                                                <span class="far fa-clock"></span>
-                                                @if(item.StartDate != null && item.EndDate.Value.Date != item.StartDate.Value.Date)
-                                                {
-                                                    @item.EndDate.Value.ToShortDateString()
-                                                }
-                                                @item.EndDate.Value.ToShortTimeString()
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-
-        @if (Model.RandomBucketList != null)
-        {
-            <div class="col-lg-6">
-                <div class="card h-100">
-                    <div class="card-body">
-                        @if (Model.RandomBucketList.ImageName != null)
-                        {
-                            <img src="@Url.Action("GetImage", "BucketLists", new { id = Model.RandomBucketList.Id })" class="card-img-top" alt="@Html.DisplayFor(modelItem => Model.RandomBucketList.Title)" />
-                        }
-                        <h5 class="card-title">@Model.RandomBucketList.Title</h5>
-                        <p class="card-text">@Model.RandomBucketList.Description</p>
-                    </div>
-                </div>
-            </div>
-        }
-
-        @if (Model.RandomQuote != null)
-        {
-            <div class="col-lg-6">
-                <div class="card h-100">
-                    <div class="card-header">
-                        Quote
-                    </div>
-                    <div class="card-body">
-                        <blockquote class="blockquote mb-0">
-                            <p>@Model.RandomQuote.Text</p>
-                            <footer class="blockquote-footer"><cite>@Model.RandomQuote.Author</cite></footer>
-                        </blockquote>
-                    </div>
-                </div>
-            </div>
-        }
+        </div>
     </div>
+
+    <div class="row row-deck row-cards mb-3">
+        <div class="col-lg-7">
+            <div class="card h-100">
+                <div class="card-header border-0">
+                    <h3 class="card-title">Today</h3>
+                </div>
+                <div class="card-body">
+                    @if (urgentTodos.Count == 0 && todayHabits.Count == 0 && upcomingHabits.Count == 0)
+                    {
+                        <div class="text-center text-muted py-5">
+                            Nothing urgent for today.
+                        </div>
+                    }
+                    else
+                    {
+                        @if (urgentTodos.Count > 0)
+                        {
+                            <div class="mb-4">
+                                <div class="text-muted text-uppercase small fw-bold mb-2">Urgent Todos</div>
+                                <div class="list-group list-group-flush border rounded">
+                                    @foreach (var item in urgentTodos)
+                                    {
+                                        <a asp-controller="Todos" asp-action="Details" asp-route-id="@item.Id" class="list-group-item list-group-item-action py-3">
+                                            <div class="d-flex align-items-start justify-content-between gap-3">
+                                                <div>
+                                                    <div class="fw-medium">@item.Title</div>
+                                                    @if (!string.IsNullOrWhiteSpace(item.Description))
+                                                    {
+                                                        <div class="text-muted small">@item.Description</div>
+                                                    }
+                                                </div>
+                                                <div class="text-end">
+                                                    <span class="badge @TodoDueClass(item)">@TodoDueText(item)</span>
+                                                    @if (item.IsImportant)
+                                                    {
+                                                        <div class="text-yellow small mt-1"><i class="fa-solid fa-star me-1"></i>Important</div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        @if (todayHabits.Count > 0 || upcomingHabits.Count > 0)
+                        {
+                            <div>
+                                <div class="text-muted text-uppercase small fw-bold mb-2">Habits</div>
+                                <div class="list-group list-group-flush border rounded">
+                                    @foreach (var item in todayHabits)
+                                    {
+                                        <a asp-controller="Habits" asp-action="Index" class="list-group-item list-group-item-action py-3">
+                                            <div class="d-flex align-items-center justify-content-between gap-3">
+                                                <div>
+                                                    <div class="fw-medium">@item.Name</div>
+                                                    <div class="text-muted small">Today</div>
+                                                </div>
+                                                @if (item.StartDate.HasValue)
+                                                {
+                                                    <span class="badge bg-yellow-lt text-yellow">
+                                                        @item.StartDate.Value.ToString("HH:mm")
+                                                        @if (item.EndDate.HasValue)
+                                                        {
+                                                            <text> - @item.EndDate.Value.ToString("HH:mm")</text>
+                                                        }
+                                                    </span>
+                                                }
+                                            </div>
+                                        </a>
+                                    }
+                                    @foreach (var item in upcomingHabits)
+                                    {
+                                        <a asp-controller="Habits" asp-action="Index" class="list-group-item list-group-item-action py-3">
+                                            <div class="d-flex align-items-center justify-content-between gap-3">
+                                                <div>
+                                                    <div class="fw-medium">@item.Name</div>
+                                                    <div class="text-muted small">@item.StartDate?.ToString("ddd, MMM d")</div>
+                                                </div>
+                                                @if (item.StartDate.HasValue)
+                                                {
+                                                    <span class="badge bg-muted-lt text-muted">@item.StartDate.Value.ToString("HH:mm")</span>
+                                                }
+                                            </div>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex gap-2">
+                        <a asp-controller="Home" asp-action="Calendar" class="btn btn-sm btn-outline-secondary flex-fill">
+                            <i class="fa-solid fa-calendar-day me-1"></i>Calendar
+                        </a>
+                        <a asp-controller="Todos" asp-action="Index" class="btn btn-sm btn-outline-primary flex-fill">
+                            <i class="fa-solid fa-list-check me-1"></i>Open Todos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card h-100">
+                <div class="card-header border-0">
+                    <h3 class="card-title">Focus Goal</h3>
+                </div>
+                @if (focusGoal == null)
+                {
+                    <div class="card-body text-center text-muted py-5">
+                        No active goals right now.
+                    </div>
+                    <div class="card-footer">
+                        <a asp-controller="Goals" asp-action="Index" class="btn btn-sm btn-outline-secondary w-100">
+                            <i class="fa-solid fa-bullseye me-1"></i>Open Goals
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    var progress = GoalProgress(focusGoal);
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                            <h4 class="card-title mb-0">@focusGoal.Name</h4>
+                            <span class="badge @(focusGoal.EndDate.HasValue && focusGoal.EndDate.Value.Date < today ? "bg-red-lt text-red" : "bg-muted-lt text-muted")">@GoalDueText(focusGoal)</span>
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(focusGoal.Description))
+                        {
+                            <p class="text-muted small mb-3">@focusGoal.Description</p>
+                        }
+                        @if (progress.HasValue)
+                        {
+                            <div class="mb-1 d-flex justify-content-between small text-muted">
+                                <span>@focusGoal.InitialValue?.ToString("0.##") → @focusGoal.TargetValue?.ToString("0.##")</span>
+                                <span>@focusGoal.CurrentValue?.ToString("0.##") (@progress%)</span>
+                            </div>
+                            <div class="progress mb-3" style="height: 6px;">
+                                <div class="progress-bar @(progress >= 100 ? "bg-green" : "bg-primary")" style="width: @progress%"></div>
+                            </div>
+                        }
+                        <div class="mt-auto">
+                            @Html.DisplayFor(m => focusGoal.Category, "Category")
+                            @Html.DisplayFor(m => focusGoal.Tags, "Tags")
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex gap-2">
+                        <a asp-controller="Goals" asp-action="Index" class="btn btn-sm btn-outline-secondary flex-fill">
+                            <i class="fa-solid fa-bullseye me-1"></i>All Goals
+                        </a>
+                        <a asp-controller="Goals" asp-action="Details" asp-route-id="@focusGoal.Id" class="btn btn-sm btn-outline-primary flex-fill">
+                            <i class="fa-solid fa-list-alt me-1"></i>Details
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    @if (Model.RandomQuote != null || Model.RandomBucketList != null)
+    {
+        <div class="row row-deck row-cards">
+            @if (Model.RandomQuote != null)
+            {
+                <div class="col-lg-6">
+                    <div class="card h-100">
+                        <div class="card-header border-0">
+                            <h3 class="card-title">Quote</h3>
+                        </div>
+                        <div class="card-body">
+                            <blockquote class="blockquote mb-0">
+                                <p>@Model.RandomQuote.Text</p>
+                                @if (!string.IsNullOrWhiteSpace(Model.RandomQuote.Author))
+                                {
+                                    <footer class="blockquote-footer"><cite>@Model.RandomQuote.Author</cite></footer>
+                                }
+                            </blockquote>
+                        </div>
+                        <div class="card-footer">
+                            <a asp-controller="Quotes" asp-action="Random" class="btn btn-sm btn-outline-secondary w-100">
+                                <i class="fa-solid fa-shuffle me-1"></i>Another quote
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (Model.RandomBucketList != null)
+            {
+                <div class="col-lg-6">
+                    <div class="card h-100">
+                        @if (!string.IsNullOrWhiteSpace(Model.RandomBucketList.ImageName))
+                        {
+                            <img src="@Url.Action("GetImage", "BucketLists", new { id = Model.RandomBucketList.Id })" class="card-img-top" alt="@Model.RandomBucketList.Title" />
+                        }
+                        <div class="card-body d-flex flex-column">
+                            <div class="text-muted small mb-2">Bucket list inspiration</div>
+                            <h4 class="card-title">@Model.RandomBucketList.Title</h4>
+                            @if (!string.IsNullOrWhiteSpace(Model.RandomBucketList.Description))
+                            {
+                                <p class="text-muted small mb-3">@Model.RandomBucketList.Description</p>
+                            }
+                            <div class="mt-auto">
+                                @Html.DisplayFor(m => Model.RandomBucketList.Category, "Category")
+                                @Html.DisplayFor(m => Model.RandomBucketList.Tags, "Tags")
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a asp-controller="BucketLists" asp-action="Details" asp-route-id="@Model.RandomBucketList.Id" class="btn btn-sm btn-outline-primary w-100">
+                                <i class="fa-solid fa-list-alt me-1"></i>Open Bucket List Item
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 </div>
 
-@section Scripts
+@section Scripts {
+    @if (Model.WeightList != null && Model.WeightList.Count > 1)
     {
-    <script src="~/lib/tabler/core/dist/libs/apexcharts/dist/apexcharts.min.js"></script>
-    <script type="text/javascript">
+        <script src="~/lib/tabler/core/dist/libs/apexcharts/dist/apexcharts.min.js"></script>
+        <script type="text/javascript">
+            const weightChartEl = document.querySelector('#weightChart');
+            if (weightChartEl) {
+                const weightChartOptions = {
+                    chart: {
+                        sparkline: { enabled: true },
+                        type: 'line',
+                        height: 40,
+                        toolbar: { show: false }
+                    },
+                    stroke: { curve: 'smooth' },
+                    colors: ['#4c79b3'],
+                    xaxis: { type: 'datetime' },
+                    tooltip: {
+                        fixed: { enabled: false },
+                        x: { show: false },
+                        y: {
+                            title: {
+                                formatter: function () { return ''; }
+                            }
+                        },
+                        marker: { show: false }
+                    },
+                    series: [{
+                        name: 'weight',
+                        data: [
+                            @foreach (var item in Model.WeightList)
+                            {
+                                <text>{ x: new Date(@item.CreatedAt.Year, @(item.CreatedAt.Month - 1), @item.CreatedAt.Day, @item.CreatedAt.Hour, @item.CreatedAt.Minute), y: @item.BodyWeight.ToString().Replace(',', '.') },</text>
+                            }
+                        ]
+                    }]
+                };
 
-        var weightChartOptions = {
-            chart: {
-                sparkline: {
-                    enabled: true
-                },
-                type: 'line',
-                height: 40,
-            },
-            stroke: {
-                curve: 'smooth'
-            },
-            colors: ["#4c79b3"],
-            xaxis: {
-                type: "datetime",
-            },
-            tooltip: {
-                fixed: {
-                    enabled: false
-                },
-                x: {
-                    show: false
-                },
-                y: {
-                    title: {
-                        formatter: function (seriesName) {
-                            return ''
-                        }
-                    }
-                },
-                marker: {
-                    show: false
-                }
-            },
-            series: [{
-                name: 'weight',
-                data: [
-                    @if(Model.WeightList != null && Model.WeightList.Count > 0) {
-                        @foreach (var item in Model.WeightList)
-                        {
-                            <text>{ x: new Date(@item.CreatedAt.Year, @item.CreatedAt.Month, @item.CreatedAt.Day, @item.CreatedAt.Hour, @item.CreatedAt.Minute), y: @item.BodyWeight.ToString().Replace(',', '.') },</text>
-                        }
-                    }
-                ]
-            }],
-        }
-
-        var weightChart = new ApexCharts(document.querySelector(`#weightChart`), weightChartOptions);
-        weightChart.render();
-    </script>
+                new ApexCharts(weightChartEl, weightChartOptions).render();
+            }
+        </script>
+    }
 }
