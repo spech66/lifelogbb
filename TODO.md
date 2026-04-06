@@ -5,7 +5,7 @@ ToDos and Features for LifelogBB.
 ### Todo
 
 - [ ] Text search in all tables (e.g. in Journal, ...)
-- [ ] ChatGPT (LLaMA, ... ?) [integration](https://www.nuget.org/packages/Azure.AI.OpenAI/)
+- [ ] ChatGPT (LLaMA, ... ?) [integration](https://www.nuget.org/packages/OpenAI)
 - [ ] Habits - Track habits
 - [ ] Strength training plan: Allow creating plans and show them as fast selection in the strength training module, keep free exercise selection as well
 - [ ] iCal Alarms
@@ -16,7 +16,7 @@ ToDos and Features for LifelogBB.
 - [ ] Telegram bot
   - https://github.com/TelegramBots/Telegram.Bot
   - https://telegrambots.github.io/book/2/send-msg/index.html
-- [ ] [CLI tool](https://github.com/gui-cs/Terminal.Gui) or using [Python](https://github.com/bczsalba/pytermgui)
+- [ ] [CLI tool](https://github.com/gui-cs/Terminal.Gui)
 
 ### In Progress :construction:
 
