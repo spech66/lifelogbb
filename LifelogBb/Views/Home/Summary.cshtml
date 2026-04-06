@@ -97,15 +97,15 @@
                     <form asp-action="Summary" method="get" class="row g-3 align-items-end">
                         <div class="col-12 col-lg-3">
                             <label class="form-label">Granularity</label>
-                            <select name="granularity" asp-items="granularityOptions" class="form-select form-select-lg"></select>
+                            <select id="granularity" name="granularity" asp-items="granularityOptions" class="form-select form-select-lg"></select>
                         </div>
                         <div class="col-12 col-lg-3">
                             <label class="form-label">Start</label>
-                            <input type="date" name="start" class="form-control form-control-lg" value="@Model.Start.ToString("yyyy-MM-dd")" />
+                            <input id="start" type="date" name="start" class="form-control form-control-lg" value="@Model.Start.ToString("yyyy-MM-dd")" />
                         </div>
                         <div class="col-12 col-lg-3">
                             <label class="form-label">End</label>
-                            <input type="date" name="end" class="form-control form-control-lg" value="@Model.End.ToString("yyyy-MM-dd")" />
+                            <input id="end" type="date" name="end" class="form-control form-control-lg" value="@Model.End.ToString("yyyy-MM-dd")" />
                         </div>
                         <div class="col-12 col-lg-3">
                             <button type="submit" class="btn btn-primary btn-lg w-100">
@@ -357,7 +357,8 @@
                     </div>
                     <div class="card-footer d-flex gap-2">
                         <a asp-controller="Weights" asp-action="Index" class="btn btn-sm btn-outline-secondary flex-fill">Weight</a>
-                        <a asp-controller="StrengthTrainings" asp-action="Index" class="btn btn-sm btn-outline-primary flex-fill">Training</a>
+                        <a asp-controller="StrengthTrainings" asp-action="Index" class="btn btn-sm btn-outline-primary flex-fill">Strength</a>
+                        <a asp-controller="EnduranceTrainings" asp-action="Index" class="btn btn-sm btn-outline-primary flex-fill">Endurance</a>
                     </div>
                 </div>
             </div>
@@ -449,3 +450,61 @@
         </div>
     }
 </div>
+
+@section Scripts {
+<script>
+    const granularityEl = document.getElementById('granularity');
+    const startEl = document.getElementById('start');
+    const endEl = document.getElementById('end');
+
+    // Map granularity to days to add (except Custom)
+    const granularityDays = {
+        'Day': 0,
+        'Week': 6,
+        'Month': 29,
+        'Year': 364
+    };
+
+    function setEndState() {
+        const granularity = granularityEl.value;
+        
+        if(granularity === 'All') {
+            startEl.disabled = true;
+            startEl.classList.add('bg-light');
+        } else {
+            startEl.disabled = false;
+            startEl.classList.remove('bg-light');
+        }
+
+        if (granularity === 'Custom') {
+            endEl.disabled = false;
+            endEl.classList.remove('bg-light');
+        } else {
+            // Calculate end date
+            const startDate = startEl.value;
+            if (startDate) {
+                const start = new Date(startDate);
+                const days = granularityDays[granularity];
+                if (typeof days !== 'undefined') {
+                    const end = new Date(start);
+                    end.setDate(end.getDate() + days);
+                    // Format as yyyy-MM-dd
+                    const yyyy = end.getFullYear();
+                    const mm = String(end.getMonth() + 1).padStart(2, '0');
+                    const dd = String(end.getDate()).padStart(2, '0');
+                    endEl.value = `${yyyy}-${mm}-${dd}`;
+                }
+            }
+            endEl.disabled = true;
+            endEl.classList.add('bg-light');
+        }
+    }
+
+    granularityEl.addEventListener('change', setEndState);
+    startEl.addEventListener('change', setEndState);
+    // On page load
+    document.addEventListener('DOMContentLoaded', setEndState);
+    // Also run immediately in case DOMContentLoaded already fired
+    setEndState();
+</script>
+}
