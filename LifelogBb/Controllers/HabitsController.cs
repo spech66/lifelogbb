@@ -66,7 +66,7 @@ namespace LifelogBb.Controllers
                         Name = habit.Name,
                         Description = habit.Description,
                         StartDate = o.Period.StartTime.Value,
-                        EndDate = (o.Period.EndTime ?? o.Period.StartTime).Value
+                        EndDate = (o.Period.EffectiveEndTime ?? o.Period.StartTime).Value
                     }));
             }
 

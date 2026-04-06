@@ -280,7 +280,7 @@ namespace LifelogBb.Controllers
                         Name = habit.Name,
                         Description = habit.Description,
                         StartDate = o.Period.StartTime.Value,
-                        EndDate = (o.Period.EndTime ?? o.Period.StartTime).Value, // Use StartTime if EndTime is null (for all-day events)
+                        EndDate = (o.Period.EffectiveEndTime ?? o.Period.StartTime).Value, // Use StartTime if EndTime is null (for all-day events)
                         RecurrenceRules = habit.RecurrenceRules,
                         IsCompleted = habit.IsCompleted
                     });

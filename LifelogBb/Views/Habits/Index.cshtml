@@ -137,19 +137,19 @@
                                             <p class="text-muted small mb-2">@habit.Description</p>
                                         }
                                         <div class="d-flex flex-wrap gap-1 mb-2">
-                                            @if (habit.StartDate.HasValue || habit.EndDate.HasValue)
-                                            {
-                                                <span class="badge bg-muted-lt text-muted small">
-                                                    <i class="fa-solid fa-calendar-range me-1"></i>
-                                                    @(habit.StartDate?.ToString("yyyy-MM-dd") ?? "?")
-                                                    &nbsp;–&nbsp;
-                                                    @(habit.EndDate?.ToString("yyyy-MM-dd") ?? "?")
-                                                </span>
-                                            }
                                             @if (!string.IsNullOrWhiteSpace(habit.RecurrenceRules))
                                             {
                                                 <span class="badge bg-blue-lt text-blue small font-monospace">
                                                     <i class="fa-solid fa-rotate me-1"></i><span class="rrule">@habit.RecurrenceRules</span>
+                                                </span>
+                                            }
+                                            @if (isToday && (habit.StartDate.HasValue || habit.EndDate.HasValue))
+                                            {
+                                                <span class="badge bg-muted-lt text-muted small">
+                                                    <i class="fa-solid fa-calendar-range me-1"></i>
+                                                    @(habit.StartDate?.ToString("HH:mm") ?? "?")
+                                                    &nbsp;–&nbsp;
+                                                    @(habit.EndDate?.ToString("HH:mm") ?? "?")
                                                 </span>
                                             }
                                         </div>
@@ -240,7 +240,6 @@
                                 <thead>
                                     <tr>
                                         <th>Habit</th>
-                                        <th>Date Range</th>
                                         <th>Completed</th>
                                         <th></th>
                                     </tr>
@@ -255,11 +254,6 @@
                                                     @Html.DisplayFor(m => habit.Category, "Category")
                                                     @Html.DisplayFor(m => habit.Tags, "Tags")
                                                 </div>
-                                            </td>
-                                            <td class="text-muted">
-                                                @(habit.StartDate?.ToString("yyyy-MM-dd") ?? "—")
-                                                &nbsp;–&nbsp;
-                                                @(habit.EndDate?.ToString("yyyy-MM-dd") ?? "—")
                                             </td>
                                             <td class="text-muted">@habit.UpdatedAt.ToString("yyyy-MM-dd")</td>
                                             <td class="text-end">
