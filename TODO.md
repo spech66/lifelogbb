@@ -4,11 +4,8 @@ ToDos and Features for LifelogBB.
 
 ### Todo
 
-- [ ] Text search in all tables (e.g. in Journal, ...)
-- [ ] ChatGPT (LLaMA, ... ?) [integration](https://www.nuget.org/packages/OpenAI)
-- [ ] Habits - Track habits
-- [ ] Strength training plan: Allow creating plans and show them as fast selection in the strength training module, keep free exercise selection as well
 - [ ] iCal Alarms
+- [ ] ChatGPT (LLaMA, ... ?) [integration](https://www.nuget.org/packages/OpenAI)
 - [ ] [Globalization and localization](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization?view=aspnetcore-6.0)
 
 #### External tools
@@ -20,7 +17,7 @@ ToDos and Features for LifelogBB.
 
 ### In Progress :construction:
 
-- [x] More demo data
+- [ ] Text search in all tables (e.g. in Journal, ...)
 
 ### Done :heavy_check_mark:
 
