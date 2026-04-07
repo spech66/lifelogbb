@@ -1,5 +1,5 @@
 # Create new tag
-# git tag v0.9.0
+# git tag v0.9.1
 # git push --tags
 
 name: Release on publish
