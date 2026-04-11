@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using System.Text;
 
 namespace LifelogBb
@@ -25,9 +24,12 @@ namespace LifelogBb
             var config = builder.Configuration;
 
             // Logging
-            builder.Logging.ClearProviders();
-            builder.Logging.AddConsole();
-            builder.Logging.SetMinimumLevel(LogLevel.Trace); // LogLevel.Information, LogLevel.Trace
+            // Keep the default providers and configuration-driven logging settings.
+            // Only enable very verbose logging automatically during Development.
+            if (builder.Environment.IsDevelopment())
+            {
+                builder.Logging.SetMinimumLevel(LogLevel.Trace);
+            }
 
             // Add services to the container.
             services.AddEntityFrameworkSqlite().AddDbContext<LifelogBbContext>();
@@ -163,8 +165,6 @@ namespace LifelogBb
                 {
                     string authorization = context.Request.Headers[HeaderNames.Authorization];
                     if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer "))
-                        return JwtBearerDefaults.AuthenticationScheme;
-                    else if (!string.IsNullOrEmpty(authorization))
                         return JwtBearerDefaults.AuthenticationScheme;
 
                     return CookieAuthenticationDefaults.AuthenticationScheme;
