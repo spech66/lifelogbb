@@ -26,7 +26,7 @@ namespace LifelogBb.ApiControllers
 
         // GET: api/[controller]/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<OUTP>> GetById(long id)
+        public virtual async Task<ActionResult<OUTP>> GetById(long id)
         {
             var note = await _service.GetById(id);
 

@@ -27,7 +27,7 @@ namespace LifelogBb.ApiControllers
 
         // GET: api/[controller]/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<OUTP>> GetById(long id)
+        public virtual async Task<ActionResult<OUTP>> GetById(long id)
         {
             var note = await _service.GetById(id);
 
@@ -39,7 +39,7 @@ namespace LifelogBb.ApiControllers
 
         // POST: api/[controller]
         [HttpPost]
-        public async Task<ActionResult<OUTP>> Create(INP model)
+        public virtual async Task<ActionResult<OUTP>> Create(INP model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState.Values);
@@ -57,7 +57,7 @@ namespace LifelogBb.ApiControllers
 
         // PUT: api/[controller]/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<OUTP>> Update(long id, INP model)
+        public virtual async Task<ActionResult<OUTP>> Update(long id, INP model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState.Values);
@@ -74,7 +74,7 @@ namespace LifelogBb.ApiControllers
 
         // DELETE: api/[controller]/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<DeleteOutput>> Delete(long id)
+        public virtual async Task<ActionResult<DeleteOutput>> Delete(long id)
         {
             var entitieId = await _service.Delete(id);
 

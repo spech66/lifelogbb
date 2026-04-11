@@ -18,6 +18,7 @@ ToDos and Features for LifelogBB.
 ### In Progress :construction:
 
 - [ ] Text search in all tables (e.g. in Journal, ...)
+- [ ] MCP Server
 
 ### Done :heavy_check_mark:
 
