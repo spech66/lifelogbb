@@ -20,7 +20,7 @@ namespace LifelogBb.ApiControllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken] // No validation as we use this from Swagger/API as well
         public IActionResult Authenticate([FromBody] LoginModel loginModel)
         {
             if (loginModel == null)
