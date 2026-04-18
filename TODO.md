@@ -20,6 +20,7 @@ ToDos and Features for LifelogBB.
 - [ ] Make day unique in Journal and make Joural API use only one date
 - [ ] Remove BMI in weight input
 - [ ] Text search in all tables (e.g. in Journal, ...)
+- [ ] MCP Server
 
 ### Done :heavy_check_mark:
 
