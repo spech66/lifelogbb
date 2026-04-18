@@ -5,7 +5,7 @@ ToDos and Features for LifelogBB.
 ### Todo
 
 - [ ] iCal Alarms
-- [ ] ChatGPT (LLaMA, ... ?) [integration](https://www.nuget.org/packages/OpenAI)
+- [ ] ChatGPT (LLaMA, ... ?) - Microsoft Agent Framework
 - [ ] [Globalization and localization](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization?view=aspnetcore-6.0)
 
 #### External tools
