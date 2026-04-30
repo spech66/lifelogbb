@@ -15,16 +15,18 @@ namespace LifelogBb.ApiControllers
         {
         }
 
-        [McpServerTool(Name= "GetAllWeights", Title = "Get All Weights"), Description("Get all weight data")]
-        public override Task<ActionResult<IEnumerable<WeightOutput>>> GetAll()
+        [McpServerTool(Name = "GetAllWeights", Title = "Get All Weights"), Description("Get all weight data")]
+        public new async Task<IEnumerable<WeightOutput>> GetAll()
         {
-            return base.GetAll();
+            var result = await _service.GetAll();
+            return result.Value ?? [];
         }
 
-        [McpServerTool(Name = "CreateWeight", Title = "Create weight entry")]
-        public override Task<ActionResult<WeightOutput>> Create(WeightInput model)
+        [McpServerTool(Name = "CreateWeight", Title = "Create weight entry"), Description("Create a new weight entry")]
+        public new async Task<WeightOutput?> Create(WeightInput model)
         {
-            return base.Create(model);
+            var result = await _service.Create(model);
+            return result;
         }
     }
 }
