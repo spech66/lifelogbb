@@ -1,14 +1,16 @@
 ﻿using LifelogBb.Models.Account;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ModelContextProtocol.Server;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Westwind.AspNetCore.Security;
-using Microsoft.AspNetCore.Authorization;
 
 namespace LifelogBb.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [McpServerToolType]
     public class AuthenticationController : ControllerBase
     {
         private readonly IConfiguration Configuration;
@@ -20,6 +22,7 @@ namespace LifelogBb.ApiControllers
 
         [HttpPost]
         [AllowAnonymous]
+        [McpServerTool]
         // [ValidateAntiForgeryToken] // No validation as we use this from Swagger/API as well
         public IActionResult Authenticate([FromBody] LoginModel loginModel)
         {

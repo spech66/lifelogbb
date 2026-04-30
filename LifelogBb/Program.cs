@@ -23,6 +23,14 @@ namespace LifelogBb
             var services = builder.Services;
             var config = builder.Configuration;
 
+            // Logging
+            // Keep the default providers and configuration-driven logging settings.
+            // Only enable very verbose logging automatically during Development.
+            if (builder.Environment.IsDevelopment())
+            {
+                builder.Logging.SetMinimumLevel(LogLevel.Trace);
+            }
+
             // Add services to the container.
             services.AddEntityFrameworkSqlite().AddDbContext<LifelogBbContext>();
 
@@ -46,6 +54,12 @@ namespace LifelogBb
                     [new OpenApiSecuritySchemeReference("Bearer", document)] = []
                 });
             }); // Swagger
+
+            // MCP Server
+            services.AddMcpServer()
+                .AddAuthorizationFilters()
+                .WithHttpTransport(options => { options.Stateless = true; })
+                .WithToolsFromAssembly();
 
             // https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-7.0
             services.Configure<ForwardedHeadersOptions>(options =>
@@ -113,6 +127,9 @@ namespace LifelogBb
                 options.EnablePersistAuthorization();
             });
 
+            // MCP
+            app.MapMcp("mcp").RequireAuthorization();
+
             app.Run();
         }
 
@@ -141,6 +158,7 @@ namespace LifelogBb
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Authentication:JwtToken:SigningKey"]))
                 };
             })
+            .AddMcp()
             .AddPolicyScheme("JWT_OR_COOKIE", "JWT_OR_COOKIE", options =>
             {
                 options.ForwardDefaultSelector = context =>
