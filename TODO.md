@@ -21,6 +21,7 @@ ToDos and Features for LifelogBB.
 - [ ] Remove BMI in weight input
 - [ ] Text search in all tables (e.g. in Journal, ...)
 - [ ] MCP Server
+  - [ ] Provide filter
 
 ### Done :heavy_check_mark:
 
