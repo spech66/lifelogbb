@@ -8,7 +8,7 @@ ToDos and Features for LifelogBB.
 
 ### In Progress :construction:
 
-- [ ] ChatGPT (LLaMA, ... ?) - Microsoft Agent Framework
+- [ ] Chat history persistence
 
 #### External tools
 
@@ -16,6 +16,7 @@ ToDos and Features for LifelogBB.
 
 ### Done :heavy_check_mark:
 
+- [x] AI Chat with tool calling (OpenAI-compatible endpoint, reads lifelog data via tools)
 - [x] Filter in tables
 - [x] Dashboard
 - [x] Calendar

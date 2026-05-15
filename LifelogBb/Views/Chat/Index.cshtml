@@ -1,0 +1,192 @@
+@model LifelogBb.Models.Chat.ChatViewModel
+
+@{
+    ViewData["Title"] = "Chat";
+}
+
+<div class="container-xl">
+    @Html.AntiForgeryToken()
+    <div class="row row-cards">
+        <div class="col-12">
+            @if (!Model.IsConfigured)
+            {
+                <div class="alert alert-warning" role="alert">
+                    <div class="d-flex">
+                        <div><i class="fas fa-exclamation-triangle me-2"></i></div>
+                        <div>
+                            Chat is not configured. Please set your API key in the
+                            <a asp-controller="Home" asp-action="Config" class="alert-link">Config page</a>.
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-comments me-2"></i>Chat</h3>
+                    <div class="card-actions">
+                        <button class="btn btn-ghost-secondary btn-sm" id="clear-chat" title="Clear chat">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div id="chat-messages" style="height: 60vh; overflow-y: auto; padding: 1.5rem;">
+                        <div class="text-center text-secondary py-4" id="chat-placeholder">
+                            <i class="fas fa-comments fa-3x mb-3 d-block"></i>
+                            Ask me anything about your life tracking data.
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex gap-2">
+                        <input type="text" id="chat-input" class="form-control form-control-lg"
+                               placeholder="Type your message..." autocomplete="off"
+                               @(Model.IsConfigured ? "" : "disabled") />
+                        <button id="chat-send" class="btn btn-primary btn-lg px-4"
+                                @(Model.IsConfigured ? "" : "disabled")>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const messagesContainer = document.getElementById('chat-messages');
+            const chatInput = document.getElementById('chat-input');
+            const sendBtn = document.getElementById('chat-send');
+            const clearBtn = document.getElementById('clear-chat');
+            const placeholder = document.getElementById('chat-placeholder');
+            const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                || document.querySelector('meta[name="RequestVerificationToken"]')?.content
+                || '';
+
+            let conversationHistory = [];
+            let isLoading = false;
+
+            function scrollToBottom() {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            function addMessage(role, content) {
+                if (placeholder) {
+                    placeholder.style.display = 'none';
+                }
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'd-flex mb-3 ' + (role === 'user' ? 'justify-content-end' : 'justify-content-start');
+
+                const bubble = document.createElement('div');
+                bubble.className = 'p-3 rounded-3 ' + (role === 'user'
+                    ? 'bg-primary text-white'
+                    : 'bg-secondary-lt');
+                bubble.style.maxWidth = '80%';
+                bubble.style.whiteSpace = 'pre-wrap';
+                bubble.style.wordBreak = 'break-word';
+                bubble.textContent = content;
+
+                wrapper.appendChild(bubble);
+                messagesContainer.appendChild(wrapper);
+                scrollToBottom();
+            }
+
+            function addLoadingIndicator() {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'd-flex mb-3 justify-content-start';
+                wrapper.id = 'loading-indicator';
+
+                const bubble = document.createElement('div');
+                bubble.className = 'p-3 rounded-3 bg-secondary-lt';
+                bubble.innerHTML = '<div class="spinner-border spinner-border-sm me-2" role="status"></div>Thinking...';
+
+                wrapper.appendChild(bubble);
+                messagesContainer.appendChild(wrapper);
+                scrollToBottom();
+            }
+
+            function removeLoadingIndicator() {
+                const loading = document.getElementById('loading-indicator');
+                if (loading) {
+                    loading.remove();
+                }
+            }
+
+            async function sendMessage() {
+                const message = chatInput.value.trim();
+                if (!message || isLoading) return;
+
+                isLoading = true;
+                sendBtn.disabled = true;
+                chatInput.disabled = true;
+
+                addMessage('user', message);
+                chatInput.value = '';
+
+                addLoadingIndicator();
+
+                try {
+                    const response = await fetch('@Url.Action("Send", "Chat")', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': antiForgeryToken
+                        },
+                        body: JSON.stringify({
+                            message: message,
+                            history: conversationHistory
+                        })
+                    });
+
+                    removeLoadingIndicator();
+
+                    if (!response.ok) {
+                        addMessage('assistant', 'Error: Failed to get response. Please try again.');
+                    } else {
+                        const data = await response.json();
+                        if (data.error) {
+                            addMessage('assistant', 'Error: ' + data.error);
+                        } else {
+                            conversationHistory.push({ role: 'user', content: message });
+                            conversationHistory.push({ role: 'assistant', content: data.response });
+                            addMessage('assistant', data.response);
+                        }
+                    }
+                } catch (err) {
+                    removeLoadingIndicator();
+                    addMessage('assistant', 'Error: Could not connect to the server.');
+                }
+
+                isLoading = false;
+                sendBtn.disabled = false;
+                chatInput.disabled = false;
+                chatInput.focus();
+            }
+
+            sendBtn.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            clearBtn.addEventListener('click', function () {
+                conversationHistory = [];
+                messagesContainer.innerHTML = '';
+                if (placeholder) {
+                    const newPlaceholder = document.createElement('div');
+                    newPlaceholder.className = 'text-center text-secondary py-4';
+                    newPlaceholder.id = 'chat-placeholder';
+                    newPlaceholder.innerHTML = '<i class="fas fa-comments fa-3x mb-3 d-block"></i>Ask me anything about your life tracking data.';
+                    messagesContainer.appendChild(newPlaceholder);
+                }
+            });
+
+            chatInput.focus();
+        });
+    </script>
+}
