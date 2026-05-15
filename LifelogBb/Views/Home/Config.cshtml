@@ -33,7 +33,7 @@
                         <div class="form-group mb-3">
                             <label asp-for="Height" class="control-label mb-1"></label>
                             <input asp-for="Height" class="form-control form-control-lg" />
-                            <span class="text-secondary">@Model.HeightHelpText</span>
+                            <span id="height-help-text" class="text-secondary">@Model.HeightHelpText</span>
                             <span asp-validation-for="Height" class="text-danger"></span>
                         </div>
                     </div>
@@ -159,3 +159,24 @@
     </div>
     <input type="hidden" asp-for="Id" />
 </form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const unitsSelect = document.getElementById('UnitsType');
+        const heightHelpText = document.getElementById('height-help-text');
+
+        if (!unitsSelect || !heightHelpText) {
+            return;
+        }
+
+        const metricText = 'Metric: @(LifelogBb.Models.Home.EditConfigViewModel.HeightMinMetric)–@(LifelogBb.Models.Home.EditConfigViewModel.HeightMaxMetric) cm';
+        const imperialText = 'Imperial: @(LifelogBb.Models.Home.EditConfigViewModel.HeightMinImperial)–@(LifelogBb.Models.Home.EditConfigViewModel.HeightMaxImperial) inches';
+
+        const updateHeightHelpText = function () {
+            heightHelpText.textContent = unitsSelect.value === '@((int)LifelogBb.Models.Entities.Measurements.Imperial)' ? imperialText : metricText;
+        };
+
+        unitsSelect.addEventListener('change', updateHeightHelpText);
+        updateHeightHelpText();
+    });
+</script>

@@ -20,10 +20,16 @@ namespace LifelogBb.Migrations
             // Backfill Height from the most recent Weight entry; fall back to unit-appropriate default
             migrationBuilder.Sql(@"
                 UPDATE Configs
-                SET Height = COALESCE(
-                    (SELECT Height FROM Weights WHERE Height > 0 ORDER BY CreatedAt DESC LIMIT 1),
-                    CASE WHEN UnitsType = 1 THEN 67 ELSE 170 END
-                )
+                SET Height = CASE
+                    WHEN UnitsType = 1 THEN COALESCE(
+                        (SELECT Height FROM Weights WHERE Height BETWEEN 16 AND 98 ORDER BY CreatedAt DESC LIMIT 1),
+                        67
+                    )
+                    ELSE COALESCE(
+                        (SELECT Height FROM Weights WHERE Height BETWEEN 40 AND 250 ORDER BY CreatedAt DESC LIMIT 1),
+                        170
+                    )
+                END
             ");
         }
 
