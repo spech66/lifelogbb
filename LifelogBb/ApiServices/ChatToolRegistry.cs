@@ -115,6 +115,7 @@ namespace LifelogBb.ApiServices
                 .FilterByGroup<TEntity>(filter, throwOnInvalidFilter: true)
                 .OrderByDescending(entity => entity.UpdatedAt)
                 .ThenByDescending(entity => entity.CreatedAt)
+                // Take one extra record so the response can tell the model when more matching data exists.
                 .Take(limit + 1)
                 .ToListAsync();
 
