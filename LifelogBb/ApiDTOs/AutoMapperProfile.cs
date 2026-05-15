@@ -21,7 +21,7 @@ namespace LifelogBb.DTOs
 
             // Journals
             CreateMap<JournalInput, Journal>()
-                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date!.Value.Date));
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date.Date));
             CreateMap<Journal, JournalOutput>();
 
             // EnduranceTrainings
