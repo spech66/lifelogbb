@@ -10,6 +10,22 @@ namespace LifelogBb.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql(@"
+                DELETE FROM Journals
+                WHERE Id IN (
+                    SELECT older.Id
+                    FROM Journals older
+                    JOIN Journals newer
+                        ON date(older.Date) = date(newer.Date)
+                        AND (
+                            newer.UpdatedAt > older.UpdatedAt
+                            OR (newer.UpdatedAt = older.UpdatedAt AND newer.Id > older.Id)
+                        )
+                );
+            ");
+
+            migrationBuilder.Sql("UPDATE Journals SET Date = date(Date);");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Journals_Date",
                 table: "Journals",

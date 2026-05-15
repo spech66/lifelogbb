@@ -97,6 +97,7 @@ namespace LifelogBb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Text,Category,Tags,Date")] Journal journal)
         {
+            journal.Date = journal.Date.Date;
             var existing = await _context.Journals.FirstOrDefaultAsync(j => j.Date == journal.Date);
             if (existing != null)
             {
@@ -152,6 +153,7 @@ namespace LifelogBb.Controllers
                 try
                 {
                     journalDb = _mapper.Map(journalViewModel, journalDb);
+                    journalDb.Date = journalDb.Date.Date;
                     journalDb.SetUpdateFields();
                     _context.Update(journalDb);
                     await _context.SaveChangesAsync();

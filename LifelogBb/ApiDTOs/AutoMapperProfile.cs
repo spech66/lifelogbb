@@ -20,7 +20,8 @@ namespace LifelogBb.DTOs
             CreateMap<Weight, WeightOutput>();
 
             // Journals
-            CreateMap<JournalInput, Journal>();
+            CreateMap<JournalInput, Journal>()
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date!.Value.Date));
             CreateMap<Journal, JournalOutput>();
 
             // EnduranceTrainings
