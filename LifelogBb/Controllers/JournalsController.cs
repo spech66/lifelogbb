@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using LifelogBb.Models;
 using LifelogBb.Models.Entities;
@@ -104,14 +105,15 @@ namespace LifelogBb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Text,Category,Tags,Date")] Journal journal)
         {
-            var existing = await _context.Journals.FirstOrDefaultAsync(j => j.Date == journal.Date);
-            if (existing != null)
-            {
-                return RedirectToAction(nameof(Edit), new { id = existing.Id });
-            }
-
             if (ModelState.IsValid)
             {
+                journal.Date = journal.Date.Date;
+                var existing = await _context.Journals.FirstOrDefaultAsync(j => j.Date == journal.Date);
+                if (existing != null)
+                {
+                    return RedirectToAction(nameof(Edit), new { id = existing.Id });
+                }
+
                 journal.SetCreateFields();
                 _context.Add(journal);
                 await _context.SaveChangesAsync();
@@ -156,25 +158,50 @@ namespace LifelogBb.Controllers
             var journalDb = await _context.Journals.FindAsync(id);
             if (ModelState.IsValid && journalDb != null)
             {
-                try
+                var normalizedDate = journalViewModel.Date.Date;
+                var isDateChanged = journalDb.Date != normalizedDate;
+                if (isDateChanged)
                 {
-                    journalDb = _mapper.Map(journalViewModel, journalDb);
-                    journalDb.SetUpdateFields();
-                    _context.Update(journalDb);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!JournalExists(journalViewModel.Id))
+                    var existing = await _context.Journals.AnyAsync(j => j.Id != id && j.Date == normalizedDate);
+                    if (existing)
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
+                        ModelState.AddModelError(nameof(EditJournalViewModel.Date), "A journal entry already exists for this date.");
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                if (ModelState.IsValid)
+                {
+                    var isSaved = false;
+                    try
+                    {
+                        journalDb = _mapper.Map(journalViewModel, journalDb);
+                        journalDb.Date = normalizedDate;
+                        journalDb.SetUpdateFields();
+                        _context.Update(journalDb);
+                        await _context.SaveChangesAsync();
+                        isSaved = true;
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!JournalExists(journalViewModel.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    catch (DbUpdateException ex) when (ex.InnerException is SqliteException { SqliteErrorCode: 19, SqliteExtendedErrorCode: 2067 })
+                    {
+                        ModelState.AddModelError(nameof(EditJournalViewModel.Date), "A journal entry already exists for this date.");
+                    }
+
+                    if (isSaved)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
             }
 
             this.AddCategoriesToViewData(_context);
