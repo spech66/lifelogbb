@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.ComponentModel.DataAnnotations.Schema;
 using LifelogBb.Models.Filtering;
 
 namespace LifelogBb.Utilities
@@ -303,7 +304,9 @@ namespace LifelogBb.Utilities
         {
             return typeof(T)
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(p => IsSimpleType(p.PropertyType))
+                .Where(p => p.SetMethod != null
+                    && p.GetCustomAttribute<NotMappedAttribute>() == null
+                    && IsSimpleType(p.PropertyType))
                 .Select(p => p.Name)
                 .ToHashSet();
         }

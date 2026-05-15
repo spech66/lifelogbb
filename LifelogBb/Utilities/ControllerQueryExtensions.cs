@@ -1,6 +1,5 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using LifelogBb.Models.Filtering;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace LifelogBb.Utilities

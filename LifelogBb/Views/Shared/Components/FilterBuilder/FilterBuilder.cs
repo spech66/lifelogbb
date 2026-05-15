@@ -1,17 +1,63 @@
 using System.Reflection;
 using System.Text.Json;
+using LifelogBb.Models.Filtering;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LifelogBb.Views.Shared.Components.FilterBuilder
 {
     public class FilterBuilder : ViewComponent
     {
+        private static readonly JsonSerializerOptions CurrentFilterJsonOptions = new()
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
         public IViewComponentResult Invoke(Type entityType, string? currentFilter = null)
         {
             var filters = BuildFilterConfig(entityType);
             ViewBag.FiltersJson = JsonSerializer.Serialize(filters);
-            ViewBag.CurrentFilter = currentFilter;
+            ViewBag.CurrentFilterJson = NormalizeCurrentFilterJson(currentFilter);
             return View();
+        }
+
+        private static string? NormalizeCurrentFilterJson(string? currentFilter)
+        {
+            if (string.IsNullOrWhiteSpace(currentFilter))
+                return null;
+
+            try
+            {
+                var parsed = JsonSerializer.Deserialize<FilterGroup>(currentFilter, CurrentFilterJsonOptions);
+                if (parsed == null || !IsValidFilterGroup(parsed))
+                    return null;
+
+                return JsonSerializer.Serialize(parsed, CurrentFilterJsonOptions);
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
+        }
+
+        private static bool IsValidFilterGroup(FilterGroup group)
+        {
+            if (group.Conditions == null || group.Groups == null)
+                return false;
+
+            foreach (var condition in group.Conditions)
+            {
+                if (condition == null || condition.Field == null || condition.Value == null)
+                    return false;
+            }
+
+            foreach (var subGroup in group.Groups)
+            {
+                if (subGroup == null || !IsValidFilterGroup(subGroup))
+                    return false;
+            }
+
+            return true;
         }
 
         private static List<object> BuildFilterConfig(Type entityType)
@@ -21,6 +67,9 @@ namespace LifelogBb.Views.Shared.Components.FilterBuilder
 
             foreach (var prop in properties)
             {
+                if (prop.SetMethod == null || prop.GetCustomAttribute<NotMappedAttribute>() != null)
+                    continue;
+
                 var type = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
 
                 if (!IsFilterableType(type))

@@ -1,19 +1,6 @@
-@using System.Text.Json
 @{
     var filtersJson = ViewBag.FiltersJson as string ?? "[]";
-    var currentFilter = ViewBag.CurrentFilter as string;
-    string currentFilterJson = "null";
-    if (!string.IsNullOrWhiteSpace(currentFilter))
-    {
-        try
-        {
-            currentFilterJson = JsonSerializer.Serialize(JsonDocument.Parse(currentFilter).RootElement);
-        }
-        catch (JsonException)
-        {
-            currentFilterJson = "null";
-        }
-    }
+    var currentFilterJson = ViewBag.CurrentFilterJson as string;
 }
 
 <link rel="stylesheet" href="~/lib/jquery-querybuilder/css/query-builder.default.css" />
@@ -30,7 +17,7 @@
             </a>
         </div>
     </div>
-    <div id="filterBuilderCollapse" class="collapse @(string.IsNullOrEmpty(currentFilter) ? "" : "show")">
+    <div id="filterBuilderCollapse" class="collapse @(string.IsNullOrEmpty(currentFilterJson) ? "" : "show")">
         <div class="card-body">
             <div id="query-builder"></div>
         </div>
@@ -42,13 +29,12 @@
     </div>
 </div>
 
-<script src="~/lib/jquery-querybuilder/js/query-builder.standalone.js"></script>
 <script>
     (function () {
         var maxDepth = 5;
         var maxConditions = 20;
         var filters = @Html.Raw(filtersJson);
-        var currentFilterJson = @Html.Raw(currentFilterJson);
+        var currentFilterJson = @Html.Raw(currentFilterJson is null ? "null" : currentFilterJson);
         var parsedFilter = currentFilterJson || null;
 
         // Operator mapping: QueryBuilder operator name => our ComparisonOperator enum name
@@ -89,7 +75,12 @@
                     var qbOperator = reverseOperatorMap[cond.operator] || 'equal';
                     var value = cond.value;
                     if (qbOperator === 'in' || qbOperator === 'not_in') {
-                        value = value.split(',').map(function (v) { return v.trim(); });
+                        if (typeof value !== 'string') {
+                            value = '';
+                        }
+                        value = value
+                            ? value.split(',').map(function (v) { return v.trim(); })
+                            : [];
                     }
                     rules.rules.push({
                         id: cond.field,
