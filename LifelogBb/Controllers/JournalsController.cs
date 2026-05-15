@@ -170,6 +170,7 @@ namespace LifelogBb.Controllers
                         journalDb.SetUpdateFields();
                         _context.Update(journalDb);
                         await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
                     }
                     catch (DbUpdateConcurrencyException)
                     {
@@ -182,7 +183,10 @@ namespace LifelogBb.Controllers
                             throw;
                         }
                     }
-                    return RedirectToAction(nameof(Index));
+                    catch (DbUpdateException ex) when (ex.InnerException?.Message?.Contains("UNIQUE constraint failed: Journals.Date", StringComparison.OrdinalIgnoreCase) == true)
+                    {
+                        ModelState.AddModelError(nameof(EditJournalViewModel.Date), "A journal entry already exists for this date.");
+                    }
                 }
             }
 
