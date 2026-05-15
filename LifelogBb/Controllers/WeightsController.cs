@@ -121,9 +121,12 @@ namespace LifelogBb.Controllers
             Weight? weight = _context.Weights.OrderByDescending(o => o.CreatedAt).FirstOrDefault();
             if(weight != null)
             {
-                weight.Id = 0;
+                var model = new EditWeightViewModel
+                {
+                    BodyWeight = weight.BodyWeight
+                };
                 ViewData["UnitsType"] = Config.GetConfig(_context).UnitsType;
-                return View(weight);
+                return View(model);
             }
 
             ViewData["UnitsType"] = Config.GetConfig(_context).UnitsType;
@@ -133,18 +136,24 @@ namespace LifelogBb.Controllers
         // POST: Weights/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Height,BodyWeight")] Weight weight)
+        public async Task<IActionResult> Create([Bind("BodyWeight")] EditWeightViewModel weightViewModel)
         {
             if (ModelState.IsValid)
             {
-                CalculateBmi(weight);
+                var config = Config.GetConfig(_context);
+                var weight = new Weight
+                {
+                    BodyWeight = weightViewModel.BodyWeight,
+                    Height = config.Height
+                };
+                weight.Bmi = BmiHelper.Calculate(weight.BodyWeight, weight.Height, config.UnitsType);
                 weight.SetCreateFields();
                 _context.Add(weight);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             ViewData["UnitsType"] = Config.GetConfig(_context).UnitsType;
-            return View(weight);
+            return View(weightViewModel);
         }
 
         // GET: Weights/Edit/5
@@ -168,7 +177,7 @@ namespace LifelogBb.Controllers
         // POST: Weights/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Height,BodyWeight,Id")] EditWeightViewModel weightViewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("BodyWeight,Id")] EditWeightViewModel weightViewModel)
         {
             if (id != weightViewModel.Id)
             {
@@ -181,7 +190,9 @@ namespace LifelogBb.Controllers
                 try
                 {
                     weightDb = _mapper.Map(weightViewModel, weightDb);
-                    CalculateBmi(weightDb);
+                    var config = Config.GetConfig(_context);
+                    weightDb.Height = config.Height;
+                    weightDb.Bmi = BmiHelper.Calculate(weightDb.BodyWeight, weightDb.Height, config.UnitsType);
                     weightDb.SetUpdateFields();
                     _context.Update(weightDb);
                     await _context.SaveChangesAsync();
@@ -244,18 +255,6 @@ namespace LifelogBb.Controllers
         private bool WeightExists(long id)
         {
           return _context.Weights.Any(e => e.Id == id);
-        }
-
-        private void CalculateBmi(Weight weight)
-        {
-            var measurements = Config.GetConfig(_context).UnitsType;
-            if (measurements == Measurements.Metric)
-            {
-                weight.Bmi = (weight.BodyWeight * 1.0) / (((weight.Height * 0.01) * weight.Height) * 0.01);
-            } else
-            {
-                weight.Bmi = weight.BodyWeight / (weight.Height * weight.Height) * 703.0;
-            }
         }
     }
 }

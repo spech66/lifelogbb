@@ -1,6 +1,3 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-
 namespace LifelogBb.Models.Entities
 {
     public enum Measurements
@@ -18,6 +15,8 @@ namespace LifelogBb.Models.Entities
         public DayOfWeek StartOfWeek { get; set; } = DayOfWeek.Monday;
 
         public Measurements UnitsType { get; set; } = Measurements.Metric;
+
+        public int Height { get; set; } = 170;
 
         public int BucketListPageSize { get; set; } = 12;
 

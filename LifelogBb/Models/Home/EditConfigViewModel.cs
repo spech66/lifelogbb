@@ -1,14 +1,30 @@
 ﻿using LifelogBb.Models.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace LifelogBb.Models.Home
 {
-    public class EditConfigViewModel
+    public class EditConfigViewModel : IValidatableObject
     {
+        public const int HeightMinMetric = 40;
+        public const int HeightMaxMetric = 250;
+        public const int HeightMinImperial = 16;
+        public const int HeightMaxImperial = 98;
+
         public long Id { get; set; } // For model/view generation only
 
         public DayOfWeek StartOfWeek { get; set; }
 
         public Measurements UnitsType { get; set; }
+
+        public int Height { get; set; }
+
+        public string HeightHelpText => UnitsType == Measurements.Metric
+            ? HeightHelpTextMetric
+            : HeightHelpTextImperial;
+
+        public string HeightHelpTextMetric => $"Metric: {HeightMinMetric}–{HeightMaxMetric} cm";
+
+        public string HeightHelpTextImperial => $"Imperial: {HeightMinImperial}–{HeightMaxImperial} inches";
 
         public int BucketListPageSize { get; set; }
 
@@ -35,5 +51,20 @@ namespace LifelogBb.Models.Home
         public string FeedToken { get; set; } = Guid.NewGuid().ToString();
 
         public string FeedTimeZone { get; set; } = "Europe/Berlin";
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (UnitsType == Measurements.Metric)
+            {
+                if (Height < HeightMinMetric || Height > HeightMaxMetric)
+                {
+                    yield return new ValidationResult($"Height must be between {HeightMinMetric} and {HeightMaxMetric} cm in metric mode.", [nameof(Height)]);
+                }
+            }
+            else if (Height < HeightMinImperial || Height > HeightMaxImperial)
+            {
+                yield return new ValidationResult($"Height must be between {HeightMinImperial} and {HeightMaxImperial} inches in imperial mode.", [nameof(Height)]);
+            }
+        }
     }
 }

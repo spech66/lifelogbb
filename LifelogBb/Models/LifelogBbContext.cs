@@ -45,12 +45,18 @@ namespace LifelogBb.Models
 
         // Create Sqlite database file in the "local" folder.
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite($"Data Source={DbPath}");
+        {
+            if (!options.IsConfigured)
+            {
+                options.UseSqlite($"Data Source={DbPath}");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Config>().Property(b => b.StartOfWeek).HasDefaultValue(DayOfWeek.Monday);
             modelBuilder.Entity<Config>().Property(b => b.UnitsType).HasDefaultValue(Measurements.Metric);
+            modelBuilder.Entity<Config>().Property(b => b.Height).HasDefaultValue(170);
             modelBuilder.Entity<Config>().Property(b => b.BucketListPageSize).HasDefaultValue(12);
             modelBuilder.Entity<Config>().Property(b => b.EnduranceTrainingPageSize).HasDefaultValue(20);
             modelBuilder.Entity<Config>().Property(b => b.GoalPageSize).HasDefaultValue(20);
@@ -64,6 +70,8 @@ namespace LifelogBb.Models
             modelBuilder.Entity<Config>().Property(b => b.FeedTimeZone).HasDefaultValue("Europe/Berlin");
             modelBuilder.Entity<Config>().Property(b => b.WeightWarningText).HasDefaultValue("You are gaining weight!");
             modelBuilder.Entity<Config>().Property(b => b.WeightWarning).HasDefaultValue(1.0);
+
+            modelBuilder.Entity<Journal>().HasIndex(j => j.Date).IsUnique();
         }
 
         public void BeginTransaction()

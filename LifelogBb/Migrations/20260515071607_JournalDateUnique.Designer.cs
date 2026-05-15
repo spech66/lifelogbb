@@ -3,6 +3,7 @@ using System;
 using LifelogBb.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LifelogBb.Migrations
 {
     [DbContext(typeof(LifelogBbContext))]
-    partial class LifelogBbContextModelSnapshot : ModelSnapshot
+    [Migration("20260515071607_JournalDateUnique")]
+    partial class JournalDateUnique
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.7");
@@ -96,11 +99,6 @@ namespace LifelogBb.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(20);
-
-                    b.Property<int>("Height")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(170);
 
                     b.Property<int>("JournalPageSize")
                         .ValueGeneratedOnAdd()

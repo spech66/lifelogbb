@@ -310,7 +310,8 @@ namespace LifelogBb.Utilities
                     };
 
                     // Make sure that date has no duplicate entries
-                    if(context.Journals.Any(j => j.Date.Date == journalEntry.Date.Date))
+                    if(context.Journals.Any(j => j.Date.Date == journalEntry.Date.Date) ||
+                       context.Journals.Local.Any(j => j.Date.Date == journalEntry.Date.Date))
                     {
                         continue;
                     }
@@ -412,7 +413,7 @@ namespace LifelogBb.Utilities
                     var weightValue = 85 - ((year - currentYear) * 5) + new Random().Next(-3, 4); // Random fluctuation of ±3 kg
                     var weightEntry = new Weight(height, weightValue)
                     {
-                        Bmi = (weightValue * 1.0) / (((height * 0.01) * height) * 0.01), // Metric BMI calculation
+                        Bmi = BmiHelper.Calculate(weightValue, height, Measurements.Metric),
                         CreatedAt = new DateTime(year, month, day),
                         UpdatedAt = new DateTime(year, month, day)                        
                     };

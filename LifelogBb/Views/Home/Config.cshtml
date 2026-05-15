@@ -1,4 +1,6 @@
-﻿@model LifelogBb.Models.Home.EditConfigViewModel
+﻿@using LifelogBb.Models.Entities
+@using LifelogBb.Models.Home
+@model EditConfigViewModel
 
 @{
     ViewData["Title"] = "Config";
@@ -29,6 +31,12 @@
                             <select asp-for="UnitsType" asp-items="@Html.GetEnumSelectList(typeof(LifelogBb.Models.Entities.Measurements))" class="form-select"></select>
                             <span class="text-warning">This won't change existing values!</span>
                             <span asp-validation-for="UnitsType" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Height" class="control-label mb-1"></label>
+                            <input asp-for="Height" class="form-control form-control-lg" aria-describedby="height-help-text" />
+                            <span id="height-help-text" class="text-secondary">@Model.HeightHelpText</span>
+                            <span asp-validation-for="Height" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="card-footer text-end">
@@ -153,3 +161,27 @@
     </div>
     <input type="hidden" asp-for="Id" />
 </form>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const unitsSelect = document.getElementById('UnitsType');
+            const heightHelpText = document.getElementById('height-help-text');
+
+            if (!unitsSelect || !heightHelpText) {
+                return;
+            }
+
+            const metricText = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.HeightHelpTextMetric));
+            const imperialText = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.HeightHelpTextImperial));
+            const imperialUnitsType = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(((int)Measurements.Imperial).ToString()));
+
+            const updateHeightHelpText = function () {
+                heightHelpText.textContent = unitsSelect.value === imperialUnitsType ? imperialText : metricText;
+            };
+
+            unitsSelect.addEventListener('change', updateHeightHelpText);
+            updateHeightHelpText();
+        });
+    </script>
+}
