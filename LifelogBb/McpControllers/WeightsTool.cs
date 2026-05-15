@@ -1,7 +1,5 @@
-﻿using LifelogBb.ApiControllers;
-using LifelogBb.ApiDTOs.Weights;
+﻿using LifelogBb.ApiDTOs.Weights;
 using LifelogBb.ApiServices;
-using Microsoft.AspNetCore.Mvc;
 using ModelContextProtocol.Server;
 using System.ComponentModel;
 
@@ -14,11 +12,10 @@ namespace LifelogBb.McpControllers
         {
         }
 
-        [McpServerTool(Name = "GetAllWeights", Title = "Get All Weights"), Description("Get all weight data")]
-        public async Task<IEnumerable<WeightOutput>> McpGetAll()
+        [McpServerTool(Name = "GetAllWeights", Title = "Get All Weights"), Description("Get all weight data. Optionally filter by providing a JSON filter expression.")]
+        public async Task<IEnumerable<WeightOutput>> McpGetAll([Description("Optional JSON filter expression")] string? filter = null)
         {
-            var result = await _service.GetAll();
-            return result.Value ?? [];
+            return await GetAllFiltered(filter);
         }
 
         [McpServerTool(Name = "CreateWeight", Title = "Create weight entry"), Description("Create a new weight entry")]
