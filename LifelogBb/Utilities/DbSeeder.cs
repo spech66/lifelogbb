@@ -413,7 +413,7 @@ namespace LifelogBb.Utilities
                     var weightValue = 85 - ((year - currentYear) * 5) + new Random().Next(-3, 4); // Random fluctuation of ±3 kg
                     var weightEntry = new Weight(height, weightValue)
                     {
-                        Bmi = (weightValue * 1.0) / (((height * 0.01) * height) * 0.01), // Metric BMI calculation
+                        Bmi = BmiHelper.Calculate(weightValue, height, Measurements.Metric),
                         CreatedAt = new DateTime(year, month, day),
                         UpdatedAt = new DateTime(year, month, day)                        
                     };
