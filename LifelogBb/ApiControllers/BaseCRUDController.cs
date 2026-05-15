@@ -20,8 +20,12 @@ namespace LifelogBb.ApiControllers
 
         // GET: api/[controller]
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<OUTP>>> GetAll()
+        public virtual async Task<ActionResult<IEnumerable<OUTP>>> GetAll([FromQuery] string? filter)
         {
+            if (!string.IsNullOrWhiteSpace(filter))
+            {
+                return Ok(await _service.GetAll(filter));
+            }
             return Ok(await _service.GetAll());
         }
 
