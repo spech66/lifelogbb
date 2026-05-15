@@ -310,7 +310,8 @@ namespace LifelogBb.Utilities
                     };
 
                     // Make sure that date has no duplicate entries
-                    if(context.Journals.Any(j => j.Date.Date == journalEntry.Date.Date))
+                    if(context.Journals.Any(j => j.Date.Date == journalEntry.Date.Date) ||
+                       context.Journals.Local.Any(j => j.Date.Date == journalEntry.Date.Date))
                     {
                         continue;
                     }
