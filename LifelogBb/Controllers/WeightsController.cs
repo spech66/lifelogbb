@@ -189,6 +189,7 @@ namespace LifelogBb.Controllers
                 {
                     weightDb = _mapper.Map(weightViewModel, weightDb);
                     var config = Config.GetConfig(_context);
+                    weightDb.Height = config.Height;
                     weightDb.Bmi = BmiHelper.Calculate(weightDb.BodyWeight, weightDb.Height, config.UnitsType);
                     weightDb.SetUpdateFields();
                     _context.Update(weightDb);

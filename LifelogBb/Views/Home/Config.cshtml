@@ -34,7 +34,7 @@
                         </div>
                         <div class="form-group mb-3">
                             <label asp-for="Height" class="control-label mb-1"></label>
-                            <input asp-for="Height" class="form-control form-control-lg" />
+                            <input asp-for="Height" class="form-control form-control-lg" aria-describedby="height-help-text" />
                             <span id="height-help-text" class="text-secondary">@Model.HeightHelpText</span>
                             <span asp-validation-for="Height" class="text-danger"></span>
                         </div>
@@ -162,24 +162,26 @@
     <input type="hidden" asp-for="Id" />
 </form>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const unitsSelect = document.getElementById('UnitsType');
-        const heightHelpText = document.getElementById('height-help-text');
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const unitsSelect = document.getElementById('UnitsType');
+            const heightHelpText = document.getElementById('height-help-text');
 
-        if (!unitsSelect || !heightHelpText) {
-            return;
-        }
+            if (!unitsSelect || !heightHelpText) {
+                return;
+            }
 
-        const metricText = '@Model.HeightHelpTextMetric';
-        const imperialText = '@Model.HeightHelpTextImperial';
-        const imperialUnitsType = '@((int)Measurements.Imperial)';
+            const metricText = '@Model.HeightHelpTextMetric';
+            const imperialText = '@Model.HeightHelpTextImperial';
+            const imperialUnitsType = '@((int)Measurements.Imperial)';
 
-        const updateHeightHelpText = function () {
-            heightHelpText.textContent = unitsSelect.value === imperialUnitsType ? imperialText : metricText;
-        };
+            const updateHeightHelpText = function () {
+                heightHelpText.textContent = unitsSelect.value === imperialUnitsType ? imperialText : metricText;
+            };
 
-        unitsSelect.addEventListener('change', updateHeightHelpText);
-        updateHeightHelpText();
-    });
-</script>
+            unitsSelect.addEventListener('change', updateHeightHelpText);
+            updateHeightHelpText();
+        });
+    </script>
+}

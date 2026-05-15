@@ -36,6 +36,7 @@ namespace LifelogBb.ApiServices
 
             dbEntry = _mapper.Map<WeightInput, Weight>(inputModel, dbEntry);
             var config = Config.GetConfig(_repository.Context);
+            dbEntry.Height = config.Height;
             dbEntry.Bmi = BmiHelper.Calculate(dbEntry.BodyWeight, dbEntry.Height, config.UnitsType);
             dbEntry.SetUpdateFields();
 
