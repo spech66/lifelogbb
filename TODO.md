@@ -17,14 +17,12 @@ ToDos and Features for LifelogBB.
 
 ### In Progress :construction:
 
-- [x] Make day unique in Journal and make Journal API use only one date
-- [ ] Remove BMI in weight input
-- [ ] Filter in tables
 - [ ] MCP Server
   - [ ] Provide filter
 
 ### Done :heavy_check_mark:
 
+- [x] Filter in tables
 - [x] Dashboard
 - [x] Calendar
 - [x] [iCal](https://github.com/rianjs/ical.net) feed
