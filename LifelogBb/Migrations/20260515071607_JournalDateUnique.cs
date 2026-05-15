@@ -24,8 +24,8 @@ namespace LifelogBb.Migrations
                 );
             ");
 
-            // Normalize existing values to date-only so uniqueness applies per calendar day.
-            migrationBuilder.Sql("UPDATE Journals SET Date = date(Date);");
+            // Normalize existing values to midnight timestamps to match EF's DateTime storage format.
+            migrationBuilder.Sql("UPDATE Journals SET Date = datetime(date(Date));");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Journals_Date",

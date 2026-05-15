@@ -97,15 +97,15 @@ namespace LifelogBb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Text,Category,Tags,Date")] Journal journal)
         {
-            journal.Date = journal.Date.Date;
-            var existing = await _context.Journals.FirstOrDefaultAsync(j => j.Date == journal.Date);
-            if (existing != null)
-            {
-                return RedirectToAction(nameof(Edit), new { id = existing.Id });
-            }
-
             if (ModelState.IsValid)
             {
+                journal.Date = journal.Date.Date;
+                var existing = await _context.Journals.FirstOrDefaultAsync(j => j.Date == journal.Date);
+                if (existing != null)
+                {
+                    return RedirectToAction(nameof(Edit), new { id = existing.Id });
+                }
+
                 journal.SetCreateFields();
                 _context.Add(journal);
                 await _context.SaveChangesAsync();
