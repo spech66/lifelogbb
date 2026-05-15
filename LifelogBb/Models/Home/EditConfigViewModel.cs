@@ -19,8 +19,12 @@ namespace LifelogBb.Models.Home
         public int Height { get; set; }
 
         public string HeightHelpText => UnitsType == Measurements.Metric
-            ? $"Metric: {HeightMinMetric}–{HeightMaxMetric} cm"
-            : $"Imperial: {HeightMinImperial}–{HeightMaxImperial} inches";
+            ? HeightHelpTextMetric
+            : HeightHelpTextImperial;
+
+        public string HeightHelpTextMetric => $"Metric: {HeightMinMetric}–{HeightMaxMetric} cm";
+
+        public string HeightHelpTextImperial => $"Imperial: {HeightMinImperial}–{HeightMaxImperial} inches";
 
         public int BucketListPageSize { get; set; }
 

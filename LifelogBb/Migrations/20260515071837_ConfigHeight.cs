@@ -17,7 +17,8 @@ namespace LifelogBb.Migrations
                 nullable: false,
                 defaultValue: 170);
 
-            // Backfill Height from the most recent Weight entry; fall back to unit-appropriate default
+            // Backfill Height from the most recent Weight entry in the same unit-valid range.
+            // Range values align with EditConfigViewModel constants: metric 40-250, imperial 16-98.
             migrationBuilder.Sql(@"
                 UPDATE Configs
                 SET Height = CASE

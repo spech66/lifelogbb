@@ -7,7 +7,7 @@ namespace LifelogBb.Models.Entities
 {
     public class Weight : BaseEntity
     {
-        [Range(16, 250)] // Supports imperial 16-98 in and metric up to 250 cm
+        [Range(16, 250)] // Shared storage range that covers both unit modes (imperial 16-98 in, metric up to 250 cm)
         public int Height { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:0.0}")]

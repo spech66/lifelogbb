@@ -1,4 +1,6 @@
-﻿@model LifelogBb.Models.Home.EditConfigViewModel
+﻿@using LifelogBb.Models.Entities
+@using LifelogBb.Models.Home
+@model EditConfigViewModel
 
 @{
     ViewData["Title"] = "Config";
@@ -169,11 +171,12 @@
             return;
         }
 
-        const metricText = 'Metric: @(LifelogBb.Models.Home.EditConfigViewModel.HeightMinMetric)–@(LifelogBb.Models.Home.EditConfigViewModel.HeightMaxMetric) cm';
-        const imperialText = 'Imperial: @(LifelogBb.Models.Home.EditConfigViewModel.HeightMinImperial)–@(LifelogBb.Models.Home.EditConfigViewModel.HeightMaxImperial) inches';
+        const metricText = '@Model.HeightHelpTextMetric';
+        const imperialText = '@Model.HeightHelpTextImperial';
+        const imperialUnitsType = '@((int)Measurements.Imperial)';
 
         const updateHeightHelpText = function () {
-            heightHelpText.textContent = unitsSelect.value === '@((int)LifelogBb.Models.Entities.Measurements.Imperial)' ? imperialText : metricText;
+            heightHelpText.textContent = unitsSelect.value === imperialUnitsType ? imperialText : metricText;
         };
 
         unitsSelect.addEventListener('change', updateHeightHelpText);
