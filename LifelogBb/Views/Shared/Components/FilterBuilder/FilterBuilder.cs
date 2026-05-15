@@ -48,9 +48,15 @@ namespace LifelogBb.Views.Shared.Components.FilterBuilder
             if (group.Conditions == null || group.Groups == null)
                 return false;
 
+            if (!Enum.IsDefined(group.Condition))
+                return false;
+
             foreach (var condition in group.Conditions)
             {
-                if (condition == null || condition.Field == null || condition.Value == null)
+                if (condition == null
+                    || string.IsNullOrWhiteSpace(condition.Field)
+                    || condition.Value == null
+                    || !Enum.IsDefined(condition.Operator))
                     return false;
             }
 
