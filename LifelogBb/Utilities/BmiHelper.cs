@@ -8,7 +8,7 @@ namespace LifelogBb.Utilities
         {
             if (unitsType == Measurements.Metric)
             {
-                return bodyWeight / (((height * 0.01) * height) * 0.01);
+                return bodyWeight / Math.Pow(height / 100.0, 2);
             }
 
             return bodyWeight / (height * height) * 703.0;

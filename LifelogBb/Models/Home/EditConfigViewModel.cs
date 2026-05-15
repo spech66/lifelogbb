@@ -52,11 +52,8 @@ namespace LifelogBb.Models.Home
                 {
                     yield return new ValidationResult($"Height must be between {HeightMinMetric} and {HeightMaxMetric} cm in metric mode.", [nameof(Height)]);
                 }
-
-                yield break;
             }
-
-            if (Height < HeightMinImperial || Height > HeightMaxImperial)
+            else if (Height < HeightMinImperial || Height > HeightMaxImperial)
             {
                 yield return new ValidationResult($"Height must be between {HeightMinImperial} and {HeightMaxImperial} inches in imperial mode.", [nameof(Height)]);
             }
