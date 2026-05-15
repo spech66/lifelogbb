@@ -151,12 +151,17 @@ namespace LifelogBb.Controllers
             if (ModelState.IsValid && journalDb != null)
             {
                 var normalizedDate = journalViewModel.Date.Date;
-                var existing = await _context.Journals.AnyAsync(j => j.Id != id && j.Date == normalizedDate);
-                if (existing)
+                var isDateChanged = journalDb.Date != normalizedDate;
+                if (isDateChanged)
                 {
-                    ModelState.AddModelError(nameof(EditJournalViewModel.Date), "A journal entry already exists for this date.");
+                    var existing = await _context.Journals.AnyAsync(j => j.Id != id && j.Date == normalizedDate);
+                    if (existing)
+                    {
+                        ModelState.AddModelError(nameof(EditJournalViewModel.Date), "A journal entry already exists for this date.");
+                    }
                 }
-                else
+
+                if (ModelState.IsValid)
                 {
                     try
                     {
