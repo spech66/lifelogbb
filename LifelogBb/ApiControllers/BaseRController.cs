@@ -23,7 +23,14 @@ namespace LifelogBb.ApiControllers
         {
             if (!string.IsNullOrWhiteSpace(filter))
             {
-                return await _service.GetAll(filter);
+                try
+                {
+                    return await _service.GetAll(filter);
+                }
+                catch (ArgumentException e)
+                {
+                    return BadRequest(new { message = e.Message });
+                }
             }
             return await _service.GetAll();
         }

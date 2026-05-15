@@ -26,7 +26,7 @@ namespace LifelogBb.ApiServices
 
         public virtual async Task<ActionResult<IEnumerable<OUTP>>> GetAll(string? filterJson)
         {
-            var query = _repository.Query.FilterByGroup<TEntity>(filterJson);
+            var query = _repository.Query.FilterByGroup<TEntity>(filterJson, throwOnInvalidFilter: true);
             var entities = await query.ToListAsync();
             return _mapper.Map<List<OUTP>>(entities);
         }

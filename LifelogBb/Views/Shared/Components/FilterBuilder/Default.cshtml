@@ -44,6 +44,8 @@
 <script src="~/lib/jquery-querybuilder/js/query-builder.standalone.js"></script>
 <script>
     (function () {
+        var maxDepth = 5;
+        var maxConditions = 20;
         var filters = @Html.Raw(filtersJson);
         var currentFilterJson = @Html.Raw(currentFilterJson);
         var parsedFilter = currentFilterJson || null;
@@ -70,6 +72,7 @@
 
         $('#query-builder').queryBuilder({
             filters: filters,
+            allow_groups: maxDepth,
             rules: parsedFilter ? fromServerFormat(parsedFilter) : undefined
         });
 
@@ -135,9 +138,30 @@
             return result;
         }
 
+        function countConditions(group) {
+            if (!group || !group.rules) {
+                return 0;
+            }
+
+            var count = 0;
+            group.rules.forEach(function (rule) {
+                if (rule.rules) {
+                    count += countConditions(rule);
+                } else {
+                    count++;
+                }
+            });
+            return count;
+        }
+
         $('#btn-filter-apply').on('click', function () {
             var result = $('#query-builder').queryBuilder('getRules');
             if (result && !$.isEmptyObject(result)) {
+                if (countConditions(result) > maxConditions) {
+                    alert('Filter supports up to ' + maxConditions + ' conditions.');
+                    return;
+                }
+
                 var serverFormat = toServerFormat(result);
                 var filterJson = JSON.stringify(serverFormat);
                 var url = new URL(window.location.href);

@@ -15,9 +15,10 @@ namespace LifelogBb.Utilities
         /// <summary>
         /// Applies a FilterGroup expression tree to an IQueryable.
         /// The filterJson parameter is a JSON-serialized FilterGroup.
-        /// Returns the original query unchanged if filterJson is null/empty or invalid.
+        /// Returns the original query unchanged if filterJson is null/empty.
+        /// When throwOnInvalidFilter is true, invalid filter JSON/expression throws ArgumentException.
         /// </summary>
-        public static IQueryable<T> FilterByGroup<T>(this IQueryable<T> query, string? filterJson)
+        public static IQueryable<T> FilterByGroup<T>(this IQueryable<T> query, string? filterJson, bool throwOnInvalidFilter = false)
         {
             if (string.IsNullOrWhiteSpace(filterJson))
                 return query;
@@ -27,13 +28,19 @@ namespace LifelogBb.Utilities
             {
                 group = JsonSerializer.Deserialize<FilterGroup>(filterJson, JsonOptions);
             }
-            catch (JsonException)
+            catch (JsonException ex)
             {
+                if (throwOnInvalidFilter)
+                    throw new ArgumentException("Invalid filter JSON.", ex);
                 return query;
             }
 
             if (group == null)
+            {
+                if (throwOnInvalidFilter)
+                    throw new ArgumentException("Invalid filter JSON.");
                 return query;
+            }
 
             try
             {
@@ -45,10 +52,14 @@ namespace LifelogBb.Utilities
             }
             catch (ArgumentException)
             {
+                if (throwOnInvalidFilter)
+                    throw;
                 return query;
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
+                if (throwOnInvalidFilter)
+                    throw new ArgumentException("Invalid filter expression.", ex);
                 return query;
             }
         }

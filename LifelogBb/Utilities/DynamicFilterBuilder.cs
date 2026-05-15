@@ -121,6 +121,9 @@ namespace LifelogBb.Utilities
                 ? Expression.Property(memberAccess, "Value")
                 : memberAccess;
 
+            if (IsComparisonOperator(condition.Operator) && !SupportsComparisonOperators(targetType))
+                throw new ArgumentException($"Operator '{condition.Operator}' is not valid for field '{condition.Field}' of type '{targetType.Name}'.");
+
             Expression comparison = condition.Operator switch
             {
                 ComparisonOperator.Equal => Expression.Equal(compareLeft, constant),
@@ -175,7 +178,7 @@ namespace LifelogBb.Utilities
 
             var rawValues = condition.Value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             if (rawValues.Length == 0)
-                return null;
+                throw new ArgumentException($"Condition value for field '{condition.Field ?? "<unknown>"}' must contain at least one value for {condition.Operator}.");
 
             var parsedValues = new List<object>();
             foreach (var raw in rawValues)
@@ -267,6 +270,33 @@ namespace LifelogBb.Utilities
             {
                 throw new ArgumentException($"Cannot parse value '{value}' as type '{targetType.Name}'.", ex);
             }
+        }
+
+        private static bool IsComparisonOperator(ComparisonOperator op)
+        {
+            return op == ComparisonOperator.GreaterThan
+                || op == ComparisonOperator.GreaterThanOrEqual
+                || op == ComparisonOperator.LessThan
+                || op == ComparisonOperator.LessThanOrEqual;
+        }
+
+        private static bool SupportsComparisonOperators(Type type)
+        {
+            var t = Nullable.GetUnderlyingType(type) ?? type;
+            return t == typeof(byte)
+                || t == typeof(sbyte)
+                || t == typeof(short)
+                || t == typeof(ushort)
+                || t == typeof(int)
+                || t == typeof(uint)
+                || t == typeof(long)
+                || t == typeof(ulong)
+                || t == typeof(float)
+                || t == typeof(double)
+                || t == typeof(decimal)
+                || t == typeof(DateTime)
+                || t == typeof(DateTimeOffset)
+                || t == typeof(TimeSpan);
         }
 
         private static HashSet<string> GetAllowedProperties<T>()
