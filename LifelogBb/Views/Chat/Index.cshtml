@@ -42,7 +42,7 @@
                         <input type="text" id="chat-input" class="form-control form-control-lg"
                                placeholder="Type your message..." autocomplete="off"
                                @(Model.IsConfigured ? "" : "disabled") />
-                        <button id="chat-send" class="btn btn-primary btn-lg px-4"
+                        <button id="chat-send" class="btn btn-primary btn-lg px-4" aria-label="Send message"
                                 @(Model.IsConfigured ? "" : "disabled")>
                             <i class="fas fa-paper-plane"></i>
                         </button>
