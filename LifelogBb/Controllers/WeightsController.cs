@@ -131,11 +131,13 @@ namespace LifelogBb.Controllers
         // POST: Weights/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Height,BodyWeight")] Weight weight)
+        public async Task<IActionResult> Create([Bind("BodyWeight")] Weight weight)
         {
             if (ModelState.IsValid)
             {
-                CalculateBmi(weight);
+                var config = Config.GetConfig(_context);
+                weight.Height = config.Height;
+                CalculateBmi(weight, config);
                 weight.SetCreateFields();
                 _context.Add(weight);
                 await _context.SaveChangesAsync();
@@ -166,7 +168,7 @@ namespace LifelogBb.Controllers
         // POST: Weights/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Height,BodyWeight,Id")] EditWeightViewModel weightViewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("BodyWeight,Id")] EditWeightViewModel weightViewModel)
         {
             if (id != weightViewModel.Id)
             {
@@ -179,7 +181,9 @@ namespace LifelogBb.Controllers
                 try
                 {
                     weightDb = _mapper.Map(weightViewModel, weightDb);
-                    CalculateBmi(weightDb);
+                    var config = Config.GetConfig(_context);
+                    weightDb.Height = config.Height;
+                    CalculateBmi(weightDb, config);
                     weightDb.SetUpdateFields();
                     _context.Update(weightDb);
                     await _context.SaveChangesAsync();
@@ -244,10 +248,9 @@ namespace LifelogBb.Controllers
           return _context.Weights.Any(e => e.Id == id);
         }
 
-        private void CalculateBmi(Weight weight)
+        private void CalculateBmi(Weight weight, Config config)
         {
-            var measurements = Config.GetConfig(_context).UnitsType;
-            if (measurements == Measurements.Metric)
+            if (config.UnitsType == Measurements.Metric)
             {
                 weight.Bmi = (weight.BodyWeight * 1.0) / (((weight.Height * 0.01) * weight.Height) * 0.01);
             } else

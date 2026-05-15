@@ -1,4 +1,5 @@
 ﻿using LifelogBb.Models.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace LifelogBb.Models.Home
 {
@@ -9,6 +10,9 @@ namespace LifelogBb.Models.Home
         public DayOfWeek StartOfWeek { get; set; }
 
         public Measurements UnitsType { get; set; }
+
+        [Range(40, 220)]
+        public int Height { get; set; }
 
         public int BucketListPageSize { get; set; }
 
