@@ -15,10 +15,7 @@ namespace LifelogBb.McpControllers
         [McpServerTool(Name = "GetAllStrengthTrainings", Title = "Get All Strength Trainings"), Description("Get all strength training data. Optionally filter by providing a JSON filter expression.")]
         public async Task<IEnumerable<StrengthTrainingOutput>> McpGetAll([Description("Optional JSON filter expression")] string? filter = null)
         {
-            var result = filter != null
-                ? await _service.GetAll(filter)
-                : await _service.GetAll();
-            return result.Value ?? [];
+            return await GetAllFiltered(filter);
         }
     }
 }

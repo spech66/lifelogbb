@@ -15,10 +15,7 @@ namespace LifelogBb.McpControllers
         [McpServerTool(Name = "GetAllJournals", Title = "Get All Journals"), Description("Get all journal data. Optionally filter by providing a JSON filter expression.")]
         public async Task<IEnumerable<JournalOutput>> McpGetAll([Description("Optional JSON filter expression")] string? filter = null)
         {
-            var result = filter != null
-                ? await _service.GetAll(filter)
-                : await _service.GetAll();
-            return result.Value ?? [];
+            return await GetAllFiltered(filter);
         }
     }
 }

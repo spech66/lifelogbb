@@ -15,10 +15,7 @@ namespace LifelogBb.McpControllers
         [McpServerTool(Name = "GetAllWeights", Title = "Get All Weights"), Description("Get all weight data. Optionally filter by providing a JSON filter expression.")]
         public async Task<IEnumerable<WeightOutput>> McpGetAll([Description("Optional JSON filter expression")] string? filter = null)
         {
-            var result = filter != null
-                ? await _service.GetAll(filter)
-                : await _service.GetAll();
-            return result.Value ?? [];
+            return await GetAllFiltered(filter);
         }
 
         [McpServerTool(Name = "CreateWeight", Title = "Create weight entry"), Description("Create a new weight entry")]
