@@ -119,9 +119,12 @@ namespace LifelogBb.Controllers
             Weight? weight = _context.Weights.OrderByDescending(o => o.CreatedAt).FirstOrDefault();
             if(weight != null)
             {
-                weight.Id = 0;
+                var model = new EditWeightViewModel
+                {
+                    BodyWeight = weight.BodyWeight
+                };
                 ViewData["UnitsType"] = Config.GetConfig(_context).UnitsType;
-                return View(weight);
+                return View(model);
             }
 
             ViewData["UnitsType"] = Config.GetConfig(_context).UnitsType;
@@ -131,20 +134,24 @@ namespace LifelogBb.Controllers
         // POST: Weights/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BodyWeight")] Weight weight)
+        public async Task<IActionResult> Create([Bind("BodyWeight")] EditWeightViewModel weightViewModel)
         {
             if (ModelState.IsValid)
             {
                 var config = Config.GetConfig(_context);
-                weight.Height = config.Height;
-                CalculateBmi(weight, config);
+                var weight = new Weight
+                {
+                    BodyWeight = weightViewModel.BodyWeight,
+                    Height = config.Height
+                };
+                weight.Bmi = BmiHelper.Calculate(weight.BodyWeight, weight.Height, config.UnitsType);
                 weight.SetCreateFields();
                 _context.Add(weight);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             ViewData["UnitsType"] = Config.GetConfig(_context).UnitsType;
-            return View(weight);
+            return View(weightViewModel);
         }
 
         // GET: Weights/Edit/5
@@ -182,8 +189,7 @@ namespace LifelogBb.Controllers
                 {
                     weightDb = _mapper.Map(weightViewModel, weightDb);
                     var config = Config.GetConfig(_context);
-                    weightDb.Height = config.Height;
-                    CalculateBmi(weightDb, config);
+                    weightDb.Bmi = BmiHelper.Calculate(weightDb.BodyWeight, weightDb.Height, config.UnitsType);
                     weightDb.SetUpdateFields();
                     _context.Update(weightDb);
                     await _context.SaveChangesAsync();
@@ -246,17 +252,6 @@ namespace LifelogBb.Controllers
         private bool WeightExists(long id)
         {
           return _context.Weights.Any(e => e.Id == id);
-        }
-
-        private void CalculateBmi(Weight weight, Config config)
-        {
-            if (config.UnitsType == Measurements.Metric)
-            {
-                weight.Bmi = (weight.BodyWeight * 1.0) / (((weight.Height * 0.01) * weight.Height) * 0.01);
-            } else
-            {
-                weight.Bmi = weight.BodyWeight / (weight.Height * weight.Height) * 703.0;
-            }
         }
     }
 }

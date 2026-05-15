@@ -98,7 +98,9 @@ namespace LifelogBb.Migrations
                         .HasDefaultValue(20);
 
                     b.Property<int>("Height")
-                        .HasColumnType("INTEGER");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(170);
 
                     b.Property<int>("JournalPageSize")
                         .ValueGeneratedOnAdd()

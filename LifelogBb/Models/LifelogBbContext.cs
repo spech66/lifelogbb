@@ -51,6 +51,7 @@ namespace LifelogBb.Models
         {
             modelBuilder.Entity<Config>().Property(b => b.StartOfWeek).HasDefaultValue(DayOfWeek.Monday);
             modelBuilder.Entity<Config>().Property(b => b.UnitsType).HasDefaultValue(Measurements.Metric);
+            modelBuilder.Entity<Config>().Property(b => b.Height).HasDefaultValue(170);
             modelBuilder.Entity<Config>().Property(b => b.BucketListPageSize).HasDefaultValue(12);
             modelBuilder.Entity<Config>().Property(b => b.EnduranceTrainingPageSize).HasDefaultValue(20);
             modelBuilder.Entity<Config>().Property(b => b.GoalPageSize).HasDefaultValue(20);

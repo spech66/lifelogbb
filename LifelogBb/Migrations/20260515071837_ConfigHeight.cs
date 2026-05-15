@@ -16,6 +16,8 @@ namespace LifelogBb.Migrations
                 type: "INTEGER",
                 nullable: false,
                 defaultValue: 170);
+
+            migrationBuilder.Sql("UPDATE Configs SET Height = 67 WHERE UnitsType = 1 AND Height = 170");
         }
 
         /// <inheritdoc />

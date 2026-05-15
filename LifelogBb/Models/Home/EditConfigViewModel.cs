@@ -3,15 +3,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LifelogBb.Models.Home
 {
-    public class EditConfigViewModel
+    public class EditConfigViewModel : IValidatableObject
     {
+        private const int HeightMinMetric = 40;
+        private const int HeightMaxMetric = 220;
+        private const int HeightMinImperial = 16;
+        private const int HeightMaxImperial = 87;
+
         public long Id { get; set; } // For model/view generation only
 
         public DayOfWeek StartOfWeek { get; set; }
 
         public Measurements UnitsType { get; set; }
 
-        [Range(40, 220)]
         public int Height { get; set; }
 
         public int BucketListPageSize { get; set; }
@@ -39,5 +43,23 @@ namespace LifelogBb.Models.Home
         public string FeedToken { get; set; } = Guid.NewGuid().ToString();
 
         public string FeedTimeZone { get; set; } = "Europe/Berlin";
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (UnitsType == Measurements.Metric)
+            {
+                if (Height < HeightMinMetric || Height > HeightMaxMetric)
+                {
+                    yield return new ValidationResult($"Height must be between {HeightMinMetric} and {HeightMaxMetric} cm in metric mode.", [nameof(Height)]);
+                }
+
+                yield break;
+            }
+
+            if (Height < HeightMinImperial || Height > HeightMaxImperial)
+            {
+                yield return new ValidationResult($"Height must be between {HeightMinImperial} and {HeightMaxImperial} inches in imperial mode.", [nameof(Height)]);
+            }
+        }
     }
 }

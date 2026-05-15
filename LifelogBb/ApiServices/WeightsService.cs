@@ -2,6 +2,7 @@
 using LifelogBb.ApiDTOs.Weights;
 using LifelogBb.Interfaces;
 using LifelogBb.Models.Entities;
+using LifelogBb.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 namespace LifelogBb.ApiServices
@@ -17,7 +18,7 @@ namespace LifelogBb.ApiServices
             var entry = _mapper.Map<Weight>(inputModel);
             var config = Config.GetConfig(_repository.Context);
             entry.Height = config.Height;
-            CalculateBmi(entry, config);
+            entry.Bmi = BmiHelper.Calculate(entry.BodyWeight, entry.Height, config.UnitsType);
             entry.SetCreateFields();
 
             _repository.Insert(entry);
@@ -35,8 +36,7 @@ namespace LifelogBb.ApiServices
 
             dbEntry = _mapper.Map<WeightInput, Weight>(inputModel, dbEntry);
             var config = Config.GetConfig(_repository.Context);
-            dbEntry.Height = config.Height;
-            CalculateBmi(dbEntry, config);
+            dbEntry.Bmi = BmiHelper.Calculate(dbEntry.BodyWeight, dbEntry.Height, config.UnitsType);
             dbEntry.SetUpdateFields();
 
             _repository.Update(dbEntry);
@@ -44,16 +44,5 @@ namespace LifelogBb.ApiServices
             return _mapper.Map<WeightOutput>(dbEntry);
         }
 
-        private static void CalculateBmi(Weight weight, Config config)
-        {
-            if (config.UnitsType == Measurements.Metric)
-            {
-                weight.Bmi = (weight.BodyWeight * 1.0) / (((weight.Height * 0.01) * weight.Height) * 0.01);
-            }
-            else
-            {
-                weight.Bmi = weight.BodyWeight / (weight.Height * weight.Height) * 703.0;
-            }
-        }
     }
 }
