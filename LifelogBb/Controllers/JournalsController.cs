@@ -150,26 +150,35 @@ namespace LifelogBb.Controllers
             var journalDb = await _context.Journals.FindAsync(id);
             if (ModelState.IsValid && journalDb != null)
             {
-                try
+                var normalizedDate = journalViewModel.Date.Date;
+                var existing = await _context.Journals.AnyAsync(j => j.Id != id && j.Date == normalizedDate);
+                if (existing)
                 {
-                    journalDb = _mapper.Map(journalViewModel, journalDb);
-                    journalDb.Date = journalDb.Date.Date;
-                    journalDb.SetUpdateFields();
-                    _context.Update(journalDb);
-                    await _context.SaveChangesAsync();
+                    ModelState.AddModelError(nameof(EditJournalViewModel.Date), "A journal entry already exists for this date.");
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!JournalExists(journalViewModel.Id))
+                    try
                     {
-                        return NotFound();
+                        journalDb = _mapper.Map(journalViewModel, journalDb);
+                        journalDb.Date = normalizedDate;
+                        journalDb.SetUpdateFields();
+                        _context.Update(journalDb);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!JournalExists(journalViewModel.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
             }
 
             this.AddCategoriesToViewData(_context);

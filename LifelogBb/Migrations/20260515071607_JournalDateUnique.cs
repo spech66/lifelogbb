@@ -11,17 +11,15 @@ namespace LifelogBb.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql(@"
-                DELETE FROM Journals
-                WHERE Id IN (
-                    SELECT older.Id
-                    FROM Journals older
-                    JOIN Journals newer
-                        ON date(older.Date) = date(newer.Date)
-                        AND (
-                            newer.UpdatedAt > older.UpdatedAt
-                            OR (newer.UpdatedAt = older.UpdatedAt AND newer.Id > older.Id)
-                        )
-                );
+                SELECT CASE
+                    WHEN EXISTS (
+                        SELECT 1
+                        FROM Journals
+                        GROUP BY date(Date)
+                        HAVING COUNT(*) > 1
+                    )
+                    THEN RAISE(ABORT, 'Cannot apply JournalDateUnique migration: duplicate journal dates exist. Resolve duplicates before applying this migration.')
+                END;
             ");
 
             // Normalize existing values to midnight timestamps to match EF's DateTime storage format.
