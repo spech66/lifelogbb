@@ -4106,8 +4106,7 @@ QueryBuilder.define('bt-checkbox', function(options) {
  * @throws MissingLibraryError
  */
 QueryBuilder.define('bt-tooltip-errors', function(options) {
-    if (! typeof bootstrap.Tooltip === "function") {
-        alert(typeof bootstrap.Tooltip );
+    if (typeof bootstrap?.Tooltip !== "function") {
         Utils.error('MissingLibrary', 'Bootstrap Popper is required to use "bt-tooltip-errors" plugin. Get it here: http://getbootstrap.com');
     }
 
@@ -4123,8 +4122,18 @@ QueryBuilder.define('bt-tooltip-errors', function(options) {
     // init/refresh tooltip when title changes
     this.model.on('update', function(e, node, field) {
         if (field == 'error' && self.settings.display_errors) {
-            node.$el.find(QueryBuilder.selectors.error_container).eq(0)
-            .attr('data-bs-original-title',options).attr('data-bs-title',options).tooltip();
+            var $errorContainer = node.$el.find(QueryBuilder.selectors.error_container).eq(0);
+            var errorTitle = Array.isArray(node.error) ? node.error.join(', ') : (node.error || '');
+            $errorContainer.attr('data-bs-title', errorTitle);
+            var tooltipEl = $errorContainer[0];
+            if (tooltipEl) {
+                var tooltipInstance = bootstrap.Tooltip.getInstance(tooltipEl);
+                if (tooltipInstance) {
+                    tooltipInstance.setContent({ '.tooltip-inner': errorTitle });
+                } else {
+                    new bootstrap.Tooltip(tooltipEl, { placement: options.placement });
+                }
+            }
         }
     });
 }, {

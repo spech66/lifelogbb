@@ -35,11 +35,22 @@ namespace LifelogBb.Utilities
             if (group == null)
                 return query;
 
-            var predicate = DynamicFilterBuilder.BuildExpression<T>(group);
-            if (predicate == null)
-                return query;
+            try
+            {
+                var predicate = DynamicFilterBuilder.BuildExpression<T>(group);
+                if (predicate == null)
+                    return query;
 
-            return query.Where(predicate);
+                return query.Where(predicate);
+            }
+            catch (ArgumentException)
+            {
+                return query;
+            }
+            catch (InvalidOperationException)
+            {
+                return query;
+            }
         }
 
         // https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/advanced?view=aspnetcore-7.0#use-dynamic-linq-to-simplify-code

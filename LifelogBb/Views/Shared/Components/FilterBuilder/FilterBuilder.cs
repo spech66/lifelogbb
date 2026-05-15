@@ -1,13 +1,12 @@
 using System.Reflection;
 using System.Text.Json;
-using LifelogBb.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LifelogBb.Views.Shared.Components.FilterBuilder
 {
     public class FilterBuilder : ViewComponent
     {
-        public async Task<IViewComponentResult> InvokeAsync(Type entityType, string? currentFilter = null)
+        public IViewComponentResult Invoke(Type entityType, string? currentFilter = null)
         {
             var filters = BuildFilterConfig(entityType);
             ViewBag.FiltersJson = JsonSerializer.Serialize(filters);

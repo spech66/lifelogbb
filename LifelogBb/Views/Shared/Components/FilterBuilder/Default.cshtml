@@ -1,8 +1,12 @@
+@using System.Text.Json
 @{
     var filtersJson = ViewBag.FiltersJson as string ?? "[]";
     var currentFilter = ViewBag.CurrentFilter as string;
     var controller = ViewContext.RouteData.Values["Controller"];
     var action = ViewContext.RouteData.Values["Action"];
+    var currentFilterJson = string.IsNullOrEmpty(currentFilter)
+        ? "null"
+        : JsonSerializer.Serialize(currentFilter);
 }
 
 <link rel="stylesheet" href="~/lib/jquery-querybuilder/css/query-builder.default.css" />
@@ -34,7 +38,8 @@
 <script>
     (function () {
         var filters = @Html.Raw(filtersJson);
-        var currentFilterJson = @Html.Raw(string.IsNullOrEmpty(currentFilter) ? "null" : currentFilter);
+        var currentFilterJson = @Html.Raw(currentFilterJson);
+        var parsedFilter = currentFilterJson ? JSON.parse(currentFilterJson) : null;
 
         // Operator mapping: QueryBuilder operator name => our ComparisonOperator enum name
         var operatorMap = {
@@ -58,7 +63,7 @@
 
         $('#query-builder').queryBuilder({
             filters: filters,
-            rules: currentFilterJson ? fromServerFormat(currentFilterJson) : undefined
+            rules: parsedFilter ? fromServerFormat(parsedFilter) : undefined
         });
 
         // Convert server FilterGroup format to QueryBuilder rules format

@@ -103,13 +103,11 @@ namespace LifelogBb.Utilities
                 if (targetType != typeof(string))
                     throw new ArgumentException($"Operator '{condition.Operator}' is only valid for string properties. Field '{condition.Field}' is {targetType.Name}.");
 
-                return BuildStringContainsExpression(condition, memberAccess, isNullable);
+                return BuildStringContainsExpression(condition, memberAccess);
             }
 
             // Parse the value to the target type
-            object? parsedValue = ParseValue(condition.Value, targetType);
-            if (parsedValue == null)
-                return null;
+            object parsedValue = ParseValue(condition.Value, targetType);
 
             var constant = Expression.Constant(parsedValue, targetType);
 
@@ -141,22 +139,19 @@ namespace LifelogBb.Utilities
 
         private static Expression BuildStringContainsExpression(
             FilterCondition condition,
-            MemberExpression memberAccess,
-            bool isNullable)
+            MemberExpression memberAccess)
         {
             var containsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) })!;
             var valueConstant = Expression.Constant(condition.Value, typeof(string));
 
-            Expression stringExpr = memberAccess;
-
-            // For nullable strings, add null check
+            // Always add a null check since strings are nullable reference types
             var nullCheck = Expression.NotEqual(memberAccess, Expression.Constant(null, typeof(string)));
-            var containsCall = Expression.Call(stringExpr, containsMethod, valueConstant);
+            var containsCall = Expression.Call(memberAccess, containsMethod, valueConstant);
             Expression result = Expression.AndAlso(nullCheck, containsCall);
 
             if (condition.Operator == ComparisonOperator.NotContains)
             {
-                result = Expression.Not(result);
+                result = Expression.AndAlso(nullCheck, Expression.Not(containsCall));
             }
 
             return result;
@@ -177,13 +172,8 @@ namespace LifelogBb.Utilities
             var parsedValues = new List<object>();
             foreach (var raw in rawValues)
             {
-                var parsed = ParseValue(raw, targetType);
-                if (parsed != null)
-                    parsedValues.Add(parsed);
+                parsedValues.Add(ParseValue(raw, targetType));
             }
-
-            if (parsedValues.Count == 0)
-                return null;
 
             // Create a typed list and use Contains
             var listType = typeof(List<>).MakeGenericType(targetType);
@@ -204,10 +194,17 @@ namespace LifelogBb.Utilities
             if (isNullable)
             {
                 var hasValue = Expression.Property(memberAccess, "HasValue");
-                containsCall = Expression.AndAlso(hasValue, containsCall);
+                if (condition.Operator == ComparisonOperator.NotIn)
+                {
+                    // (HasValue) AND NOT list.Contains(Value) — nulls do not match
+                    containsCall = Expression.AndAlso(hasValue, Expression.Not(containsCall));
+                }
+                else
+                {
+                    containsCall = Expression.AndAlso(hasValue, containsCall);
+                }
             }
-
-            if (condition.Operator == ComparisonOperator.NotIn)
+            else if (condition.Operator == ComparisonOperator.NotIn)
             {
                 containsCall = Expression.Not(containsCall);
             }
@@ -215,7 +212,7 @@ namespace LifelogBb.Utilities
             return containsCall;
         }
 
-        private static object? ParseValue(string value, Type targetType)
+        private static object ParseValue(string value, Type targetType)
         {
             try
             {
@@ -243,15 +240,24 @@ namespace LifelogBb.Utilities
                 if (targetType == typeof(DateTime))
                     return DateTime.Parse(value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
 
+                if (targetType == typeof(DateTimeOffset))
+                    return DateTimeOffset.Parse(value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+
+                if (targetType == typeof(TimeSpan))
+                    return TimeSpan.Parse(value, CultureInfo.InvariantCulture);
+
+                if (targetType == typeof(Guid))
+                    return Guid.Parse(value);
+
                 if (targetType.IsEnum)
                     return Enum.Parse(targetType, value, ignoreCase: true);
 
                 // Fallback: try Convert
-                return Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
+                return Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture)!;
             }
-            catch
+            catch (Exception ex) when (ex is not ArgumentException)
             {
-                return null;
+                throw new ArgumentException($"Cannot parse value '{value}' as type '{targetType.Name}'.", ex);
             }
         }
 

@@ -23,9 +23,9 @@ namespace LifelogBb.ApiControllers
         {
             if (!string.IsNullOrWhiteSpace(filter))
             {
-                return Ok(await _service.GetAll(filter));
+                return await _service.GetAll(filter);
             }
-            return Ok(await _service.GetAll());
+            return await _service.GetAll();
         }
 
         // GET: api/[controller]/5
