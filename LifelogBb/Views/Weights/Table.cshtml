@@ -35,6 +35,7 @@
 }
 
 <div class="container-xl">
+    @await Component.InvokeAsync("FilterBuilder", new { entityType = typeof(LifelogBb.Models.Entities.Weight), currentFilter = ViewData["Filter"] as string })
     <div class="row row-cards">
         @if (Model.List.Count > 0 && Model.List.PageIndex == 1 && Model.List.First().BodyWeight > Model.Config.WeightWarning)
         {

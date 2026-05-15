@@ -8,6 +8,7 @@
 }
 
 <div class="container-xl">
+    @await Component.InvokeAsync("FilterBuilder", new { entityType = typeof(LifelogBb.Models.Entities.Goal), currentFilter = ViewData["Filter"] as string })
     <div class="row row-cards">
         <div class="col-12">
             <div class="card">

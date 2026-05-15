@@ -92,7 +92,7 @@ namespace LifelogBb.Controllers
         }
 
         // GET: Habits/Table
-        public async Task<IActionResult> Table(string sortOrder, string currentFilter, string searchString, int? pageNumber)
+        public async Task<IActionResult> Table(string sortOrder, string currentFilter, string searchString, string? filter, int? pageNumber)
         {
             ViewData["CurrentSort"] = sortOrder;
 
@@ -106,8 +106,10 @@ namespace LifelogBb.Controllers
             }
 
             ViewData["CurrentFilter"] = searchString;
+            ViewData["Filter"] = filter;
 
             var habits = from s in _context.Habits select s;
+            habits = habits.FilterByGroup(filter);
             habits = habits.SortByName(sortOrder, $"{nameof(Habit.CreatedAt)}_desc");
 
             var config = Config.GetConfig(_context);

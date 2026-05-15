@@ -53,7 +53,7 @@ namespace LifelogBb.Controllers
         }
 
         // GET: Quotes/Table/
-        public async Task<IActionResult> Table(string sortOrder, string currentFilter, string searchString, int? pageNumber)
+        public async Task<IActionResult> Table(string sortOrder, string currentFilter, string searchString, string? filter, int? pageNumber)
         {
             ViewData["CurrentSort"] = sortOrder;
 
@@ -67,8 +67,10 @@ namespace LifelogBb.Controllers
             }
 
             ViewData["CurrentFilter"] = searchString;
+            ViewData["Filter"] = filter;
 
             var quotes = from s in _context.Quotes select s;
+            quotes = quotes.FilterByGroup(filter);
             quotes = quotes.SortByName(sortOrder, $"{nameof(Quote.CreatedAt)}_desc");
 
             var config = Config.GetConfig(_context);

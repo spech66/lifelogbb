@@ -58,7 +58,7 @@ namespace LifelogBb.Controllers
         }
 
         // GET: Todos/Table
-        public async Task<IActionResult> Table(string sortOrder, string currentFilter, string searchString, int? pageNumber)
+        public async Task<IActionResult> Table(string sortOrder, string currentFilter, string searchString, string? filter, int? pageNumber)
         {
             ViewData["CurrentSort"] = sortOrder;
 
@@ -72,8 +72,10 @@ namespace LifelogBb.Controllers
             }
 
             ViewData["CurrentFilter"] = searchString;
+            ViewData["Filter"] = filter;
 
             var todos = from s in _context.Todos select s;
+            todos = todos.FilterByGroup(filter);
             todos = todos.SortByName(sortOrder, $"{nameof(Todo.CreatedAt)}_desc");
 
             var config = Config.GetConfig(_context);
