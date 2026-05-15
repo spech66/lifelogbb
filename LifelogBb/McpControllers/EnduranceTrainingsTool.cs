@@ -17,5 +17,12 @@ namespace LifelogBb.McpControllers
         {
             return await GetAllFiltered(filter);
         }
+
+        [McpServerTool(Name = "CreateEnduranceTraining", Title = "Create endurance training entry"), Description("Create a new endurance training entry")]
+        public async Task<EnduranceTrainingOutput?> Create(EnduranceTrainingInput model)
+        {
+            var result = await _service.Create(model);
+            return result;
+        }
     }
 }

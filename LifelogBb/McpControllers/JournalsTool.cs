@@ -17,5 +17,12 @@ namespace LifelogBb.McpControllers
         {
             return await GetAllFiltered(filter);
         }
+
+        [McpServerTool(Name = "CreateJournal", Title = "Create journal entry"), Description("Create a new journal entry")]
+        public async Task<JournalOutput?> Create(JournalInput model)
+        {
+            var result = await _service.Create(model);
+            return result;
+        }
     }
 }

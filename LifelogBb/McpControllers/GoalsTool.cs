@@ -17,5 +17,12 @@ namespace LifelogBb.McpControllers
         {
             return await GetAllFiltered(filter);
         }
+
+        [McpServerTool(Name = "CreateGoal", Title = "Create goal entry"), Description("Create a new goal entry")]
+        public async Task<GoalOutput?> Create(GoalInput model)
+        {
+            var result = await _service.Create(model);
+            return result;
+        }
     }
 }
