@@ -72,7 +72,7 @@ namespace LifelogBb.ApiServices
 
                 if (msg.ToolCalls != null)
                 {
-                    msgObj["tool_calls"] = JsonNode.Parse(msg.ToolCalls.ToJsonString());
+                    msgObj["tool_calls"] = msg.ToolCalls.DeepClone();
                 }
 
                 messages.Add(msgObj);
@@ -104,7 +104,7 @@ namespace LifelogBb.ApiServices
                 var toolCalls = message["tool_calls"]?.AsArray();
 
                 // Append assistant message to conversation
-                messages.Add(JsonNode.Parse(message.ToJsonString()));
+                messages.Add(message.DeepClone());
 
                 if (finishReason == "tool_calls" || (toolCalls != null && toolCalls.Count > 0))
                 {
@@ -149,8 +149,8 @@ namespace LifelogBb.ApiServices
                 var requestBody = new JsonObject
                 {
                     ["model"] = config.ChatModel,
-                    ["messages"] = JsonNode.Parse(messages.ToJsonString()),
-                    ["tools"] = JsonNode.Parse(tools.ToJsonString())
+                    ["messages"] = messages.DeepClone(),
+                    ["tools"] = tools.DeepClone()
                 };
 
                 var content = new StringContent(
