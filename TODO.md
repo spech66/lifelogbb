@@ -5,20 +5,14 @@ ToDos and Features for LifelogBB.
 ### Todo
 
 - [ ] iCal Alarms
-- [ ] ChatGPT (LLaMA, ... ?) - Microsoft Agent Framework
-- [ ] [Globalization and localization](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization?view=aspnetcore-6.0)
-
-#### External tools
-
-- [ ] Telegram bot
-  - https://github.com/TelegramBots/Telegram.Bot
-  - https://telegrambots.github.io/book/2/send-msg/index.html
-- [ ] [CLI tool](https://github.com/gui-cs/Terminal.Gui)
 
 ### In Progress :construction:
 
-- [ ] MCP Server
-  - [ ] Provide filter
+- [ ] ChatGPT (LLaMA, ... ?) - Microsoft Agent Framework
+
+#### External tools
+
+- [x] MCP Server
 
 ### Done :heavy_check_mark:
 
