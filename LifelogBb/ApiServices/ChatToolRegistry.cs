@@ -90,7 +90,7 @@ namespace LifelogBb.ApiServices
             // All services implement IBaseCRUDService<INP, OUTP> which has GetAll() and GetAll(string?)
             // Use dynamic dispatch to call the correct GetAll method
             dynamic dynamicService = service;
-            ActionResult<IEnumerable<object>> result = filter != null
+            dynamic result = filter != null
                 ? await dynamicService.GetAll(filter)
                 : await dynamicService.GetAll();
 

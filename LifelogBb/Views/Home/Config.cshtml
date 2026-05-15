@@ -170,7 +170,11 @@
                         </div>
                         <div class="form-group mb-3">
                             <label asp-for="ChatApiKey" class="control-label mb-1"></label>
-                            <input asp-for="ChatApiKey" type="password" class="form-control form-control-lg" placeholder="sk-..." />
+                            <input asp-for="ChatApiKey" type="password" class="form-control form-control-lg" placeholder="sk-..." autocomplete="new-password" />
+                            @if (Model.HasChatApiKey)
+                            {
+                                <div class="form-hint">An API key is already configured. Leave this blank to keep the existing key.</div>
+                            }
                             <span asp-validation-for="ChatApiKey" class="text-danger"></span>
                         </div>
                         <div class="form-group mb-3">

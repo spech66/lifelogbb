@@ -60,7 +60,7 @@
             const chatInput = document.getElementById('chat-input');
             const sendBtn = document.getElementById('chat-send');
             const clearBtn = document.getElementById('clear-chat');
-            const placeholder = document.getElementById('chat-placeholder');
+            let placeholder = document.getElementById('chat-placeholder');
             const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]')?.value
                 || document.querySelector('meta[name="RequestVerificationToken"]')?.content
                 || '';
@@ -73,6 +73,7 @@
             }
 
             function addMessage(role, content) {
+                placeholder = document.getElementById('chat-placeholder');
                 if (placeholder) {
                     placeholder.style.display = 'none';
                 }
@@ -183,6 +184,7 @@
                     newPlaceholder.id = 'chat-placeholder';
                     newPlaceholder.innerHTML = '<i class="fas fa-comments fa-3x mb-3 d-block"></i>Ask me anything about your life tracking data.';
                     messagesContainer.appendChild(newPlaceholder);
+                    placeholder = newPlaceholder;
                 }
             });
 

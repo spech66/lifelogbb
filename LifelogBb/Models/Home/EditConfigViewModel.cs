@@ -56,6 +56,8 @@ namespace LifelogBb.Models.Home
 
         public string ChatApiKey { get; set; } = "";
 
+        public bool HasChatApiKey { get; set; }
+
         public string ChatModel { get; set; } = "gpt-4o";
 
         public string ChatSystemPrompt { get; set; } = "You are a helpful life-tracking assistant for LifelogBB. You can query the user's data (weights, journals, todos, goals, habits, quotes, strength trainings, endurance trainings) using the available tools. Summarize and analyze the data to help the user understand their progress and habits.";
