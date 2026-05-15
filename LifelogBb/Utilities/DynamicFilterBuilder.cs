@@ -178,7 +178,7 @@ namespace LifelogBb.Utilities
 
             var rawValues = condition.Value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             if (rawValues.Length == 0)
-                throw new ArgumentException($"Condition value for field '{condition.Field ?? "<unknown>"}' must contain at least one value for {condition.Operator}.");
+                throw new ArgumentException($"Condition value for field '{condition.Field ?? "<unknown>"}' must contain at least one value for operator '{condition.Operator}'.");
 
             var parsedValues = new List<object>();
             foreach (var raw in rawValues)

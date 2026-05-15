@@ -37,6 +37,7 @@
         <div class="card-footer text-end">
             <button type="button" id="btn-filter-clear" class="btn btn-ghost-secondary me-2">Clear</button>
             <button type="button" id="btn-filter-apply" class="btn btn-primary">Apply Filter</button>
+            <div id="filter-limit-warning" class="alert alert-warning mt-2 mb-0 text-start d-none" role="alert" aria-live="assertive"></div>
         </div>
     </div>
 </div>
@@ -154,14 +155,24 @@
             return count;
         }
 
+        function setLimitWarning(message) {
+            var warning = $('#filter-limit-warning');
+            if (message) {
+                warning.text(message).removeClass('d-none');
+            } else {
+                warning.addClass('d-none').text('');
+            }
+        }
+
         $('#btn-filter-apply').on('click', function () {
             var result = $('#query-builder').queryBuilder('getRules');
             if (result && !$.isEmptyObject(result)) {
                 if (countConditions(result) > maxConditions) {
-                    alert('Filter supports up to ' + maxConditions + ' conditions.');
+                    setLimitWarning('Filter supports up to ' + maxConditions + ' conditions.');
                     return;
                 }
 
+                setLimitWarning(null);
                 var serverFormat = toServerFormat(result);
                 var filterJson = JSON.stringify(serverFormat);
                 var url = new URL(window.location.href);
@@ -172,6 +183,7 @@
 
         $('#btn-filter-clear').on('click', function () {
             $('#query-builder').queryBuilder('reset');
+            setLimitWarning(null);
             var url = new URL(window.location.href);
             url.searchParams.delete('filter');
             window.location.href = url.toString();
