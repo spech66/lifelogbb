@@ -1,5 +1,3 @@
-﻿using System.ComponentModel.DataAnnotations;
-
 namespace LifelogBb.Models.Entities
 {
     public enum Measurements
@@ -18,7 +16,6 @@ namespace LifelogBb.Models.Entities
 
         public Measurements UnitsType { get; set; } = Measurements.Metric;
 
-        [Range(16, 250)] // Metric default is cm; imperial mode stores inches.
         public int Height { get; set; } = 170;
 
         public int BucketListPageSize { get; set; } = 12;
