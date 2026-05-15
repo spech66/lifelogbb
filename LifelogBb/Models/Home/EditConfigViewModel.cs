@@ -5,10 +5,10 @@ namespace LifelogBb.Models.Home
 {
     public class EditConfigViewModel : IValidatableObject
     {
-        private const int HeightMinMetric = 40;
-        private const int HeightMaxMetric = 250;
-        private const int HeightMinImperial = 16;
-        private const int HeightMaxImperial = 98;
+        public const int HeightMinMetric = 40;
+        public const int HeightMaxMetric = 250;
+        public const int HeightMinImperial = 16;
+        public const int HeightMaxImperial = 98;
 
         public long Id { get; set; } // For model/view generation only
 
@@ -17,6 +17,10 @@ namespace LifelogBb.Models.Home
         public Measurements UnitsType { get; set; }
 
         public int Height { get; set; }
+
+        public string HeightHelpText => UnitsType == Measurements.Metric
+            ? $"Metric: {HeightMinMetric}–{HeightMaxMetric} cm"
+            : $"Imperial: {HeightMinImperial}–{HeightMaxImperial} inches";
 
         public int BucketListPageSize { get; set; }
 
