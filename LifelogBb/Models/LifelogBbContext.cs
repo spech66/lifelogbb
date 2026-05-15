@@ -71,6 +71,12 @@ namespace LifelogBb.Models
             modelBuilder.Entity<Config>().Property(b => b.WeightWarningText).HasDefaultValue("You are gaining weight!");
             modelBuilder.Entity<Config>().Property(b => b.WeightWarning).HasDefaultValue(1.0);
 
+            modelBuilder.Entity<Config>().Property(b => b.ChatEndpoint).HasDefaultValue("https://api.openai.com/v1/chat/completions");
+            modelBuilder.Entity<Config>().Property(b => b.ChatApiKey).HasDefaultValue("");
+            modelBuilder.Entity<Config>().Property(b => b.ChatModel).HasDefaultValue("gpt-4o");
+            modelBuilder.Entity<Config>().Property(b => b.ChatSystemPrompt).HasDefaultValue("You are a helpful life-tracking assistant for LifelogBB. You can query the user's data (weights, journals, todos, goals, habits, quotes, strength trainings, endurance trainings) using the available tools. Summarize and analyze the data to help the user understand their progress and habits.");
+            modelBuilder.Entity<Config>().Property(b => b.ChatMaxToolRoundtrips).HasDefaultValue(10);
+
             modelBuilder.Entity<Journal>().HasIndex(j => j.Date).IsUnique();
         }
 

@@ -44,6 +44,16 @@ namespace LifelogBb.Models.Entities
 
         public string FeedTimeZone { get; set; } = "Europe/Berlin";
 
+        public string ChatEndpoint { get; set; } = "https://api.openai.com/v1/chat/completions";
+
+        public string ChatApiKey { get; set; } = "";
+
+        public string ChatModel { get; set; } = "gpt-4o";
+
+        public string ChatSystemPrompt { get; set; } = "You are a helpful life-tracking assistant for LifelogBB. You can query the user's data (weights, journals, todos, goals, habits, quotes, strength trainings, endurance trainings) using the available tools. Summarize and analyze the data to help the user understand their progress and habits.";
+
+        public int ChatMaxToolRoundtrips { get; set; } = 10;
+
         public Config()
         {
             // Default constructor
