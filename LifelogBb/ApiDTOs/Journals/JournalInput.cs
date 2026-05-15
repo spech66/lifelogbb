@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace LifelogBb.ApiDTOs.Journals
 {
-    public class JournalInput
+    public class JournalInput : IValidatableObject
     {
         [Required]
         [MinLength(1)]
@@ -13,9 +13,17 @@ namespace LifelogBb.ApiDTOs.Journals
 
         public string? Tags { get; set; }
 
+        [Required]
         [JsonRequired]
-        [Range(typeof(DateTime), "0001-01-02", "9999-12-31")]
         [DataType(DataType.Date)]
         public DateTime Date { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (Date == DateTime.MinValue)
+            {
+                yield return new ValidationResult("Date is required.", new[] { nameof(Date) });
+            }
+        }
     }
 }

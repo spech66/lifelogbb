@@ -24,6 +24,7 @@ namespace LifelogBb.Migrations
                 );
             ");
 
+            // Normalize existing values to date-only so uniqueness applies per calendar day.
             migrationBuilder.Sql("UPDATE Journals SET Date = date(Date);");
 
             migrationBuilder.CreateIndex(
