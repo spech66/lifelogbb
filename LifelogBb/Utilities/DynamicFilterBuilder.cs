@@ -41,6 +41,9 @@ namespace LifelogBb.Utilities
                 throw new ArgumentException($"Filter tree exceeds maximum depth of {MaxDepth}.");
             EnsureGroupCollectionsAreNotNull(group);
 
+            if (!Enum.IsDefined(typeof(LogicalOperator), group.Operator))
+                throw new ArgumentException($"Unsupported logical operator value: {group.Operator}.", nameof(group));
+
             var expressions = new List<Expression>();
 
             // Build condition expressions
