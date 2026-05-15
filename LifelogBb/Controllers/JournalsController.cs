@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using LifelogBb.Models;
 using LifelogBb.Models.Entities;
@@ -163,6 +164,7 @@ namespace LifelogBb.Controllers
 
                 if (ModelState.IsValid)
                 {
+                    var isSaved = false;
                     try
                     {
                         journalDb = _mapper.Map(journalViewModel, journalDb);
@@ -170,7 +172,7 @@ namespace LifelogBb.Controllers
                         journalDb.SetUpdateFields();
                         _context.Update(journalDb);
                         await _context.SaveChangesAsync();
-                        return RedirectToAction(nameof(Index));
+                        isSaved = true;
                     }
                     catch (DbUpdateConcurrencyException)
                     {
@@ -183,9 +185,14 @@ namespace LifelogBb.Controllers
                             throw;
                         }
                     }
-                    catch (DbUpdateException ex) when (ex.InnerException?.Message?.Contains("UNIQUE constraint failed: Journals.Date", StringComparison.OrdinalIgnoreCase) == true)
+                    catch (DbUpdateException ex) when (ex.InnerException is SqliteException { SqliteErrorCode: 19, SqliteExtendedErrorCode: 2067 })
                     {
                         ModelState.AddModelError(nameof(EditJournalViewModel.Date), "A journal entry already exists for this date.");
+                    }
+
+                    if (isSaved)
+                    {
+                        return RedirectToAction(nameof(Index));
                     }
                 }
             }
