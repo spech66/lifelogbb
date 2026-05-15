@@ -34,8 +34,8 @@
         var maxDepth = 5;
         var maxConditions = 20;
         var filters = @Html.Raw(filtersJson);
-        var currentFilterValue = @Html.Raw(currentFilterJson is null ? "null" : currentFilterJson);
-        var parsedFilter = currentFilterValue || null;
+        var parsedCurrentFilter = @Html.Raw(currentFilterJson is null ? "null" : currentFilterJson);
+        var parsedFilter = parsedCurrentFilter || null;
 
         // Operator mapping: QueryBuilder operator name => our ComparisonOperator enum name
         var operatorMap = {
