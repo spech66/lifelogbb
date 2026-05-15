@@ -10,6 +10,7 @@ namespace LifelogBb.Utilities
     {
         private const int MaxDepth = 5;
         private const int MaxConditions = 20;
+        private const int MaxInValues = 100;
 
         /// <summary>
         /// Builds an Expression&lt;Func&lt;T, bool&gt;&gt; from a FilterGroup tree.
@@ -180,6 +181,9 @@ namespace LifelogBb.Utilities
             var rawValues = condition.Value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             if (rawValues.Length == 0)
                 throw new ArgumentException($"Condition value for field '{condition.Field ?? "<unknown>"}' must contain at least one value for operator '{condition.Operator}'.");
+
+            if (rawValues.Length > MaxInValues)
+                throw new ArgumentException($"Condition value for field '{condition.Field ?? "<unknown>"}' exceeds maximum of {MaxInValues} values for operator '{condition.Operator}'.");
 
             var parsedValues = new List<object>();
             foreach (var raw in rawValues)

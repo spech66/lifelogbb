@@ -7,6 +7,11 @@
     ViewData["SecondaryAction"] = "feed";
 }
 
+
+@section Styles
+{
+    <link rel="stylesheet" href="~/lib/jquery-querybuilder/css/query-builder.default.css" />
+}
 @functions {
     string DateToColor(LifelogBb.Models.Entities.Todo item)
     {
@@ -133,3 +138,8 @@
         </div>
     </div>
 </div>
+
+@section Scripts
+{
+    <script src="~/lib/jquery-querybuilder/js/query-builder.standalone.js"></script>
+}

@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Reflection;
 using System.Text.Json;
 using LifelogBb.Models.Filtering;
@@ -13,10 +14,12 @@ namespace LifelogBb.Views.Shared.Components.FilterBuilder
             PropertyNameCaseInsensitive = true
         };
 
+        private static readonly ConcurrentDictionary<Type, string> FilterConfigJsonCache = new();
+
         public IViewComponentResult Invoke(Type entityType, string? currentFilter = null)
         {
-            var filters = BuildFilterConfig(entityType);
-            ViewBag.FiltersJson = JsonSerializer.Serialize(filters);
+            ViewBag.FiltersJson = FilterConfigJsonCache.GetOrAdd(entityType,
+                static type => JsonSerializer.Serialize(BuildFilterConfig(type)));
             ViewBag.CurrentFilterJson = NormalizeCurrentFilterJson(currentFilter);
             return View();
         }

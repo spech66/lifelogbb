@@ -8,6 +8,11 @@
     ViewData["SecondaryAction"] = "graph";
 }
 
+
+@section Styles
+{
+    <link rel="stylesheet" href="~/lib/jquery-querybuilder/css/query-builder.default.css" />
+}
 @functions {
     string GetBmiColorClass(LifelogBb.Models.Entities.Weight weight)
     {
@@ -120,3 +125,8 @@
         </div>
     </div>
 </div>
+
+@section Scripts
+{
+    <script src="~/lib/jquery-querybuilder/js/query-builder.standalone.js"></script>
+}

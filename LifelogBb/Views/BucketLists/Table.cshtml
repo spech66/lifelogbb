@@ -7,6 +7,11 @@
     ViewData["SecondaryAction"] = "vision";
 }
 
+
+@section Styles
+{
+    <link rel="stylesheet" href="~/lib/jquery-querybuilder/css/query-builder.default.css" />
+}
 <div class="container-xl">
     @await Component.InvokeAsync("FilterBuilder", new { entityType = typeof(LifelogBb.Models.Entities.BucketList), currentFilter = ViewData["Filter"] as string })
     <div class="row row-cards">
@@ -85,3 +90,8 @@
         </div>
     </div>
 </div>
+
+@section Scripts
+{
+    <script src="~/lib/jquery-querybuilder/js/query-builder.standalone.js"></script>
+}

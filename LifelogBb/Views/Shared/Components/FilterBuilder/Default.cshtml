@@ -3,8 +3,6 @@
     var currentFilterJson = ViewBag.CurrentFilterJson as string;
 }
 
-<link rel="stylesheet" href="~/lib/jquery-querybuilder/css/query-builder.default.css" />
-
 <div class="card mb-3">
     <div class="card-header">
         <h3 class="card-title">
@@ -30,7 +28,7 @@
 </div>
 
 <script>
-    (function () {
+    window.addEventListener('load', function () {
         var maxDepth = 5;
         var maxConditions = 20;
         var filters = @Html.Raw(filtersJson);
@@ -168,6 +166,7 @@
                 var filterJson = JSON.stringify(serverFormat);
                 var url = new URL(window.location.href);
                 url.searchParams.set('filter', filterJson);
+                url.searchParams.delete('pageNumber');
                 window.location.href = url.toString();
             }
         });
@@ -177,7 +176,8 @@
             setLimitWarning(null);
             var url = new URL(window.location.href);
             url.searchParams.delete('filter');
+            url.searchParams.delete('pageNumber');
             window.location.href = url.toString();
         });
-    })();
+    });
 </script>
