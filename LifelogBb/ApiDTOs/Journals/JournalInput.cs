@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace LifelogBb.ApiDTOs.Journals
 {
@@ -13,8 +12,6 @@ namespace LifelogBb.ApiDTOs.Journals
 
         public string? Tags { get; set; }
 
-        [Required]
-        [JsonRequired]
         [DataType(DataType.Date)]
         public DateTime Date { get; set; }
 
