@@ -64,6 +64,8 @@ namespace LifelogBb.Models
             modelBuilder.Entity<Config>().Property(b => b.FeedTimeZone).HasDefaultValue("Europe/Berlin");
             modelBuilder.Entity<Config>().Property(b => b.WeightWarningText).HasDefaultValue("You are gaining weight!");
             modelBuilder.Entity<Config>().Property(b => b.WeightWarning).HasDefaultValue(1.0);
+
+            modelBuilder.Entity<Journal>().HasIndex(j => j.Date).IsUnique();
         }
 
         public void BeginTransaction()
