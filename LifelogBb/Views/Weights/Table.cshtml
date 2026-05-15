@@ -8,6 +8,11 @@
     ViewData["SecondaryAction"] = "graph";
 }
 
+
+@section Styles
+{
+    <link rel="stylesheet" href="~/lib/jquery-querybuilder/css/query-builder.default.css" />
+}
 @functions {
     string GetBmiColorClass(LifelogBb.Models.Entities.Weight weight)
     {
@@ -35,6 +40,7 @@
 }
 
 <div class="container-xl">
+    @await Component.InvokeAsync("FilterBuilder", new { entityType = typeof(LifelogBb.Models.Entities.Weight), currentFilter = ViewData["Filter"] as string })
     <div class="row row-cards">
         @if (Model.List.Count > 0 && Model.List.PageIndex == 1 && Model.List.First().BodyWeight > Model.Config.WeightWarning)
         {
@@ -68,16 +74,16 @@
                         <thead>
                             <tr>
                                 <th class="w-1">
-                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "CreatedAt")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")">Date</a>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "CreatedAt")" asp-route-currentFilter="@ViewData["CurrentFilter"]" asp-route-filter="@ViewData["Filter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "CreatedAt")">Date</a>
                                 </th>
                                 <th>
-                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "BodyWeight")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "BodyWeight")">BodyWeight</a>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "BodyWeight")" asp-route-currentFilter="@ViewData["CurrentFilter"]" asp-route-filter="@ViewData["Filter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "BodyWeight")">BodyWeight</a>
                                 </th>
                                 <th>
-                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Height")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Height")">Height</a>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Height")" asp-route-currentFilter="@ViewData["CurrentFilter"]" asp-route-filter="@ViewData["Filter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Height")">Height</a>
                                 </th>
                                 <th>
-                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Bmi")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Bmi")">Bmi</a>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Bmi")" asp-route-currentFilter="@ViewData["CurrentFilter"]" asp-route-filter="@ViewData["Filter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Bmi")">Bmi</a>
                                 </th>
                                 <th></th>
                             </tr>
@@ -119,3 +125,8 @@
         </div>
     </div>
 </div>
+
+@section Scripts
+{
+    <script src="~/lib/jquery-querybuilder/js/query-builder.standalone.js"></script>
+}

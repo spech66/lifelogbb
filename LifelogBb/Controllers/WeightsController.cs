@@ -64,7 +64,7 @@ namespace LifelogBb.Controllers
         }
 
         // GET: Weights/Table
-        public async Task<IActionResult> Table(string sortOrder, string currentFilter, string searchString, int? pageNumber)
+        public async Task<IActionResult> Table(string sortOrder, string currentFilter, string searchString, string? filter, int? pageNumber)
         {
             ViewData["CurrentSort"] = sortOrder;
 
@@ -78,8 +78,10 @@ namespace LifelogBb.Controllers
             }
 
             ViewData["CurrentFilter"] = searchString;
+            ViewData["Filter"] = filter;
 
             var weights = from s in _context.Weights select s;
+            weights = weights.FilterByGroup(filter);
             weights = weights.FilterByDoubleProps(nameof(Weight.BodyWeight), searchString, 1.0);
             weights = weights.SortByName(sortOrder, $"{nameof(Weight.CreatedAt)}_desc");
 

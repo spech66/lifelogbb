@@ -3,6 +3,7 @@ using LifelogBb.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using LifelogBb.Models.Entities;
+using LifelogBb.Utilities;
 
 namespace LifelogBb.ApiServices
 {
@@ -20,6 +21,13 @@ namespace LifelogBb.ApiServices
         public virtual async Task<ActionResult<IEnumerable<OUTP>>> GetAll()
         {
             var entities = await _repository.Query.ToListAsync();
+            return _mapper.Map<List<OUTP>>(entities);
+        }
+
+        public virtual async Task<ActionResult<IEnumerable<OUTP>>> GetAll(string? filterJson)
+        {
+            var query = _repository.Query.FilterByGroup<TEntity>(filterJson, throwOnInvalidFilter: true);
+            var entities = await query.ToListAsync();
             return _mapper.Map<List<OUTP>>(entities);
         }
 

@@ -60,7 +60,7 @@ namespace LifelogBb.Controllers
         }
 
         // GET: EnduranceTrainings/Table
-        public async Task<IActionResult> Table(string sortOrder, string currentFilter, string searchString, int? pageNumber)
+        public async Task<IActionResult> Table(string sortOrder, string currentFilter, string searchString, string? filter, int? pageNumber)
         {
             ViewData["CurrentSort"] = sortOrder;
 
@@ -74,8 +74,10 @@ namespace LifelogBb.Controllers
             }
 
             ViewData["CurrentFilter"] = searchString;
+            ViewData["Filter"] = filter;
 
             var trainings = from s in _context.EnduranceTrainings select s;
+            trainings = trainings.FilterByGroup(filter);
             trainings = trainings.SortByName(sortOrder, $"{nameof(EnduranceTraining.CreatedAt)}_desc");
 
             var config = Config.GetConfig(_context);

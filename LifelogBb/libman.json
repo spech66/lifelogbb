@@ -99,6 +99,15 @@
       "files": [
         "index.global.min.js"
       ]
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jQuery-QueryBuilder@3.0.0",
+      "destination": "wwwroot/lib/jquery-querybuilder/",
+      "files": [
+        "js/query-builder.standalone.js",
+        "css/query-builder.default.css"
+      ]
     }
   ]
 }

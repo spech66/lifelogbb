@@ -41,7 +41,7 @@ namespace LifelogBb.Controllers
         }
 
         // GET: Journals/Table
-        public async Task<IActionResult> Table(string sortOrder, string currentFilter, string searchString, int? pageNumber)
+        public async Task<IActionResult> Table(string sortOrder, string currentFilter, string searchString, string? filter, int? pageNumber)
         {
             ViewData["CurrentSort"] = sortOrder;
 
@@ -55,8 +55,10 @@ namespace LifelogBb.Controllers
             }
 
             ViewData["CurrentFilter"] = searchString;
+            ViewData["Filter"] = filter;
 
             var journals = from s in _context.Journals select s;
+            journals = journals.FilterByGroup(filter);
             journals = journals.SortByName(sortOrder, $"{nameof(Journal.Date)}_desc");
 
             var config = Config.GetConfig(_context);

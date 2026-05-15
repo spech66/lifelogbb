@@ -6,7 +6,13 @@
     ViewData["PrimaryAction"] = "create";
 }
 
+
+@section Styles
+{
+    <link rel="stylesheet" href="~/lib/jquery-querybuilder/css/query-builder.default.css" />
+}
 <div class="container-xl">
+    @await Component.InvokeAsync("FilterBuilder", new { entityType = typeof(LifelogBb.Models.Entities.Journal), currentFilter = ViewData["Filter"] as string })
     <div class="row row-cards">
         <div class="col-12">
             <div class="card">
@@ -15,10 +21,10 @@
                         <thead>
                             <tr>
                                 <th class="w-1">
-                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Date")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Date")">Date</a>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Date")" asp-route-currentFilter="@ViewData["CurrentFilter"]" asp-route-filter="@ViewData["Filter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Date")">Date</a>
                                 </th>
                                 <th>
-                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Category")" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Category")">Category</a>
+                                    <a asp-action="Table" asp-route-sortOrder="@RazorPageExtensions.GetSortRoute(ViewData, "Category")" asp-route-currentFilter="@ViewData["CurrentFilter"]" asp-route-filter="@ViewData["Filter"]" class="table-sort @RazorPageExtensions.GetSortOrder(ViewData, "Category")">Category</a>
                                 </th>
                                 <th>
                                     Tags
@@ -60,3 +66,8 @@
         </div>
     </div>
 </div>
+
+@section Scripts
+{
+    <script src="~/lib/jquery-querybuilder/js/query-builder.standalone.js"></script>
+}
