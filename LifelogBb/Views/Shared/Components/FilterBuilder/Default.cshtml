@@ -7,7 +7,7 @@
     {
         try
         {
-            currentFilterJson = JsonDocument.Parse(currentFilter).RootElement.GetRawText();
+            currentFilterJson = JsonSerializer.Serialize(JsonDocument.Parse(currentFilter).RootElement);
         }
         catch (JsonException)
         {
@@ -137,7 +137,7 @@
 
         $('#btn-filter-apply').on('click', function () {
             var result = $('#query-builder').queryBuilder('getRules');
-            if (!$.isEmptyObject(result)) {
+            if (result && !$.isEmptyObject(result)) {
                 var serverFormat = toServerFormat(result);
                 var filterJson = JSON.stringify(serverFormat);
                 var url = new URL(window.location.href);
