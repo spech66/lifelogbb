@@ -17,5 +17,12 @@ namespace LifelogBb.McpControllers
         {
             return await GetAllFiltered(filter);
         }
+
+        [McpServerTool(Name = "CreateQuote", Title = "Create quote entry"), Description("Create a new quote entry")]
+        public async Task<QuoteOutput?> Create(QuoteInput model)
+        {
+            var result = await _service.Create(model);
+            return result;
+        }
     }
 }

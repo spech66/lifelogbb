@@ -17,5 +17,12 @@ namespace LifelogBb.McpControllers
         {
             return await GetAllFiltered(filter);
         }
+
+        [McpServerTool(Name = "CreateTodo", Title = "Create todo entry"), Description("Create a new todo entry")]
+        public async Task<TodoOutput?> Create(TodoInput model)
+        {
+            var result = await _service.Create(model);
+            return result;
+        }
     }
 }

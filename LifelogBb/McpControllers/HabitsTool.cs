@@ -17,5 +17,12 @@ namespace LifelogBb.McpControllers
         {
             return await GetAllFiltered(filter);
         }
+
+        [McpServerTool(Name = "CreateHabit", Title = "Create habit entry"), Description("Create a new habit entry")]
+        public async Task<HabitOutput?> Create(HabitInput model)
+        {
+            var result = await _service.Create(model);
+            return result;
+        }
     }
 }
