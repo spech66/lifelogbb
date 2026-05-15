@@ -82,13 +82,20 @@ namespace LifelogBb.Controllers
         }
 
         // GET: Journals/Create
-        public IActionResult Create(string? date = null)
+        public async Task<IActionResult> Create(string? date = null)
         {
-            this.AddCategoriesToViewData(_context);
-            this.AddTagsToViewData(_context);
             var defaultDate = date != null && DateTime.TryParse(date, out var parsedDate)
                 ? parsedDate
                 : DateTime.UtcNow.Date;
+
+            var existing = await _context.Journals.FirstOrDefaultAsync(j => j.Date == defaultDate);
+            if (existing != null)
+            {
+                return RedirectToAction(nameof(Edit), new { id = existing.Id });
+            }
+
+            this.AddCategoriesToViewData(_context);
+            this.AddTagsToViewData(_context);
             return View(new Journal { Date = defaultDate });
         }
 

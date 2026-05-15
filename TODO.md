@@ -17,7 +17,7 @@ ToDos and Features for LifelogBB.
 
 ### In Progress :construction:
 
-- [ ] Make day unique in Journal and make Joural API use only one date
+- [x] Make day unique in Journal and make Journal API use only one date
 - [ ] Remove BMI in weight input
 - [ ] Filter in tables
 - [ ] MCP Server
