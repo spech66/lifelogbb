@@ -7,7 +7,7 @@ namespace LifelogBb.Models.Entities
 {
     public class Weight : BaseEntity
     {
-        [Range(40, 220)] // 100 cm => 39,3701 inch...
+        [Range(16, 250)] // Supports metric cm and imperial inches.
         public int Height { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:0.0}")]

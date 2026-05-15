@@ -6,9 +6,9 @@ namespace LifelogBb.Models.Home
     public class EditConfigViewModel : IValidatableObject
     {
         private const int HeightMinMetric = 40;
-        private const int HeightMaxMetric = 220;
+        private const int HeightMaxMetric = 250;
         private const int HeightMinImperial = 16;
-        private const int HeightMaxImperial = 87;
+        private const int HeightMaxImperial = 98;
 
         public long Id { get; set; } // For model/view generation only
 
