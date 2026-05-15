@@ -2,8 +2,6 @@
 @{
     var filtersJson = ViewBag.FiltersJson as string ?? "[]";
     var currentFilter = ViewBag.CurrentFilter as string;
-    var controller = ViewContext.RouteData.Values["Controller"];
-    var action = ViewContext.RouteData.Values["Action"];
     var currentFilterJson = string.IsNullOrEmpty(currentFilter)
         ? "null"
         : JsonSerializer.Serialize(currentFilter);
@@ -39,7 +37,15 @@
     (function () {
         var filters = @Html.Raw(filtersJson);
         var currentFilterJson = @Html.Raw(currentFilterJson);
-        var parsedFilter = currentFilterJson ? JSON.parse(currentFilterJson) : null;
+        var parsedFilter = null;
+        if (currentFilterJson) {
+            try {
+                var filterJsonString = JSON.parse(currentFilterJson);
+                parsedFilter = filterJsonString ? JSON.parse(filterJsonString) : null;
+            } catch (e) {
+                parsedFilter = null;
+            }
+        }
 
         // Operator mapping: QueryBuilder operator name => our ComparisonOperator enum name
         var operatorMap = {
@@ -133,14 +139,17 @@
             if (!$.isEmptyObject(result)) {
                 var serverFormat = toServerFormat(result);
                 var filterJson = JSON.stringify(serverFormat);
-                var url = '/@controller/@action?filter=' + encodeURIComponent(filterJson);
-                window.location.href = url;
+                var url = new URL(window.location.href);
+                url.searchParams.set('filter', filterJson);
+                window.location.href = url.toString();
             }
         });
 
         $('#btn-filter-clear').on('click', function () {
             $('#query-builder').queryBuilder('reset');
-            window.location.href = '/@controller/@action';
+            var url = new URL(window.location.href);
+            url.searchParams.delete('filter');
+            window.location.href = url.toString();
         });
     })();
 </script>

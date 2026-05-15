@@ -34,10 +34,20 @@ namespace LifelogBb.Views.Shared.Components.FilterBuilder
                     { "type", qbType }
                 };
 
-                // Add specific operators based on type
-                if (qbType == "string")
+                // Add specific operators based on actual CLR type
+                if (type == typeof(string))
                 {
                     filter["operators"] = new[] { "equal", "not_equal", "contains", "not_contains", "in", "not_in" };
+                }
+                else if (type.IsEnum || type == typeof(Guid) || type == typeof(TimeSpan))
+                {
+                    filter["operators"] = new[] { "equal", "not_equal", "in", "not_in" };
+
+                    if (type.IsEnum)
+                    {
+                        filter["input"] = "select";
+                        filter["values"] = Enum.GetNames(type).ToDictionary(n => n, n => SplitCamelCase(n));
+                    }
                 }
                 else if (qbType == "integer" || qbType == "double")
                 {

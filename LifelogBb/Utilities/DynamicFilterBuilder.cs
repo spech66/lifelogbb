@@ -16,6 +16,7 @@ namespace LifelogBb.Utilities
         /// </summary>
         public static Expression<Func<T, bool>>? BuildExpression<T>(FilterGroup group)
         {
+            EnsureGroupCollectionsAreNotNull(group);
             var allowedProperties = GetAllowedProperties<T>();
             ValidateLimits(group, MaxDepth, MaxConditions);
 
@@ -36,6 +37,7 @@ namespace LifelogBb.Utilities
         {
             if (depth > MaxDepth)
                 throw new ArgumentException($"Filter tree exceeds maximum depth of {MaxDepth}.");
+            EnsureGroupCollectionsAreNotNull(group);
 
             var expressions = new List<Expression>();
 
@@ -75,6 +77,9 @@ namespace LifelogBb.Utilities
             ParameterExpression parameter,
             HashSet<string> allowedProperties)
         {
+            if (condition.Value == null)
+                throw new ArgumentException($"Condition value for field '{condition.Field}' cannot be null.");
+
             if (string.IsNullOrWhiteSpace(condition.Field))
                 return null;
 
@@ -165,6 +170,9 @@ namespace LifelogBb.Utilities
             bool isNullable)
         {
             // Parse comma-separated values
+            if (string.IsNullOrWhiteSpace(condition.Value))
+                throw new ArgumentException($"Condition value for field '{condition.Field}' cannot be null or empty for {condition.Operator}.");
+
             var rawValues = condition.Value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             if (rawValues.Length == 0)
                 return null;
@@ -286,6 +294,7 @@ namespace LifelogBb.Utilities
         private static void ValidateLimits(FilterGroup group, int maxDepth, int maxConditions, int currentDepth = 0, int[]? conditionCount = null)
         {
             conditionCount ??= new[] { 0 };
+            EnsureGroupCollectionsAreNotNull(group);
 
             if (currentDepth > maxDepth)
                 throw new ArgumentException($"Filter tree exceeds maximum depth of {maxDepth}.");
@@ -298,6 +307,12 @@ namespace LifelogBb.Utilities
             {
                 ValidateLimits(subGroup, maxDepth, maxConditions, currentDepth + 1, conditionCount);
             }
+        }
+
+        private static void EnsureGroupCollectionsAreNotNull(FilterGroup group)
+        {
+            if (group.Conditions == null || group.Groups == null)
+                throw new ArgumentException("Filter group contains null collections.");
         }
     }
 }

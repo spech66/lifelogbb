@@ -4419,7 +4419,7 @@ QueryBuilder.define('filter-description', function(options) {
                         html: true
                     })
                     $b.on('mouseout', function() {
-                        popover('hide');
+                        popover.hide();
                     });
                 }
                 else {
