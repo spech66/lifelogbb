@@ -77,11 +77,11 @@ namespace LifelogBb.Utilities
             ParameterExpression parameter,
             HashSet<string> allowedProperties)
         {
-            if (condition.Value == null)
-                throw new ArgumentException($"Condition value for field '{condition.Field}' cannot be null.");
-
             if (string.IsNullOrWhiteSpace(condition.Field))
                 return null;
+
+            if (condition.Value == null)
+                throw new ArgumentException($"Condition value for field '{condition.Field}' cannot be null.");
 
             if (!allowedProperties.Contains(condition.Field))
                 throw new ArgumentException($"Field '{condition.Field}' is not a valid filterable property.");
@@ -171,7 +171,7 @@ namespace LifelogBb.Utilities
         {
             // Parse comma-separated values
             if (string.IsNullOrWhiteSpace(condition.Value))
-                throw new ArgumentException($"Condition value for field '{condition.Field}' cannot be null or empty for {condition.Operator}.");
+                throw new ArgumentException($"Condition value for field '{condition.Field ?? "<unknown>"}' cannot be null or empty for {condition.Operator}.");
 
             var rawValues = condition.Value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             if (rawValues.Length == 0)

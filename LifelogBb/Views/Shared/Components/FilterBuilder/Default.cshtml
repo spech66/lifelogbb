@@ -2,9 +2,18 @@
 @{
     var filtersJson = ViewBag.FiltersJson as string ?? "[]";
     var currentFilter = ViewBag.CurrentFilter as string;
-    var currentFilterJson = string.IsNullOrEmpty(currentFilter)
-        ? "null"
-        : JsonSerializer.Serialize(currentFilter);
+    string currentFilterJson = "null";
+    if (!string.IsNullOrWhiteSpace(currentFilter))
+    {
+        try
+        {
+            currentFilterJson = JsonDocument.Parse(currentFilter).RootElement.GetRawText();
+        }
+        catch (JsonException)
+        {
+            currentFilterJson = "null";
+        }
+    }
 }
 
 <link rel="stylesheet" href="~/lib/jquery-querybuilder/css/query-builder.default.css" />
@@ -37,15 +46,7 @@
     (function () {
         var filters = @Html.Raw(filtersJson);
         var currentFilterJson = @Html.Raw(currentFilterJson);
-        var parsedFilter = null;
-        if (currentFilterJson) {
-            try {
-                var filterJsonString = JSON.parse(currentFilterJson);
-                parsedFilter = filterJsonString ? JSON.parse(filterJsonString) : null;
-            } catch (e) {
-                parsedFilter = null;
-            }
-        }
+        var parsedFilter = currentFilterJson || null;
 
         // Operator mapping: QueryBuilder operator name => our ComparisonOperator enum name
         var operatorMap = {
