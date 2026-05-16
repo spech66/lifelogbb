@@ -284,13 +284,17 @@
                         }).then(function (res) { return res.json(); })
                           .then(function (data) {
                               if (data.success) {
-                                  // Update sidebar link text
+                                  // Update sidebar link text and button attribute
                                   var item = document.getElementById('session-' + sessionId);
                                   if (item) {
                                       var link = item.querySelector('a');
                                       if (link) {
                                           link.textContent = data.name;
                                           link.title = data.name;
+                                      }
+                                      var renameBtn = item.querySelector('.rename-session-btn');
+                                      if (renameBtn) {
+                                          renameBtn.dataset.sessionName = data.name;
                                       }
                                   }
                                   // Update header if this is the active session

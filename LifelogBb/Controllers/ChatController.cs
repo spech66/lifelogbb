@@ -13,6 +13,7 @@ namespace LifelogBb.Controllers
     public partial class ChatController : Controller
     {
         private const int DefaultSessionNameMaxLength = 50;
+        private const int MaxConversationMessages = 20;
 
         [GeneratedRegex("<[^>]+>")]
         private static partial Regex HtmlTagRegex();
@@ -46,7 +47,7 @@ namespace LifelogBb.Controllers
                     .FirstOrDefaultAsync(s => s.Id == id.Value);
             }
 
-            if (activeSession == null && sessions.Count > 0)
+            if (!id.HasValue && activeSession == null && sessions.Count > 0)
             {
                 activeSession = await _context.ChatSessions
                     .Include(s => s.Messages.OrderBy(m => m.SortOrder))
@@ -98,10 +99,15 @@ namespace LifelogBb.Controllers
                     .FirstOrDefaultAsync(s => s.Id == request.SessionId.Value);
             }
 
+            if (request.SessionId.HasValue && session == null)
+            {
+                return Json(new { error = "Session not found." });
+            }
+
             if (session != null)
             {
-                // Build conversation from persisted messages
-                foreach (var msg in session.Messages)
+                // Build conversation from persisted messages, capped to MaxConversationMessages
+                foreach (var msg in session.Messages.TakeLast(MaxConversationMessages))
                 {
                     conversation.Add(new ChatMessage
                     {
@@ -135,9 +141,10 @@ namespace LifelogBb.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            var nextSortOrder = session.Messages.Count > 0
-                ? session.Messages.Max(m => m.SortOrder) + 1
-                : 0;
+            var maxSortOrder = await _context.ChatSessionMessages
+                .Where(m => m.ChatSessionId == session.Id)
+                .MaxAsync(m => (int?)m.SortOrder);
+            var nextSortOrder = (maxSortOrder ?? -1) + 1;
 
             var userMsg = new ChatSessionMessage
             {
@@ -233,7 +240,6 @@ namespace LifelogBb.Controllers
     {
         public string Message { get; set; } = "";
         public long? SessionId { get; set; }
-        public List<ChatMessageViewModel>? History { get; set; }
     }
 
     public class RenameSessionRequest
