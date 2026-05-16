@@ -154,9 +154,10 @@ namespace LifelogBb.Controllers
             var persisted = false;
             for (var attempt = 0; attempt < MaxSortOrderRetries && !persisted; attempt++)
             {
-                await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable, HttpContext.RequestAborted);
                 try
                 {
+                    await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable, HttpContext.RequestAborted);
+
                     var maxSortOrder = await _context.ChatSessionMessages
                         .Where(m => m.ChatSessionId == session.Id)
                         .MaxAsync(m => (int?)m.SortOrder, HttpContext.RequestAborted);
