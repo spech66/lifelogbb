@@ -85,9 +85,13 @@
                     ? 'bg-primary text-white'
                     : 'bg-secondary-lt');
                 bubble.style.maxWidth = '80%';
-                bubble.style.whiteSpace = 'pre-wrap';
                 bubble.style.wordBreak = 'break-word';
-                bubble.textContent = content;
+                if (role === 'assistant') {
+                    bubble.innerHTML = content;
+                } else {
+                    bubble.style.whiteSpace = 'pre-wrap';
+                    bubble.textContent = content;
+                }
 
                 wrapper.appendChild(bubble);
                 messagesContainer.appendChild(wrapper);

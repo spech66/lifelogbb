@@ -4,6 +4,7 @@ using LifelogBb.Models.Chat;
 using LifelogBb.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using Westwind.AspNetCore.Markdown;
 
 namespace LifelogBb.Controllers
 {
@@ -60,8 +61,9 @@ namespace LifelogBb.Controllers
             });
 
             var response = await _chatService.SendAsync(conversation);
+            var html = Markdown.Parse(response);
 
-            return Json(new { response });
+            return Json(new { response = html });
         }
     }
 
