@@ -186,12 +186,16 @@ namespace LifelogBb.Controllers
                     await transaction.CommitAsync(HttpContext.RequestAborted);
                     persisted = true;
                 }
-                catch (Exception ex) when (IsRetryableSqliteLockError(ex) && attempt < MaxSortOrderRetries - 1)
+                catch (Exception ex) when (IsRetryableSqliteLockError(ex))
                 {
                     _context.ChangeTracker.Clear();
-                    session = await _context.ChatSessions
-                        .FirstAsync(s => s.Id == session.Id, HttpContext.RequestAborted);
-                    await Task.Delay(50 * (attempt + 1), HttpContext.RequestAborted);
+
+                    if (attempt < MaxSortOrderRetries - 1)
+                    {
+                        session = await _context.ChatSessions
+                            .FirstAsync(s => s.Id == session.Id, HttpContext.RequestAborted);
+                        await Task.Delay(50 * (attempt + 1), HttpContext.RequestAborted);
+                    }
                 }
             }
 
