@@ -138,18 +138,10 @@ namespace LifelogBb.Controllers
             var html = Markdown.Parse(response);
 
             // Persist to database
-            if (session == null)
-            {
-                session = new ChatSession
-                {
-                    Name = request.Message.Length > DefaultSessionNameMaxLength
-                        ? request.Message[..DefaultSessionNameMaxLength] + "..."
-                        : request.Message
-                };
-                session.SetCreateFields();
-                _context.ChatSessions.Add(session);
-                await _context.SaveChangesAsync();
-            }
+            var sessionId = session?.Id;
+            var newSessionName = request.Message.Length > DefaultSessionNameMaxLength
+                ? request.Message[..DefaultSessionNameMaxLength] + "..."
+                : request.Message;
 
             var persisted = false;
             for (var attempt = 0; attempt < MaxSortOrderRetries && !persisted; attempt++)
@@ -158,14 +150,39 @@ namespace LifelogBb.Controllers
                 {
                     await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable, HttpContext.RequestAborted);
 
+                    ChatSession sessionToPersist;
+                    if (sessionId.HasValue)
+                    {
+                        var existingSession = await _context.ChatSessions
+                            .FirstOrDefaultAsync(s => s.Id == sessionId.Value, HttpContext.RequestAborted);
+
+                        if (existingSession == null)
+                        {
+                            return Json(new { error = "Session not found." });
+                        }
+
+                        sessionToPersist = existingSession;
+                    }
+                    else
+                    {
+                        sessionToPersist = new ChatSession
+                        {
+                            Name = newSessionName
+                        };
+                        sessionToPersist.SetCreateFields();
+                        _context.ChatSessions.Add(sessionToPersist);
+                        await _context.SaveChangesAsync(HttpContext.RequestAborted);
+                        sessionId = sessionToPersist.Id;
+                    }
+
                     var maxSortOrder = await _context.ChatSessionMessages
-                        .Where(m => m.ChatSessionId == session.Id)
+                        .Where(m => m.ChatSessionId == sessionToPersist.Id)
                         .MaxAsync(m => (int?)m.SortOrder, HttpContext.RequestAborted);
                     var nextSortOrder = (maxSortOrder ?? -1) + 1;
 
                     var userMsg = new ChatSessionMessage
                     {
-                        ChatSessionId = session.Id,
+                        ChatSessionId = sessionToPersist.Id,
                         Role = "user",
                         Content = request.Message,
                         SortOrder = nextSortOrder
@@ -174,7 +191,7 @@ namespace LifelogBb.Controllers
 
                     var assistantMsg = new ChatSessionMessage
                     {
-                        ChatSessionId = session.Id,
+                        ChatSessionId = sessionToPersist.Id,
                         Role = "assistant",
                         Content = response,
                         SortOrder = nextSortOrder + 1
@@ -182,9 +199,10 @@ namespace LifelogBb.Controllers
                     assistantMsg.SetCreateFields();
 
                     _context.ChatSessionMessages.AddRange(userMsg, assistantMsg);
-                    session.SetUpdateFields();
+                    sessionToPersist.SetUpdateFields();
                     await _context.SaveChangesAsync(HttpContext.RequestAborted);
                     await transaction.CommitAsync(HttpContext.RequestAborted);
+                    session = sessionToPersist;
                     persisted = true;
                 }
                 catch (Exception ex) when (IsRetryableSqliteLockError(ex))
@@ -193,8 +211,6 @@ namespace LifelogBb.Controllers
 
                     if (attempt < MaxSortOrderRetries - 1)
                     {
-                        session = await _context.ChatSessions
-                            .FirstAsync(s => s.Id == session.Id, HttpContext.RequestAborted);
                         await Task.Delay(50 * (attempt + 1), HttpContext.RequestAborted);
                     }
                 }
@@ -205,7 +221,7 @@ namespace LifelogBb.Controllers
                 return Json(new { error = "Could not save message. Please try again." });
             }
 
-            return Json(new { response = html, sessionId = session.Id, sessionName = session.Name });
+            return Json(new { response = html, sessionId = session!.Id, sessionName = session.Name });
         }
 
         [HttpPost]
