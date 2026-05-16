@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using LifelogBb.ApiServices;
 using LifelogBb.Models;
 using LifelogBb.Models.Chat;
@@ -9,8 +10,12 @@ using Westwind.AspNetCore.Markdown;
 
 namespace LifelogBb.Controllers
 {
-    public class ChatController : Controller
+    public partial class ChatController : Controller
     {
+        private const int DefaultSessionNameMaxLength = 50;
+
+        [GeneratedRegex("<[^>]+>")]
+        private static partial Regex HtmlTagRegex();
         private readonly LifelogBbContext _context;
         private readonly ChatService _chatService;
 
@@ -121,7 +126,9 @@ namespace LifelogBb.Controllers
             {
                 session = new ChatSession
                 {
-                    Name = request.Message.Length > 50 ? request.Message[..50] + "..." : request.Message
+                    Name = request.Message.Length > DefaultSessionNameMaxLength
+                        ? request.Message[..DefaultSessionNameMaxLength] + "..."
+                        : request.Message
                 };
                 session.SetCreateFields();
                 _context.ChatSessions.Add(session);
@@ -187,7 +194,12 @@ namespace LifelogBb.Controllers
                 return NotFound();
             }
 
-            session.Name = request.Name.Length > 200 ? request.Name[..200] : request.Name;
+            var maxLength = typeof(ChatSession)
+                .GetProperty(nameof(ChatSession.Name))!
+                .GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.StringLengthAttribute), false)
+                .Cast<System.ComponentModel.DataAnnotations.StringLengthAttribute>()
+                .FirstOrDefault()?.MaximumLength ?? 200;
+            session.Name = request.Name.Length > maxLength ? request.Name[..maxLength] : request.Name;
             session.SetUpdateFields();
             await _context.SaveChangesAsync();
 
@@ -213,7 +225,7 @@ namespace LifelogBb.Controllers
         private static string StripHtml(string html)
         {
             // Simple HTML tag removal for sending back to AI as plain text
-            return System.Text.RegularExpressions.Regex.Replace(html, "<[^>]+>", "").Trim();
+            return HtmlTagRegex().Replace(html, "").Trim();
         }
     }
 
