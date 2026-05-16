@@ -1,11 +1,12 @@
-using System.Collections.Concurrent;
 using LifelogBb.ApiServices;
 using LifelogBb.Models;
 using LifelogBb.Models.Chat;
 using LifelogBb.Models.Entities;
+using Microsoft.Data.Sqlite;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Westwind.AspNetCore.Markdown;
+using System.Data;
 
 namespace LifelogBb.Controllers
 {
@@ -13,7 +14,7 @@ namespace LifelogBb.Controllers
     {
         private const int DefaultSessionNameMaxLength = 50;
         private const int MaxConversationMessages = 20;
-        private static readonly ConcurrentDictionary<long, SemaphoreSlim> SessionMessageLocks = new();
+        private const int MaxSortOrderRetries = 3;
         private readonly LifelogBbContext _context;
         private readonly ChatService _chatService;
 
@@ -102,13 +103,13 @@ namespace LifelogBb.Controllers
 
             if (session != null)
             {
-                var historyLimit = MaxConversationMessages - 1;
+                var maxHistoryMessages = MaxConversationMessages - 1;
 
                 // Build conversation from persisted messages, reserving one slot for the current user message
                 var historyMessages = await _context.ChatSessionMessages
                     .Where(m => m.ChatSessionId == session.Id)
                     .OrderByDescending(m => m.SortOrder)
-                    .Take(historyLimit)
+                    .Take(maxHistoryMessages)
                     .OrderBy(m => m.SortOrder)
                     .ToListAsync();
 
@@ -128,6 +129,10 @@ namespace LifelogBb.Controllers
                 Role = "user",
                 Content = request.Message
             });
+            if (conversation.Count > MaxConversationMessages)
+            {
+                conversation = conversation.TakeLast(MaxConversationMessages).ToList();
+            }
 
             var response = await _chatService.SendAsync(conversation);
             var html = Markdown.Parse(response);
@@ -146,40 +151,53 @@ namespace LifelogBb.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            var sessionMessageLock = SessionMessageLocks.GetOrAdd(session.Id, _ => new SemaphoreSlim(1, 1));
-            await sessionMessageLock.WaitAsync();
-            try
+            var persisted = false;
+            for (var attempt = 0; attempt < MaxSortOrderRetries && !persisted; attempt++)
             {
-                var maxSortOrder = await _context.ChatSessionMessages
-                    .Where(m => m.ChatSessionId == session.Id)
-                    .MaxAsync(m => (int?)m.SortOrder);
-                var nextSortOrder = (maxSortOrder ?? -1) + 1;
-
-                var userMsg = new ChatSessionMessage
+                await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable, HttpContext.RequestAborted);
+                try
                 {
-                    ChatSessionId = session.Id,
-                    Role = "user",
-                    Content = request.Message,
-                    SortOrder = nextSortOrder
-                };
-                userMsg.SetCreateFields();
+                    var maxSortOrder = await _context.ChatSessionMessages
+                        .Where(m => m.ChatSessionId == session.Id)
+                        .MaxAsync(m => (int?)m.SortOrder, HttpContext.RequestAborted);
+                    var nextSortOrder = (maxSortOrder ?? -1) + 1;
 
-                var assistantMsg = new ChatSessionMessage
+                    var userMsg = new ChatSessionMessage
+                    {
+                        ChatSessionId = session.Id,
+                        Role = "user",
+                        Content = request.Message,
+                        SortOrder = nextSortOrder
+                    };
+                    userMsg.SetCreateFields();
+
+                    var assistantMsg = new ChatSessionMessage
+                    {
+                        ChatSessionId = session.Id,
+                        Role = "assistant",
+                        Content = response,
+                        SortOrder = nextSortOrder + 1
+                    };
+                    assistantMsg.SetCreateFields();
+
+                    _context.ChatSessionMessages.AddRange(userMsg, assistantMsg);
+                    session.SetUpdateFields();
+                    await _context.SaveChangesAsync(HttpContext.RequestAborted);
+                    await transaction.CommitAsync(HttpContext.RequestAborted);
+                    persisted = true;
+                }
+                catch (Exception ex) when (IsRetryableSqliteLockError(ex) && attempt < MaxSortOrderRetries - 1)
                 {
-                    ChatSessionId = session.Id,
-                    Role = "assistant",
-                    Content = response,
-                    SortOrder = nextSortOrder + 1
-                };
-                assistantMsg.SetCreateFields();
-
-                _context.ChatSessionMessages.AddRange(userMsg, assistantMsg);
-                session.SetUpdateFields();
-                await _context.SaveChangesAsync();
+                    _context.ChangeTracker.Clear();
+                    session = await _context.ChatSessions
+                        .FirstAsync(s => s.Id == session.Id, HttpContext.RequestAborted);
+                    await Task.Delay(50 * (attempt + 1), HttpContext.RequestAborted);
+                }
             }
-            finally
+
+            if (!persisted)
             {
-                sessionMessageLock.Release();
+                return Json(new { error = "Could not save message. Please try again." });
             }
 
             return Json(new { response = html, sessionId = session.Id, sessionName = session.Name });
@@ -241,6 +259,18 @@ namespace LifelogBb.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private static bool IsRetryableSqliteLockError(Exception exception)
+        {
+            var sqliteException = exception switch
+            {
+                DbUpdateException dbUpdateException when dbUpdateException.InnerException is SqliteException innerSqliteException => innerSqliteException,
+                SqliteException directSqliteException => directSqliteException,
+                _ => null
+            };
+
+            return sqliteException is { SqliteErrorCode: 5 or 6 or 517 };
         }
     }
 
