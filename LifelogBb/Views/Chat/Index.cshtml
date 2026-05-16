@@ -7,9 +7,9 @@
 <div class="container-xl">
     @Html.AntiForgeryToken()
     <div class="row row-cards">
-        <div class="col-12">
-            @if (!Model.IsConfigured)
-            {
+        @if (!Model.IsConfigured)
+        {
+            <div class="col-12">
                 <div class="alert alert-warning" role="alert">
                     <div class="d-flex">
                         <div><i class="fas fa-exclamation-triangle me-2"></i></div>
@@ -19,22 +19,76 @@
                         </div>
                     </div>
                 </div>
-            }
+            </div>
+        }
+        <div class="col-12 col-md-3">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-comments me-2"></i>Chat</h3>
+                    <h3 class="card-title">Chats</h3>
                     <div class="card-actions">
-                        <button class="btn btn-ghost-secondary btn-sm" id="clear-chat" title="Clear chat">
-                            <i class="fas fa-trash"></i>
+                        <form asp-action="CreateSession" method="post">
+                            <button type="submit" class="btn btn-ghost-primary btn-sm" title="New chat">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="list-group list-group-flush" style="max-height: 60vh; overflow-y: auto;">
+                    @if (Model.Sessions.Count == 0)
+                    {
+                        <div class="list-group-item text-secondary text-center py-3">
+                            No chats yet
+                        </div>
+                    }
+                    @foreach (var session in Model.Sessions)
+                    {
+                        <div class="list-group-item list-group-item-action d-flex align-items-center @(session.Id == Model.ActiveSessionId ? "active" : "")"
+                             id="session-@session.Id">
+                            <a asp-action="Index" asp-route-id="@session.Id"
+                               class="flex-grow-1 text-truncate text-decoration-none @(session.Id == Model.ActiveSessionId ? "text-muted" : "")"
+                               title="@session.Name">
+                                @session.Name
+                            </a>
+                            <div class="d-flex gap-1 ms-2 flex-shrink-0">
+                                <button class="btn btn-ghost-secondary btn-sm p-1 rename-session-btn"
+                                        data-session-id="@session.Id" data-session-name="@session.Name"
+                                        title="Rename">
+                                    <i class="fas fa-pencil-alt" style="font-size: 0.7rem;"></i>
+                                </button>
+                                <form asp-action="DeleteSession" asp-route-id="@session.Id" method="post"
+                                      class="d-inline delete-session-form">
+                                    <button type="submit" class="btn btn-ghost-danger btn-sm p-1" title="Delete">
+                                        <i class="fas fa-trash" style="font-size: 0.7rem;"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-9">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-comments me-2"></i>
+                        <span id="active-session-name">@(Model.ActiveSessionName ?? "Chat")</span>
+                    </h3>
+                    <div class="card-actions">
+                        <button class="btn btn-ghost-secondary btn-sm" id="clear-chat" title="Clear chat display">
+                            <i class="fas fa-eraser"></i>
                         </button>
                     </div>
                 </div>
                 <div class="card-body p-0">
                     <div id="chat-messages" style="height: 60vh; overflow-y: auto; padding: 1.5rem;">
-                        <div class="text-center text-secondary py-4" id="chat-placeholder">
-                            <i class="fas fa-comments fa-3x mb-3 d-block"></i>
-                            Ask me anything about your life tracking data.
-                        </div>
+                        @if (Model.Messages.Count == 0)
+                        {
+                            <div class="text-center text-secondary py-4" id="chat-placeholder">
+                                <i class="fas fa-comments fa-3x mb-3 d-block"></i>
+                                Ask me anything about your life tracking data.
+                            </div>
+                        }
                     </div>
                 </div>
                 <div class="card-footer">
@@ -65,8 +119,16 @@
                 || document.querySelector('meta[name="RequestVerificationToken"]')?.content
                 || '';
 
-            let conversationHistory = [];
+            let currentSessionId = @(Model.ActiveSessionId.HasValue ? Model.ActiveSessionId.Value.ToString() : "null");
             let isLoading = false;
+
+            // Render persisted messages on load
+            const persistedMessages = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Messages, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }));
+            if (persistedMessages && persistedMessages.length > 0) {
+                persistedMessages.forEach(function (msg) {
+                    addMessage(msg.role, msg.content);
+                });
+            }
 
             function scrollToBottom() {
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -141,7 +203,7 @@
                         },
                         body: JSON.stringify({
                             message: message,
-                            history: conversationHistory
+                            sessionId: currentSessionId
                         })
                     });
 
@@ -154,9 +216,14 @@
                         if (data.error) {
                             addMessage('assistant', 'Error: ' + data.error);
                         } else {
-                            conversationHistory.push({ role: 'user', content: message });
-                            conversationHistory.push({ role: 'assistant', content: data.response });
                             addMessage('assistant', data.response);
+                            // Update session ID if a new session was created
+                            if (data.sessionId && !currentSessionId) {
+                                currentSessionId = data.sessionId;
+                                // Reload to show the new session in sidebar
+                                window.location.href = '@Url.Action("Index", "Chat")' + '?id=' + data.sessionId;
+                                return;
+                            }
                         }
                     }
                 } catch (err) {
@@ -178,17 +245,66 @@
                 }
             });
 
+            // Clear just the visual display (messages stay in DB)
             clearBtn.addEventListener('click', function () {
-                conversationHistory = [];
                 messagesContainer.innerHTML = '';
-                if (placeholder) {
-                    const newPlaceholder = document.createElement('div');
-                    newPlaceholder.className = 'text-center text-secondary py-4';
-                    newPlaceholder.id = 'chat-placeholder';
-                    newPlaceholder.innerHTML = '<i class="fas fa-comments fa-3x mb-3 d-block"></i>Ask me anything about your life tracking data.';
-                    messagesContainer.appendChild(newPlaceholder);
-                    placeholder = newPlaceholder;
-                }
+                const newPlaceholder = document.createElement('div');
+                newPlaceholder.className = 'text-center text-secondary py-4';
+                newPlaceholder.id = 'chat-placeholder';
+                newPlaceholder.innerHTML = '<i class="fas fa-comments fa-3x mb-3 d-block"></i>Ask me anything about your life tracking data.';
+                messagesContainer.appendChild(newPlaceholder);
+                placeholder = newPlaceholder;
+            });
+
+            // Delete session confirmation
+            document.querySelectorAll('.delete-session-form').forEach(function (form) {
+                form.addEventListener('submit', function (e) {
+                    if (!confirm('This chat will be deleted forever. Continue?')) {
+                        e.preventDefault();
+                    }
+                });
+            });
+
+            // Rename session
+            document.querySelectorAll('.rename-session-btn').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const sessionId = this.dataset.sessionId;
+                    const currentName = this.dataset.sessionName;
+                    const newName = prompt('Enter new name:', currentName);
+                    if (newName && newName.trim() && newName.trim() !== currentName) {
+                        fetch('@Url.Action("RenameSession", "Chat")', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'RequestVerificationToken': antiForgeryToken
+                            },
+                            body: JSON.stringify({ id: parseInt(sessionId), name: newName.trim() })
+                        }).then(function (res) { return res.json(); })
+                          .then(function (data) {
+                              if (data.success) {
+                                  // Update sidebar link text and button attribute
+                                  var item = document.getElementById('session-' + sessionId);
+                                  if (item) {
+                                      var link = item.querySelector('a');
+                                      if (link) {
+                                          link.textContent = data.name;
+                                          link.title = data.name;
+                                      }
+                                      var renameBtn = item.querySelector('.rename-session-btn');
+                                      if (renameBtn) {
+                                          renameBtn.dataset.sessionName = data.name;
+                                      }
+                                  }
+                                  // Update header if this is the active session
+                                  if (parseInt(sessionId) === currentSessionId) {
+                                      document.getElementById('active-session-name').textContent = data.name;
+                                  }
+                              }
+                          });
+                    }
+                });
             });
 
             chatInput.focus();

@@ -8,7 +8,7 @@ ToDos and Features for LifelogBB.
 
 ### In Progress :construction:
 
-- [ ] Chat history persistence
+- [x] Chat history persistence
 
 #### External tools
 
