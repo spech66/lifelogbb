@@ -158,6 +158,7 @@ namespace LifelogBb.Controllers
 
                         if (existingSession == null)
                         {
+                            await transaction.RollbackAsync(HttpContext.RequestAborted);
                             return Json(new { error = "Session not found." });
                         }
 
@@ -172,7 +173,6 @@ namespace LifelogBb.Controllers
                         sessionToPersist.SetCreateFields();
                         _context.ChatSessions.Add(sessionToPersist);
                         await _context.SaveChangesAsync(HttpContext.RequestAborted);
-                        sessionId = sessionToPersist.Id;
                     }
 
                     var maxSortOrder = await _context.ChatSessionMessages
@@ -202,6 +202,7 @@ namespace LifelogBb.Controllers
                     sessionToPersist.SetUpdateFields();
                     await _context.SaveChangesAsync(HttpContext.RequestAborted);
                     await transaction.CommitAsync(HttpContext.RequestAborted);
+                    sessionId = sessionToPersist.Id;
                     session = sessionToPersist;
                     persisted = true;
                 }
