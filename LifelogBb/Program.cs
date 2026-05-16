@@ -82,6 +82,9 @@ namespace LifelogBb
             services.AddScoped<TodosService>();
             services.AddScoped<HabitsService>();
             services.AddScoped<GoalsService>();
+            services.AddScoped<ChatToolRegistry>();
+            services.AddScoped<ChatService>();
+            services.AddHttpClient();
 
             ConfigureCookieJwt(services, config);
 

@@ -225,6 +225,8 @@ namespace LifelogBb.Controllers
         {
             var config = Models.Entities.Config.GetConfig(_context);
             var model = _mapper.Map<EditConfigViewModel>(config);
+            model.HasChatApiKey = !string.IsNullOrWhiteSpace(config.ChatApiKey);
+            model.ChatApiKey = "";
             return View(model);
         }
 
@@ -234,15 +236,21 @@ namespace LifelogBb.Controllers
         {
             // Will always create the first entry if it doesn't exist which most likely was done in the view
             var configDb = Models.Entities.Config.GetConfig(_context);
+            var existingChatApiKey = configDb.ChatApiKey;
             if (ModelState.IsValid)
             {
                 configDb = _mapper.Map(configViewModel, configDb);
+                if (string.IsNullOrWhiteSpace(configViewModel.ChatApiKey))
+                {
+                    configDb.ChatApiKey = existingChatApiKey;
+                }
                 configDb.SetUpdateFields();
                 _context.Update(configDb);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
+            configViewModel.HasChatApiKey = !string.IsNullOrWhiteSpace(existingChatApiKey);
             return View(nameof(Config), configViewModel);
         }
 

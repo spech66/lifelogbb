@@ -25,6 +25,7 @@ All **data** is stored in a single **SQLite database** for full control and port
 * 📅 iCal feeds: Todo for Todos and Goals, Event for Habits (Time boxing/blocking)
 * ⚙️ Settings
 * 🖼 [Tabler](https://tabler.io/) UI
+* 🤖 MCP Server and optional OpenAI compatible Chat (supports local LLMs)
 
 [TODO](https://github.com/spech66/lifelogbb/blob/main/TODO.md)
 
