@@ -1,11 +1,10 @@
-using System.Text.RegularExpressions;
+using System.Collections.Concurrent;
 using LifelogBb.ApiServices;
 using LifelogBb.Models;
 using LifelogBb.Models.Chat;
 using LifelogBb.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 using Westwind.AspNetCore.Markdown;
 
 namespace LifelogBb.Controllers
@@ -14,9 +13,7 @@ namespace LifelogBb.Controllers
     {
         private const int DefaultSessionNameMaxLength = 50;
         private const int MaxConversationMessages = 20;
-
-        [GeneratedRegex("<[^>]+>")]
-        private static partial Regex HtmlTagRegex();
+        private static readonly ConcurrentDictionary<long, SemaphoreSlim> SessionMessageLocks = new();
         private readonly LifelogBbContext _context;
         private readonly ChatService _chatService;
 
@@ -63,7 +60,7 @@ namespace LifelogBb.Controllers
                     messages.Add(new ChatMessageViewModel
                     {
                         Role = msg.Role,
-                        Content = msg.Content
+                        Content = msg.Role == "assistant" ? Markdown.Parse(msg.Content) : msg.Content
                     });
                 }
             }
@@ -95,7 +92,6 @@ namespace LifelogBb.Controllers
             if (request.SessionId.HasValue)
             {
                 session = await _context.ChatSessions
-                    .Include(s => s.Messages.OrderBy(m => m.SortOrder))
                     .FirstOrDefaultAsync(s => s.Id == request.SessionId.Value);
             }
 
@@ -106,13 +102,22 @@ namespace LifelogBb.Controllers
 
             if (session != null)
             {
-                // Build conversation from persisted messages, capped to MaxConversationMessages
-                foreach (var msg in session.Messages.TakeLast(MaxConversationMessages))
+                var historyLimit = MaxConversationMessages - 1;
+
+                // Build conversation from persisted messages, reserving one slot for the current user message
+                var historyMessages = await _context.ChatSessionMessages
+                    .Where(m => m.ChatSessionId == session.Id)
+                    .OrderByDescending(m => m.SortOrder)
+                    .Take(historyLimit)
+                    .OrderBy(m => m.SortOrder)
+                    .ToListAsync();
+
+                foreach (var msg in historyMessages)
                 {
                     conversation.Add(new ChatMessage
                     {
                         Role = msg.Role,
-                        Content = msg.Role == "assistant" ? StripHtml(msg.Content) : msg.Content
+                        Content = msg.Content
                     });
                 }
             }
@@ -141,32 +146,41 @@ namespace LifelogBb.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            var maxSortOrder = await _context.ChatSessionMessages
-                .Where(m => m.ChatSessionId == session.Id)
-                .MaxAsync(m => (int?)m.SortOrder);
-            var nextSortOrder = (maxSortOrder ?? -1) + 1;
-
-            var userMsg = new ChatSessionMessage
+            var sessionMessageLock = SessionMessageLocks.GetOrAdd(session.Id, _ => new SemaphoreSlim(1, 1));
+            await sessionMessageLock.WaitAsync();
+            try
             {
-                ChatSessionId = session.Id,
-                Role = "user",
-                Content = request.Message,
-                SortOrder = nextSortOrder
-            };
-            userMsg.SetCreateFields();
+                var maxSortOrder = await _context.ChatSessionMessages
+                    .Where(m => m.ChatSessionId == session.Id)
+                    .MaxAsync(m => (int?)m.SortOrder);
+                var nextSortOrder = (maxSortOrder ?? -1) + 1;
 
-            var assistantMsg = new ChatSessionMessage
+                var userMsg = new ChatSessionMessage
+                {
+                    ChatSessionId = session.Id,
+                    Role = "user",
+                    Content = request.Message,
+                    SortOrder = nextSortOrder
+                };
+                userMsg.SetCreateFields();
+
+                var assistantMsg = new ChatSessionMessage
+                {
+                    ChatSessionId = session.Id,
+                    Role = "assistant",
+                    Content = response,
+                    SortOrder = nextSortOrder + 1
+                };
+                assistantMsg.SetCreateFields();
+
+                _context.ChatSessionMessages.AddRange(userMsg, assistantMsg);
+                session.SetUpdateFields();
+                await _context.SaveChangesAsync();
+            }
+            finally
             {
-                ChatSessionId = session.Id,
-                Role = "assistant",
-                Content = html,
-                SortOrder = nextSortOrder + 1
-            };
-            assistantMsg.SetCreateFields();
-
-            _context.ChatSessionMessages.AddRange(userMsg, assistantMsg);
-            session.SetUpdateFields();
-            await _context.SaveChangesAsync();
+                sessionMessageLock.Release();
+            }
 
             return Json(new { response = html, sessionId = session.Id, sessionName = session.Name });
         }
@@ -227,12 +241,6 @@ namespace LifelogBb.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
-        }
-
-        private static string StripHtml(string html)
-        {
-            // Simple HTML tag removal for sending back to AI as plain text
-            return HtmlTagRegex().Replace(html, "").Trim();
         }
     }
 
