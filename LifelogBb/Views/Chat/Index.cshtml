@@ -45,7 +45,7 @@
                         <div class="list-group-item list-group-item-action d-flex align-items-center @(session.Id == Model.ActiveSessionId ? "active" : "")"
                              id="session-@session.Id">
                             <a asp-action="Index" asp-route-id="@session.Id"
-                               class="flex-grow-1 text-truncate text-decoration-none @(session.Id == Model.ActiveSessionId ? "text-white" : "")"
+                               class="flex-grow-1 text-truncate text-decoration-none @(session.Id == Model.ActiveSessionId ? "text-muted" : "")"
                                title="@session.Name">
                                 @session.Name
                             </a>
