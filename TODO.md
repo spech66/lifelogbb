@@ -5,6 +5,7 @@ ToDos and Features for LifelogBB.
 ### Todo
 
 - [ ] iCal Alarms
+- [ ] Publish images to GHCR and/or Dockerhub
 
 ### In Progress :construction:
 
