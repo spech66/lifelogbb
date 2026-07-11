@@ -205,6 +205,30 @@ Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
 WantedBy=multi-user.target
 ```
 
+## MCP Server
+
+LifelogBB exposes a built-in **Model Context Protocol (MCP)** server that lets AI assistants (e.g. Claude, GitHub Copilot, Cursor) read and interact with your life-log data directly.
+
+The MCP endpoint is available at `/mcp` and requires a **JWT Bearer token** for authentication. Generate a token via the Swagger UI (`/Swagger/`) using the `/api/authentication/token` endpoint with your configured password.
+
+### Example MCP configuration (Claude Desktop / mcp.json)
+
+```json
+{
+  "mcpServers": {
+    "lifelogbb": {
+      "type": "http",
+      "url": "https://your-lifelogbb-host/mcp",
+      "headers": {
+        "Authorization": "Bearer <your-jwt-token>"
+      }
+    }
+  }
+}
+```
+
+Replace `https://your-lifelogbb-host` with the URL of your LifelogBB instance and `<your-jwt-token>` with the token obtained above.
+
 ## Development
 
 Clone the repository and either install [Visual Studio](https://visualstudio.microsoft.com/) or just the [dotnet tools](https://dotnet.microsoft.com/en-us/learn/aspnet/hello-world-tutorial/install).
