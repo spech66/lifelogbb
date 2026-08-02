@@ -164,7 +164,9 @@ namespace LifelogBb
             })
             .AddScheme<AuthenticationSchemeOptions, McpTokenAuthenticationHandler>(
                 McpTokenDefaults.AuthenticationScheme, McpTokenDefaults.DisplayName, options => { })
-            .AddMcp()
+            // No AddMcp() here. It only serves OAuth resource metadata discovery, which needs an OAuth
+            // server we do not have. Its handler intercepts /.well-known/oauth-protected-resource and
+            // throws when ResourceMetadata is unset. MCP clients authenticate with the MCP token or a JWT.
             .AddPolicyScheme("JWT_OR_COOKIE", "JWT_OR_COOKIE", options =>
             {
                 options.ForwardDefaultSelector = context =>
