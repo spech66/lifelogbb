@@ -1,4 +1,5 @@
 ﻿using LifelogBb.Models.Entities;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace LifelogBb.Models.Home
@@ -54,6 +55,9 @@ namespace LifelogBb.Models.Home
 
         public string ChatEndpoint { get; set; } = "https://api.openai.com/v1/chat/completions";
 
+        // Optional. Leaving it blank keeps the stored key, so the implicit "required" validation
+        // for non nullable strings must not reject an empty value.
+        [ValidateNever]
         public string ChatApiKey { get; set; } = "";
 
         public bool HasChatApiKey { get; set; }
@@ -64,6 +68,11 @@ namespace LifelogBb.Models.Home
 
         [Range(1, 50)]
         public int ChatMaxToolRoundtrips { get; set; } = 10;
+
+        // Optional. An empty value disables token authentication for the MCP server.
+        [ValidateNever]
+        [Display(Name = "MCP Token")]
+        public string McpToken { get; set; } = "";
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

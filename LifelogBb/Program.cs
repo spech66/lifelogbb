@@ -4,6 +4,7 @@ using LifelogBb.DTOs;
 using LifelogBb.Interfaces;
 using LifelogBb.Models;
 using LifelogBb.Utilities;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -161,11 +162,19 @@ namespace LifelogBb
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Authentication:JwtToken:SigningKey"]))
                 };
             })
+            .AddScheme<AuthenticationSchemeOptions, McpTokenAuthenticationHandler>(
+                McpTokenDefaults.AuthenticationScheme, McpTokenDefaults.DisplayName, options => { })
             .AddMcp()
             .AddPolicyScheme("JWT_OR_COOKIE", "JWT_OR_COOKIE", options =>
             {
                 options.ForwardDefaultSelector = context =>
                 {
+                    // The MCP endpoint is only used by non interactive clients. Always use the MCP token
+                    // scheme so a missing or wrong token returns a plain 401 instead of a redirect to the
+                    // login page. The handler falls back to JWT if the value is not the configured token.
+                    if (context.Request.Path.StartsWithSegments("/mcp"))
+                        return McpTokenDefaults.AuthenticationScheme;
+
                     string authorization = context.Request.Headers[HeaderNames.Authorization];
                     if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer "))
                         return JwtBearerDefaults.AuthenticationScheme;

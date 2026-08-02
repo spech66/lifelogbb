@@ -78,6 +78,7 @@ namespace LifelogBb.Models
             modelBuilder.Entity<Config>().Property(b => b.ChatModel).HasDefaultValue("gpt-4o");
             modelBuilder.Entity<Config>().Property(b => b.ChatSystemPrompt).HasDefaultValue("You are a helpful life-tracking assistant for LifelogBB. You can query the user's data (weights, journals, todos, goals, habits, quotes, strength trainings, endurance trainings) using the available tools. Summarize and analyze the data to help the user understand their progress and habits.");
             modelBuilder.Entity<Config>().Property(b => b.ChatMaxToolRoundtrips).HasDefaultValue(10);
+            modelBuilder.Entity<Config>().Property(b => b.McpToken).HasDefaultValue("");
 
             modelBuilder.Entity<ChatSession>()
                 .HasMany(s => s.Messages)
