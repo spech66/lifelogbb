@@ -119,6 +119,10 @@ namespace LifelogBb.Controllers
         /// Dynamic client registration (RFC 7591). Only public clients are accepted, so no secret is
         /// ever issued or stored. Anyone who can reach the instance can register, but a registration
         /// on its own grants nothing: a token still requires the app password at the consent step.
+        ///
+        /// No antiforgery token, and there cannot be one: the caller is a non browser HTTP client with
+        /// no session and no way to obtain one. Nothing here acts on an existing session either, so
+        /// there is no cross site request to forge.
         /// </summary>
         [HttpPost("~/oauth/register")]
         [AllowAnonymous]
@@ -201,7 +205,8 @@ namespace LifelogBb.Controllers
             _context.OAuthClients.Add(client);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Registered OAuth client {ClientName} ({ClientId}).", client.ClientName, client.ClientId);
+            _logger.LogInformation("Registered OAuth client {ClientName} ({ClientId}).",
+                LogSanitizer.ForLog(client.ClientName), client.ClientId);
 
             return StatusCode(StatusCodes.Status201Created, BuildRegistrationResponse(client));
         }
@@ -321,7 +326,8 @@ namespace LifelogBb.Controllers
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Issued an authorization code to {ClientName} ({ClientId}).", client.ClientName, client.ClientId);
+            _logger.LogInformation("Issued an authorization code to {ClientName} ({ClientId}).",
+                LogSanitizer.ForLog(client.ClientName), client.ClientId);
 
             return Redirect(QueryHelpers.AddQueryString(model.RedirectUri!, new Dictionary<string, string?>
             {
@@ -421,8 +427,10 @@ namespace LifelogBb.Controllers
             if (!string.IsNullOrEmpty(model.Resource) && model.Resource != expectedResource)
             {
                 // Recorded but not enforced, see the audience note in the README.
+                // Both values are attacker reachable: the resource comes straight from the query and
+                // the expected value is built from the Host header.
                 _logger.LogWarning("Authorization request asked for resource {Resource}, expected {Expected}.",
-                    model.Resource, expectedResource);
+                    LogSanitizer.ForLog(model.Resource), LogSanitizer.ForLog(expectedResource));
             }
 
             return null;
