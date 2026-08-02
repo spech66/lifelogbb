@@ -165,7 +165,13 @@
                     <div class="card-body">
                         <div class="alert alert-info" role="alert">
                             <h4 class="alert-title">MCP Server</h4>
-                            <div class="text-secondary">LifelogBB includes a built-in <strong>Model Context Protocol (MCP)</strong> server at <code>/mcp</code>. Connect AI assistants (e.g. Claude Desktop, GitHub Copilot, Cursor) by providing your instance URL and a JWT Bearer token obtained from <a href="/Swagger/" target="_blank">Swagger UI</a> via <code>/api/authentication/token</code>.</div>
+                            <div class="text-secondary">LifelogBB includes a built-in <strong>Model Context Protocol (MCP)</strong> server at <code>/mcp</code>. Connect AI assistants (e.g. Claude Desktop, GitHub Copilot, Cursor) by providing your instance URL and the MCP token below as an <code>Authorization: Bearer</code> header. Alternatively use a short lived JWT token obtained from <a href="/Swagger/" target="_blank">Swagger UI</a> via <code>POST /api/authentication</code>.</div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="McpToken" class="control-label mb-1"></label>
+                            <input asp-for="McpToken" class="form-control form-control-lg" placeholder="Leave empty to disable token authentication" />
+                            <div class="form-hint">Long lived token for MCP clients. Sent as <code>Authorization: Bearer &lt;token&gt;</code>. It never expires and grants full access to your data, so use a long random value. Leave empty to allow only short lived JWT tokens.</div>
+                            <span asp-validation-for="McpToken" class="text-danger"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label asp-for="ChatEndpoint" class="control-label mb-1"></label>

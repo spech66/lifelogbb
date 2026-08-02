@@ -209,7 +209,10 @@ WantedBy=multi-user.target
 
 LifelogBB exposes a built-in **Model Context Protocol (MCP)** server that lets AI assistants (e.g. Claude, GitHub Copilot, Cursor) read and interact with your life-log data directly.
 
-The MCP endpoint is available at `/mcp` and requires a **JWT Bearer token** for authentication. Generate a token via the Swagger UI (`/Swagger/`) using the `/api/authentication/token` endpoint with your configured password.
+The MCP endpoint is available at `/mcp` and accepts a **Bearer token** in the `Authorization` header. Two kinds of token work:
+
+* **MCP token (recommended).** Set a long random value under *Config → Chat / AI → MCP Token*. It does not expire, so MCP clients keep working without re-authenticating. Leave the field empty to disable this and allow JWT tokens only.
+* **JWT token.** Generate one via the Swagger UI (`/Swagger/`) using `POST /api/authentication` with your configured password. It expires after `Authentication:JwtToken:TokenTimeoutMinutes` (60 minutes by default).
 
 ### Example MCP configuration (Claude Desktop / mcp.json)
 
@@ -220,14 +223,16 @@ The MCP endpoint is available at `/mcp` and requires a **JWT Bearer token** for 
       "type": "http",
       "url": "https://your-lifelogbb-host/mcp",
       "headers": {
-        "Authorization": "Bearer <your-jwt-token>"
+        "Authorization": "Bearer <your-mcp-token>"
       }
     }
   }
 }
 ```
 
-Replace `https://your-lifelogbb-host` with the URL of your LifelogBB instance and `<your-jwt-token>` with the token obtained above.
+Replace `https://your-lifelogbb-host` with the URL of your LifelogBB instance and `<your-mcp-token>` with the token from the config page.
+
+The MCP token grants full read and write access to all of your life-log data and never expires. Only use it over HTTPS and treat it like a password.
 
 ## Development
 

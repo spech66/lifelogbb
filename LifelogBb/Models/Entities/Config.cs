@@ -54,6 +54,12 @@ namespace LifelogBb.Models.Entities
 
         public int ChatMaxToolRoundtrips { get; set; } = 10;
 
+        /// <summary>
+        /// Long lived token for MCP clients, sent as "Authorization: Bearer &lt;token&gt;".
+        /// Empty disables token authentication and only allows short lived JWT tokens.
+        /// </summary>
+        public string McpToken { get; set; } = "";
+
         public Config()
         {
             // Default constructor
