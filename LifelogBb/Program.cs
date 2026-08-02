@@ -148,7 +148,7 @@ namespace LifelogBb
             .AddCookie(options =>
             {
                 options.LoginPath = "/Account/Login/";
-                options.ExpireTimeSpan = TimeSpan.FromDays(double.Parse(config["Authentication:Cookie:ExpireDays"]));
+                options.ExpireTimeSpan = TimeSpan.FromDays(double.Parse(config.GetRequired("Authentication:Cookie:ExpireDays")));
             })
             .AddJwtBearer(options =>
             {
@@ -159,7 +159,7 @@ namespace LifelogBb
                     ValidateAudience = true,
                     ValidAudience = config["Authentication:JwtToken:Audience"],
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Authentication:JwtToken:SigningKey"]))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetRequired("Authentication:JwtToken:SigningKey")))
                 };
             })
             .AddScheme<AuthenticationSchemeOptions, McpTokenAuthenticationHandler>(
@@ -177,7 +177,7 @@ namespace LifelogBb
                     if (context.Request.Path.StartsWithSegments("/mcp"))
                         return McpTokenDefaults.AuthenticationScheme;
 
-                    string authorization = context.Request.Headers[HeaderNames.Authorization];
+                    string? authorization = context.Request.Headers[HeaderNames.Authorization];
                     if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer "))
                         return JwtBearerDefaults.AuthenticationScheme;
 

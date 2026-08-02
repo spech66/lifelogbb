@@ -1,4 +1,5 @@
 ﻿using LifelogBb.Models.Account;
+using LifelogBb.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
@@ -42,10 +43,10 @@ namespace LifelogBb.ApiControllers
 
                 var token = JwtHelper.GetJwtToken(
                     "Default user",
-                    Configuration["Authentication:JwtToken:SigningKey"],
-                    Configuration["Authentication:JwtToken:Issuer"],
-                    Configuration["Authentication:JwtToken:Audience"],
-                    TimeSpan.FromMinutes(double.Parse(Configuration["Authentication:JwtToken:TokenTimeoutMinutes"])),
+                    Configuration.GetRequired("Authentication:JwtToken:SigningKey"),
+                    Configuration.GetRequired("Authentication:JwtToken:Issuer"),
+                    Configuration.GetRequired("Authentication:JwtToken:Audience"),
+                    TimeSpan.FromMinutes(double.Parse(Configuration.GetRequired("Authentication:JwtToken:TokenTimeoutMinutes"))),
                     claims.ToArray()
                 );
 

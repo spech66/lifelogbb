@@ -282,7 +282,7 @@ namespace LifelogBb.Controllers
                 var calEvent = new CalendarEvent()
                 {
                     Uid = habit.Id.ToString(),
-                    Url = new Uri(Url.Action(nameof(Details), nameof(HabitsController).Replace("Controller", ""), new { id = habit.Id }, "https", Request.Host.Value)),
+                    Url = new Uri(Url.Action(nameof(Details), nameof(HabitsController).Replace("Controller", ""), new { id = habit.Id }, "https", Request.Host.Value)!),
                     Summary = habit.Name,
                     Description = habit.Description,
                     LastModified = new CalDateTime(habit.UpdatedAt),

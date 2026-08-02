@@ -251,7 +251,7 @@ namespace LifelogBb.Controllers
                 calendar.Todos.Add(new CalendarComponents.Todo()
                 {
                     Uid = todo.Id.ToString(),
-                    Url = new Uri(Url.Action(nameof(Details), nameof(TodosController).Replace("Controller", ""), new { id = todo.Id }, "https", Request.Host.Value)),
+                    Url = new Uri(Url.Action(nameof(Details), nameof(TodosController).Replace("Controller", ""), new { id = todo.Id }, "https", Request.Host.Value)!),
                     Summary = todo.Title,
                     Description = todo.Description,
                     Completed = todo.Completed.HasValue ? new CalDateTime(todo.Completed.Value) : null,

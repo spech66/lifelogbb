@@ -30,7 +30,7 @@ namespace Westwind.AspNetCore.Security
             string issuer,
             string audience,
             TimeSpan expiration,
-            Claim[] additionalClaims = null)
+            Claim[]? additionalClaims = null)
         {
             var claims = new[]
             {
@@ -73,7 +73,7 @@ namespace Westwind.AspNetCore.Security
             string issuer,
             string audience,
             TimeSpan expiration,
-            Claim[] additionalClaims = null)
+            Claim[]? additionalClaims = null)
         {
             var token = GetJwtToken(username, uniqueKey, issuer, audience, expiration, additionalClaims);
             return new JwtSecurityTokenHandler().WriteToken(token);

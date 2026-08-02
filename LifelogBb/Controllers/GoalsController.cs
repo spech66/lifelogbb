@@ -246,7 +246,7 @@ namespace LifelogBb.Controllers
                 calendar.Todos.Add(new Ical.Net.CalendarComponents.Todo()
                 {
                     Uid = goal.Id.ToString(),
-                    Url = new Uri(Url.Action(nameof(Details), nameof(GoalsController).Replace("Controller", ""), new { id = goal.Id }, "https", Request.Host.Value)),
+                    Url = new Uri(Url.Action(nameof(Details), nameof(GoalsController).Replace("Controller", ""), new { id = goal.Id }, "https", Request.Host.Value)!),
                     Summary = goal.Name,
                     Description = $"{goal.Description}\n\nInitial Value: {goal.InitialValue}\nCurrent Value: {goal.CurrentValue}\nTarget Value: {goal.TargetValue}\n",
                     Completed = goal.EndDate.HasValue ? new CalDateTime(goal.EndDate.Value) : null,
