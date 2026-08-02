@@ -46,7 +46,7 @@ namespace LifelogBb.ApiControllers
                     Configuration.GetRequired("Authentication:JwtToken:SigningKey"),
                     Configuration.GetRequired("Authentication:JwtToken:Issuer"),
                     Configuration.GetRequired("Authentication:JwtToken:Audience"),
-                    TimeSpan.FromMinutes(double.Parse(Configuration.GetRequired("Authentication:JwtToken:TokenTimeoutMinutes"))),
+                    TimeSpan.FromMinutes(Configuration.GetRequiredDouble("Authentication:JwtToken:TokenTimeoutMinutes")),
                     claims.ToArray()
                 );
 

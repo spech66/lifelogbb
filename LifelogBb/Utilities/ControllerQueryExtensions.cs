@@ -108,7 +108,8 @@ namespace LifelogBb.Utilities
             var prop = query.ElementType.GetProperty(field);
             if (prop == null) { return query; }
 
-            if (!double.TryParse(searchString, out var searchDouble))
+            // Accepts "80.5" and "80,5" alike, so the search box behaves the same on an en and a de machine.
+            if (!NumberParsing.TryParseDouble(searchString, out var searchDouble))
             {
                 return query;
             }

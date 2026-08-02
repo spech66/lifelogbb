@@ -20,4 +20,20 @@ public static class ConfigurationExtensions
 
         return value;
     }
+
+    /// <summary>
+    /// Returns the value for <paramref name="key"/> as a number and throws when it is missing or
+    /// not a valid number. Accepts both "1.5" and "1,5" so the same appsettings file works on an
+    /// en and a de machine.
+    /// </summary>
+    public static double GetRequiredDouble(this IConfiguration configuration, string key)
+    {
+        var value = configuration.GetRequired(key);
+        if (!NumberParsing.TryParseDouble(value, out var number))
+        {
+            throw new InvalidOperationException($"Configuration value \"{key}\" is not a valid number: \"{value}\".");
+        }
+
+        return number;
+    }
 }
