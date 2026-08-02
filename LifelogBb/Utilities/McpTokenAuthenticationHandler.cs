@@ -79,12 +79,29 @@ public class McpTokenAuthenticationHandler : AuthenticationHandler<Authenticatio
         return await Context.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
     }
 
-    protected override Task HandleChallengeAsync(AuthenticationProperties properties)
+    protected override async Task HandleChallengeAsync(AuthenticationProperties properties)
     {
         // Never redirect to the cookie login page, MCP clients need a plain 401.
         Response.StatusCode = StatusCodes.Status401Unauthorized;
-        Response.Headers[HeaderNames.WWWAuthenticate] = "Bearer";
-        return Task.CompletedTask;
+
+        var challenge = "Bearer";
+        try
+        {
+            // Read only, see HandleAuthenticateAsync. This is what points an OAuth capable client at
+            // the discovery documents (RFC 9728), so it stays quiet while OAuth is disabled.
+            if (await OAuthSettings.IsEnabledAsync(_context, Context.RequestAborted))
+            {
+                var baseUrl = PublicUrl.GetBaseUrl(Request);
+                challenge = $"Bearer resource_metadata=\"{baseUrl}{OAuthDefaults.ProtectedResourceMetadataPath}\"";
+            }
+        }
+        catch (Exception ex)
+        {
+            // A failed lookup, for example on an aborted request, must still produce a valid 401.
+            Logger.LogWarning(ex, "Could not read the MCP OAuth setting for the challenge header.");
+        }
+
+        Response.Headers[HeaderNames.WWWAuthenticate] = challenge;
     }
 
     protected override Task HandleForbiddenAsync(AuthenticationProperties properties)

@@ -164,9 +164,10 @@ namespace LifelogBb
             })
             .AddScheme<AuthenticationSchemeOptions, McpTokenAuthenticationHandler>(
                 McpTokenDefaults.AuthenticationScheme, McpTokenDefaults.DisplayName, options => { })
-            // No AddMcp() here. It only serves OAuth resource metadata discovery, which needs an OAuth
-            // server we do not have. Its handler intercepts /.well-known/oauth-protected-resource and
-            // throws when ResourceMetadata is unset. MCP clients authenticate with the MCP token or a JWT.
+            // No AddMcp() here. Its handler intercepts /.well-known/oauth-protected-resource and serves
+            // a single static document. OAuthController serves both RFC 9728 path variants itself and
+            // hides them while Config.McpOAuthEnabled is off, and McpTokenAuthenticationHandler adds the
+            // matching resource_metadata challenge. MCP clients authenticate with OAuth, the MCP token or a JWT.
             .AddPolicyScheme("JWT_OR_COOKIE", "JWT_OR_COOKIE", options =>
             {
                 options.ForwardDefaultSelector = context =>

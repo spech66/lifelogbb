@@ -60,6 +60,13 @@ namespace LifelogBb.Models.Entities
         /// </summary>
         public string McpToken { get; set; } = "";
 
+        /// <summary>
+        /// Enables the built-in OAuth 2.1 authorization server for MCP clients that cannot use a
+        /// static token (Claude connectors, Claude Code). Off by default: every OAuth endpoint
+        /// returns 404 and the /mcp 401 does not advertise resource metadata.
+        /// </summary>
+        public bool McpOAuthEnabled { get; set; } = false;
+
         public Config()
         {
             // Default constructor

@@ -1,0 +1,55 @@
+@model LifelogBb.Models.OAuth.AuthorizeViewModel
+
+@{
+    ViewData["Title"] = "Authorize access";
+}
+
+<div class="page page-center">
+    <div class="container container-tight py-4">
+        <div class="card card-md">
+            <div class="card-body">
+                <h2 class="h2 text-center mb-4">Authorize access</h2>
+                <p class="text-secondary">
+                    <strong>@Model.ClientName</strong> wants to connect to your LifelogBB instance.
+                </p>
+                <div class="alert alert-warning" role="alert">
+                    <h4 class="alert-title">This grants full access</h4>
+                    <div class="text-secondary">
+                        The application will be able to read and create all of your data: weights, journals,
+                        todos, goals, habits, quotes and trainings.
+                    </div>
+                </div>
+                <dl class="row">
+                    <dt class="col-4">Scope</dt>
+                    <dd class="col-8"><code>@Model.GrantedScope</code></dd>
+                    <dt class="col-4">Redirect to</dt>
+                    <dd class="col-8 text-break"><code>@Model.RedirectUri</code></dd>
+                </dl>
+                <p class="text-secondary">
+                    Only approve this if you started the connection yourself and recognise the address above.
+                </p>
+                @* Every value is posted back and revalidated against the database, nothing is trusted. *@
+                <form asp-action="Authorize" method="post">
+                    <input type="hidden" name="response_type" value="@Model.ResponseType" />
+                    <input type="hidden" name="client_id" value="@Model.ClientId" />
+                    <input type="hidden" name="redirect_uri" value="@Model.RedirectUri" />
+                    <input type="hidden" name="code_challenge" value="@Model.CodeChallenge" />
+                    <input type="hidden" name="code_challenge_method" value="@Model.CodeChallengeMethod" />
+                    <input type="hidden" name="state" value="@Model.State" />
+                    <input type="hidden" name="scope" value="@Model.Scope" />
+                    <input type="hidden" name="resource" value="@Model.Resource" />
+                    <div class="form-footer">
+                        <div class="d-flex">
+                            <button type="submit" name="decision" value="deny" class="btn btn-secondary">
+                                <i class="fas fa-ban icon"></i>Deny
+                            </button>
+                            <button type="submit" name="decision" value="approve" class="btn btn-primary ms-auto">
+                                <i class="fas fa-check icon"></i>Approve
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

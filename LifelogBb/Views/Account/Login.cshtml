@@ -10,6 +10,8 @@
             <div class="card-body">
                 <h2 class="h2 text-center mb-4">Login to your account</h2>
                 <form asp-action="Login">
+                    @* asp-action drops the query string, so the return URL has to travel in the body. *@
+                    <input type="hidden" asp-for="ReturnUrl" />
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="mb-2">
                         <label class="form-label">

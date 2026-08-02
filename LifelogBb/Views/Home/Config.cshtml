@@ -165,7 +165,15 @@
                     <div class="card-body">
                         <div class="alert alert-info" role="alert">
                             <h4 class="alert-title">MCP Server</h4>
-                            <div class="text-secondary">LifelogBB includes a built-in <strong>Model Context Protocol (MCP)</strong> server at <code>/mcp</code>. Connect AI assistants (e.g. Claude Desktop, GitHub Copilot, Cursor) by providing your instance URL and the MCP token below as an <code>Authorization: Bearer</code> header. Alternatively use a short lived JWT token obtained from <a href="/Swagger/" target="_blank">Swagger UI</a> via <code>POST /api/authentication</code>.</div>
+                            <div class="text-secondary">LifelogBB includes a built-in <strong>Model Context Protocol (MCP)</strong> server at <code>@($"{Context.Request.Scheme}://{Context.Request.Host}/mcp")</code>. Connect AI assistants (e.g. Claude Desktop, GitHub Copilot, Cursor) by providing your instance URL and the MCP token below as an <code>Authorization: Bearer</code> header. Alternatively use a short lived JWT token obtained from <a href="/Swagger/" target="_blank">Swagger UI</a> via <code>POST /api/authentication</code>, or enable OAuth below for clients that cannot use a static token.</div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-check form-switch">
+                                <input asp-for="McpOAuthEnabled" class="form-check-input" type="checkbox" />
+                                <span class="form-check-label">@Html.DisplayNameFor(m => m.McpOAuthEnabled)</span>
+                            </label>
+                            <div class="form-hint">Runs a built-in OAuth 2.1 authorization server so clients like Claude can sign in with your normal password instead of a static token. While disabled all OAuth endpoints return <code>404</code>. Requires a publicly reachable HTTPS URL for hosted clients.</div>
+                            <span asp-validation-for="McpOAuthEnabled" class="text-danger"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label asp-for="McpToken" class="control-label mb-1"></label>

@@ -18,15 +18,15 @@ namespace LifelogBb.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Login()
+        public IActionResult Login(string? returnUrl = null)
         {
-            return View();
+            return View(new LoginModel { ReturnUrl = returnUrl });
         }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login([Bind("Password")] LoginModel loginModel)
+        public async Task<IActionResult> Login([Bind("Password,ReturnUrl")] LoginModel loginModel)
         {
             // TODO Add documentation hint to secure password instead of using appsettings.json file
             // https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-6.0
@@ -44,11 +44,17 @@ namespace LifelogBb.Controllers
 
                 var authProperties = new AuthenticationProperties
                 {
-                    RedirectUri = "/Index",
                     IsPersistent = true,
                 };
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                // IsLocalUrl keeps a crafted ReturnUrl from turning the login page into an open redirect.
+                if (!string.IsNullOrEmpty(loginModel.ReturnUrl) && Url.IsLocalUrl(loginModel.ReturnUrl))
+                {
+                    return LocalRedirect(loginModel.ReturnUrl);
+                }
+
                 return RedirectToAction(actionName: "Index", controllerName: "Home");
             }
 

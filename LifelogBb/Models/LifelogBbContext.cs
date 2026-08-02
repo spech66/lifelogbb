@@ -20,6 +20,8 @@ namespace LifelogBb.Models
         public DbSet<Config> Configs { get; set; } = null!;
         public DbSet<ChatSession> ChatSessions { get; set; } = null!;
         public DbSet<ChatSessionMessage> ChatSessionMessages { get; set; } = null!;
+        public DbSet<OAuthClient> OAuthClients { get; set; } = null!;
+        public DbSet<OAuthGrant> OAuthGrants { get; set; } = null!;
 
         private readonly IConfiguration _configuration;
 
@@ -79,6 +81,7 @@ namespace LifelogBb.Models
             modelBuilder.Entity<Config>().Property(b => b.ChatSystemPrompt).HasDefaultValue("You are a helpful life-tracking assistant for LifelogBB. You can query the user's data (weights, journals, todos, goals, habits, quotes, strength trainings, endurance trainings) using the available tools. Summarize and analyze the data to help the user understand their progress and habits.");
             modelBuilder.Entity<Config>().Property(b => b.ChatMaxToolRoundtrips).HasDefaultValue(10);
             modelBuilder.Entity<Config>().Property(b => b.McpToken).HasDefaultValue("");
+            modelBuilder.Entity<Config>().Property(b => b.McpOAuthEnabled).HasDefaultValue(false);
 
             modelBuilder.Entity<ChatSession>()
                 .HasMany(s => s.Messages)
@@ -87,6 +90,17 @@ namespace LifelogBb.Models
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Journal>().HasIndex(j => j.Date).IsUnique();
+
+            modelBuilder.Entity<OAuthClient>().HasIndex(c => c.ClientId).IsUnique();
+            modelBuilder.Entity<OAuthGrant>().HasIndex(g => g.TokenHash).IsUnique();
+            modelBuilder.Entity<OAuthGrant>().HasIndex(g => g.SessionId);
+            modelBuilder.Entity<OAuthGrant>().HasIndex(g => g.ExpiresAt);
+
+            modelBuilder.Entity<OAuthClient>()
+                .HasMany(c => c.Grants)
+                .WithOne(g => g.Client)
+                .HasForeignKey(g => g.OAuthClientId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         public void BeginTransaction()

@@ -1,0 +1,28 @@
+@model LifelogBb.Models.OAuth.OAuthErrorViewModel
+
+@{
+    ViewData["Title"] = "Authorization failed";
+}
+
+<div class="page page-center">
+    <div class="container container-tight py-4">
+        <div class="card card-md">
+            <div class="card-body">
+                <h2 class="h2 text-center mb-4">Authorization failed</h2>
+                <div class="alert alert-danger" role="alert">
+                    <h4 class="alert-title">@Model.Error</h4>
+                    <div class="text-secondary">@Model.Description</div>
+                </div>
+                @* The redirect target of a failed request is unverified, so nothing links back to it. *@
+                <p class="text-secondary">
+                    Nothing was shared. Start the connection again from the application you were using.
+                </p>
+                <div class="form-footer">
+                    <a class="btn btn-secondary w-100" asp-controller="Home" asp-action="Index">
+                        <i class="fas fa-arrow-circle-left icon"></i>Back to LifelogBB
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

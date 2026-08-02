@@ -84,6 +84,8 @@ dotnet watch
 All migrations are bundled in the `efbundle` file. Run it with the `--connection` argument.
 For Windows the `efbundle` is called `efbundle.exe`.
 
+Regenerate the bundle with `dotnet ef migrations bundle` whenever a migration is added, otherwise a deployment misses the new tables.
+
 ```sh
 # Install dotnet-ef
 dotnet tool install --global dotnet-ef | echo "already installed"
@@ -209,10 +211,13 @@ WantedBy=multi-user.target
 
 LifelogBB exposes a built-in **Model Context Protocol (MCP)** server that lets AI assistants (e.g. Claude, GitHub Copilot, Cursor) read and interact with your life-log data directly.
 
-The MCP endpoint is available at `/mcp` and accepts a **Bearer token** in the `Authorization` header. Two kinds of token work:
+The MCP endpoint is available at `/mcp` and accepts a **Bearer token** in the `Authorization` header. Three ways to get one, depending on what the client supports:
 
-* **MCP token (recommended).** Set a long random value under *Config → Chat / AI → MCP Token*. It does not expire, so MCP clients keep working without re-authenticating. Leave the field empty to disable this and allow JWT tokens only.
-* **JWT token.** Generate one via the Swagger UI (`/Swagger/`) using `POST /api/authentication` with your configured password. It expires after `Authentication:JwtToken:TokenTimeoutMinutes` (60 minutes by default).
+* **MCP token** — for clients you configure by hand with a config file or a header field (Claude Desktop, Copilot, Cursor). Set a long random value under *Config → Chat / AI → MCP Token*. It does not expire, so the client keeps working without re-authenticating. Leave the field empty to reject static tokens and allow the other two only.
+* **OAuth** — for clients that sign in themselves and offer no field to paste a token into, such as claude.ai connectors and Claude Code. Off by default, see [OAuth](#oauth-claude-connectors-and-claude-code) below.
+* **JWT token** — for scripts and one-off testing. Generate one via the Swagger UI (`/Swagger/`) using `POST /api/authentication` with your configured password. It expires after `Authentication:JwtToken:TokenTimeoutMinutes` (60 minutes by default).
+
+All three work at the same time and none of them disables the others. The MCP token is checked first on `/mcp`; anything else falls through to JWT validation, which is also what OAuth access tokens are.
 
 ### Example MCP configuration (Claude Desktop / mcp.json)
 
@@ -232,7 +237,29 @@ The MCP endpoint is available at `/mcp` and accepts a **Bearer token** in the `A
 
 Replace `https://your-lifelogbb-host` with the URL of your LifelogBB instance and `<your-mcp-token>` with the token from the config page.
 
-The MCP token grants full read and write access to all of your life-log data and never expires. Only use it over HTTPS and treat it like a password.
+The MCP token grants full read and write access to all of your life-log data and never expires. Only use it over HTTPS and treat it like a password. Every client presents the same value, so there is no way to cut off one of them: replacing the token in the config disconnects all of them at once. OAuth is the better choice if that matters, since each client gets its own refresh token and deleting its row from `OAuthClients` stops only that client from renewing.
+
+### OAuth (Claude connectors and Claude Code)
+
+Claude connects to MCP servers with OAuth and offers no field for a static token, so LifelogBB ships a small built-in OAuth 2.1 authorization server. It is **off by default**. Enable it under *Config → Chat / AI → Enable MCP OAuth*; while it is off, every OAuth endpoint returns `404` and the `/mcp` challenge does not advertise it.
+
+Once enabled, point the client at your instance and it discovers the rest on its own:
+
+```sh
+claude mcp add --transport http lifelogbb https://your-lifelogbb-host/mcp
+```
+
+For a claude.ai custom connector use *Settings → Connectors → Add custom connector* with the same `/mcp` URL. Anthropic's servers perform the discovery and token calls, so the instance needs a **publicly reachable HTTPS URL with a valid certificate** — `localhost` and self-signed certificates will not work there.
+
+The client registers itself, sends you to the normal LifelogBB login, and shows a consent screen before any token is issued. Nothing about your password leaves the instance. The endpoints involved are `/.well-known/oauth-protected-resource`, `/.well-known/oauth-authorization-server`, `/oauth/register`, `/oauth/authorize` and `/oauth/token`.
+
+Deliberate limitations of this minimal implementation:
+
+* Access tokens are the same JWTs `POST /api/authentication` issues, so they are also valid on the REST API and Swagger. With a single account this grants nothing extra, but tokens are not bound to the `/mcp` resource (RFC 8707).
+* There is a single scope that always grants full read and write access. Requested scopes are ignored.
+* Clients are public, there are no client secrets and no client configuration endpoint (RFC 7592). Registered clients are managed by editing the database.
+* There is no token introspection or revocation. Access tokens stay valid until they expire; turning the toggle off stops new ones but does not invalidate outstanding ones. Rotating `Authentication:JwtToken:SigningKey` invalidates everything immediately.
+* There is no rate limiting. If the instance is exposed to the internet, add something like nginx `limit_req` in front of `/oauth/`.
 
 ## Development
 

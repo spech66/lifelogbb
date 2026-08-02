@@ -74,6 +74,9 @@ namespace LifelogBb.Models.Home
         [Display(Name = "MCP Token")]
         public string McpToken { get; set; } = "";
 
+        [Display(Name = "Enable MCP OAuth")]
+        public bool McpOAuthEnabled { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (UnitsType == Measurements.Metric)
