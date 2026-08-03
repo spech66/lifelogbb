@@ -38,12 +38,15 @@ namespace LifelogBb.ApiServices
         {
             EnsureSortableField(sortOrder);
 
+            if (limit is < 1)
+                throw new ArgumentException($"Limit must be at least 1 but was {limit}.");
+
             IQueryable<TEntity> query = _repository.Query
                 .FilterByGroup<TEntity>(filterJson, throwOnInvalidFilter: true)
                 .SortByName(sortOrder ?? string.Empty, DefaultSortOrder);
 
             if (limit.HasValue)
-                query = query.Take(Math.Max(1, limit.Value));
+                query = query.Take(limit.Value);
 
             var entities = await query.ToListAsync();
             return _mapper.Map<List<OUTP>>(entities);
@@ -52,14 +55,18 @@ namespace LifelogBb.ApiServices
         /// <summary>
         /// SortByName silently falls back to its default for unknown fields. Callers of the API and
         /// the MCP tools get a clear error instead, so a typo does not look like a successful sort.
+        /// Checked against the EF model rather than the CLR type, because computed properties such
+        /// as Weight.BmiOverweight are not mapped to a column and would only fail once EF tries to
+        /// translate the query.
         /// </summary>
-        private static void EnsureSortableField(string? sortOrder)
+        private void EnsureSortableField(string? sortOrder)
         {
             if (string.IsNullOrWhiteSpace(sortOrder))
                 return;
 
             var field = sortOrder.EndsWith("_desc") ? sortOrder[..^5] : sortOrder;
-            if (typeof(TEntity).GetProperty(field) == null)
+            var entityType = _repository.Context.Model.FindEntityType(typeof(TEntity));
+            if (entityType?.FindProperty(field) == null)
                 throw new ArgumentException($"Unknown sort field '{field}'.");
         }
 

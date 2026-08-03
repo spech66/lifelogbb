@@ -242,7 +242,7 @@ Every area (weights, journals, todos, goals, habits, quotes, strength and endura
 | --- | --- |
 | `filter` | A JSON filter expression restricting which entries are returned. |
 | `sort` | Field to sort by. Append `_desc` for descending order, e.g. `CreatedAt_desc`. An unknown field is rejected instead of being ignored. |
-| `limit` | Maximum number of entries to return. |
+| `limit` | Maximum number of entries to return. Must be at least 1. |
 
 Whenever one of these parameters is used the results are sorted, so a `limit` returns a predictable set. Without an explicit `sort` the newest entries come first — by `CreatedAt` for most areas, and by the journal `Date` for journals, since that is the day an entry is about rather than the day it was written. Combining `sort` and `limit` is the way to ask for the latest entries, for example `limit` 1 for the current weight or the last workout, instead of fetching an entire area.
 
