@@ -20,13 +20,13 @@ namespace LifelogBb.ApiControllers
 
         // GET: api/[controller]
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<OUTP>>> GetAll([FromQuery] string? filter)
+        public virtual async Task<ActionResult<IEnumerable<OUTP>>> GetAll([FromQuery] string? filter, [FromQuery] string? sort, [FromQuery] int? limit)
         {
-            if (!string.IsNullOrWhiteSpace(filter))
+            if (!string.IsNullOrWhiteSpace(filter) || !string.IsNullOrWhiteSpace(sort) || limit.HasValue)
             {
                 try
                 {
-                    return await _service.GetAll(filter);
+                    return await _service.GetAll(filter, sort, limit);
                 }
                 catch (ArgumentException e)
                 {

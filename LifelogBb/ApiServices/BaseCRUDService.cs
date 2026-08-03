@@ -11,7 +11,7 @@ namespace LifelogBb.ApiServices
     {
         protected readonly IRepository<TEntity> _repository;
         protected readonly IMapper _mapper;
-        
+
         public BaseCRUDService(IRepository<TEntity> repository, IMapper mapper)
         {
             _repository = repository;
@@ -24,11 +24,43 @@ namespace LifelogBb.ApiServices
             return _mapper.Map<List<OUTP>>(entities);
         }
 
-        public virtual async Task<ActionResult<IEnumerable<OUTP>>> GetAll(string? filterJson)
+        /// <summary>
+        /// Sort order applied when the caller does not ask for one. Entities with their own date
+        /// field override this so that "newest" means the same here as it does in the UI.
+        /// </summary>
+        protected virtual string DefaultSortOrder => $"{nameof(BaseEntity.CreatedAt)}_desc";
+
+        /// <summary>
+        /// Filters, sorts and limits in one query. Results are always ordered so that a limit is
+        /// deterministic; without an explicit sortOrder the newest entries come first.
+        /// </summary>
+        public virtual async Task<ActionResult<IEnumerable<OUTP>>> GetAll(string? filterJson, string? sortOrder = null, int? limit = null)
         {
-            var query = _repository.Query.FilterByGroup<TEntity>(filterJson, throwOnInvalidFilter: true);
+            EnsureSortableField(sortOrder);
+
+            IQueryable<TEntity> query = _repository.Query
+                .FilterByGroup<TEntity>(filterJson, throwOnInvalidFilter: true)
+                .SortByName(sortOrder ?? string.Empty, DefaultSortOrder);
+
+            if (limit.HasValue)
+                query = query.Take(Math.Max(1, limit.Value));
+
             var entities = await query.ToListAsync();
             return _mapper.Map<List<OUTP>>(entities);
+        }
+
+        /// <summary>
+        /// SortByName silently falls back to its default for unknown fields. Callers of the API and
+        /// the MCP tools get a clear error instead, so a typo does not look like a successful sort.
+        /// </summary>
+        private static void EnsureSortableField(string? sortOrder)
+        {
+            if (string.IsNullOrWhiteSpace(sortOrder))
+                return;
+
+            var field = sortOrder.EndsWith("_desc") ? sortOrder[..^5] : sortOrder;
+            if (typeof(TEntity).GetProperty(field) == null)
+                throw new ArgumentException($"Unknown sort field '{field}'.");
         }
 
         public virtual async Task<OUTP> GetById(long id)
