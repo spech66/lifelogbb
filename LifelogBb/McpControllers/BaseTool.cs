@@ -15,11 +15,9 @@ namespace LifelogBb.McpControllers
             _service = service;
         }
 
-        protected async Task<IEnumerable<OUTP>> GetAllFiltered(string? filter)
+        protected async Task<IEnumerable<OUTP>> GetAllFiltered(string? filter, string? sort, int? limit)
         {
-            var result = filter != null
-                ? await _service.GetAll(filter)
-                : await _service.GetAll();
+            var result = await _service.GetAll(filter, sort, limit);
             return result.Value ?? [];
         }
     }
