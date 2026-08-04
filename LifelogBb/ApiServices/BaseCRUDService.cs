@@ -36,7 +36,7 @@ namespace LifelogBb.ApiServices
         /// </summary>
         public virtual async Task<ActionResult<IEnumerable<OUTP>>> GetAll(string? filterJson, string? sortOrder = null, int? limit = null)
         {
-            EnsureSortableField(sortOrder);
+            sortOrder = EnsureSortableField(sortOrder);
 
             if (limit is < 1)
                 throw new ArgumentException($"Limit must be at least 1 but was {limit}.");
@@ -58,16 +58,28 @@ namespace LifelogBb.ApiServices
         /// Checked against the EF model rather than the CLR type, because computed properties such
         /// as Weight.BmiOverweight are not mapped to a column and would only fail once EF tries to
         /// translate the query.
+        /// Returns the sortOrder with the field's canonical (correctly-cased) name, since SortByName
+        /// resolves properties via case-sensitive reflection and would otherwise silently fall back
+        /// to the default sort for a field that only differs by case (e.g. "title" vs "Title").
         /// </summary>
-        private void EnsureSortableField(string? sortOrder)
+        private string? EnsureSortableField(string? sortOrder)
         {
             if (string.IsNullOrWhiteSpace(sortOrder))
-                return;
+                return sortOrder;
 
-            var field = sortOrder.EndsWith("_desc") ? sortOrder[..^5] : sortOrder;
+            var isDescending = sortOrder.EndsWith("_desc");
+            var field = isDescending ? sortOrder[..^5] : sortOrder;
             var entityType = _repository.Context.Model.FindEntityType(typeof(TEntity));
-            if (entityType?.FindProperty(field) == null)
-                throw new ArgumentException($"Unknown sort field '{field}'.");
+            var property = entityType?.GetProperties()
+                .FirstOrDefault(p => string.Equals(p.Name, field, StringComparison.OrdinalIgnoreCase));
+            if (property == null)
+            {
+                var validFields = entityType?.GetProperties().Select(p => p.Name) ?? Enumerable.Empty<string>();
+                throw new ArgumentException(
+                    $"Unknown sort field '{field}'. Valid fields are: {string.Join(", ", validFields)}.");
+            }
+
+            return isDescending ? $"{property.Name}_desc" : property.Name;
         }
 
         public virtual async Task<OUTP> GetById(long id)
