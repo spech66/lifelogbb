@@ -33,6 +33,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Transitive dependencies pinned to the first patched version of a security advisory.
+         Remove each entry once the package that pulls it in ships the fixed version itself.
+         Microsoft.OpenApi        <- Swashbuckle.AspNetCore                     GHSA-v5pm-xwqc-g5wc
+         SQLitePCLRaw.lib.*       <- Microsoft.EntityFrameworkCore.Sqlite       GHSA-2m69-gcr7-jv3q
+         NuGet.Packaging/Protocol <- Microsoft.VisualStudio.Web.CodeGeneration  GHSA-g4vj-cjjj-v7hg -->
+    <PackageReference Include="Microsoft.OpenApi" Version="2.7.5" />
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.12" />
+    <PackageReference Include="NuGet.Packaging" Version="6.12.5" />
+    <PackageReference Include="NuGet.Protocol" Version="6.12.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Migrations\" />
   </ItemGroup>
 

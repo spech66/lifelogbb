@@ -15,7 +15,7 @@ namespace LifelogBb.Utilities
             var tagsBucketLists = _context.BucketLists.Select(s => s.Tags).Distinct();
 
             var tags = tagGoals.Union(tagsHabits).Union(tagsJournal).Union(tagsQuotes).Union(tagsTodos).Union(tagsBucketLists).Distinct();            
-            var tagsList = tags.ToList().Where(s => s != null).SelectMany(s => s.Split(',')).Distinct();
+            var tagsList = tags.ToList().OfType<string>().SelectMany(s => s.Split(',')).Distinct();
             var tagsText = string.Join(",", tagsList);
             
             controller.ViewData["TagsList"] = tagsText;

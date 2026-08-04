@@ -64,7 +64,7 @@ namespace LifelogBb.Utilities
         }
 
         // https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/advanced?view=aspnetcore-7.0#use-dynamic-linq-to-simplify-code
-        public static IOrderedQueryable<T> SortByName<T>(this IQueryable<T> query, string sortOrder, string defaultSort = "CreatedAt_desc")
+        public static IOrderedQueryable<T> SortByName<T>(this IQueryable<T> query, string sortOrder, string defaultSort = "CreatedAt_desc") where T : class
         {
             // Sorting name is not specified or on the entity => fallback to default to prevent errors
             if (string.IsNullOrEmpty(sortOrder) || query.ElementType.GetProperty(sortOrder.Replace("_desc", "")) == null)
@@ -89,7 +89,7 @@ namespace LifelogBb.Utilities
             }
         }
 
-        public static IQueryable<T> FilterByStringProps<T>(this IQueryable<T> query, string field, string searchString)
+        public static IQueryable<T> FilterByStringProps<T>(this IQueryable<T> query, string field, string searchString) where T : class
         {
             if (string.IsNullOrEmpty(field) || string.IsNullOrEmpty(searchString)) { return query; }
 
@@ -101,14 +101,15 @@ namespace LifelogBb.Utilities
             return query.Where(e => EF.Property<string>(e, field).Contains(searchString));
         }
 
-        public static IQueryable<T> FilterByDoubleProps<T>(this IQueryable<T> query, string field, string searchString, double range)
+        public static IQueryable<T> FilterByDoubleProps<T>(this IQueryable<T> query, string field, string searchString, double range) where T : class
         {
             if (string.IsNullOrEmpty(field) || string.IsNullOrEmpty(searchString)) { return query; }
 
             var prop = query.ElementType.GetProperty(field);
             if (prop == null) { return query; }
 
-            if (!double.TryParse(searchString, out var searchDouble))
+            // Accepts "80.5" and "80,5" alike, so the search box behaves the same on an en and a de machine.
+            if (!NumberParsing.TryParseDouble(searchString, out var searchDouble))
             {
                 return query;
             }

@@ -8,7 +8,7 @@
         {
             if (item.SubItems is not null && item.SubItems.Count > 0)
             {
-                var hasActiveSubItem = item.SubItems.Any(x => x.Controller == ViewContext.RouteData.Values["controller"].ToString() && x.Action == ViewContext.RouteData.Values["action"].ToString());
+                var hasActiveSubItem = item.SubItems.Any(x => x.Controller == ViewContext.RouteData.Values["controller"]?.ToString() && x.Action == ViewContext.RouteData.Values["action"]?.ToString());
                 var activeClass = hasActiveSubItem ? "active" : "";
                 var showSubItems = hasActiveSubItem ? "true" : "false";
                 var showSubItemsClass = hasActiveSubItem ? "show" : "";
@@ -22,7 +22,7 @@
                             <div class="dropdown-menu-column">
                                 @foreach(var subItem in item.SubItems)
                                 {
-                                    var isSubActive = subItem.Controller == ViewContext.RouteData.Values["controller"].ToString() && subItem.Action == ViewContext.RouteData.Values["action"].ToString();
+                                    var isSubActive = subItem.Controller == ViewContext.RouteData.Values["controller"]?.ToString() && subItem.Action == ViewContext.RouteData.Values["action"]?.ToString();
                                     var subActiveClass = isSubActive ? "active" : "";
                                     <a class="dropdown-item @subActiveClass" asp-area="" asp-controller="@subItem.Controller" asp-action="@subItem.Action">
                                         <span class="nav-link-icon d-md-none d-lg-inline-block"><i class="@subItem.Icon"></i></span>

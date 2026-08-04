@@ -212,11 +212,11 @@ namespace LifelogBb.Controllers
 
             // Add Due date for todos on forDay (Set start date and end date to due date to show as block)
             var todos = await _context.Todos.Where(t => !t.IsCompleted && t.DueDate != null && t.DueDate.Value.Date == forDay).ToListAsync();
-            model.Events.AddRange(todos.ConvertAll(t => new CalendarViewModelEvent { Type = EntityType.Todo, Text = t.Title, StartDate = t.DueDate.Value, EndDate = t.DueDate.Value }));
+            model.Events.AddRange(todos.ConvertAll(t => new CalendarViewModelEvent { Type = EntityType.Todo, Text = t.Title, StartDate = t.DueDate!.Value, EndDate = t.DueDate!.Value }));
 
             // Add End date for goals on forDay (Set start date to end date to show as block)
             var goals = await _context.Goals.Where(t => !t.IsCompleted && t.EndDate != null && t.EndDate.Value.Date == forDay).ToListAsync();
-            model.Events.AddRange(goals.ConvertAll(g => new CalendarViewModelEvent { Type = EntityType.Goal, Text = g.Name, StartDate = g.EndDate.Value, EndDate = g.EndDate.Value }));
+            model.Events.AddRange(goals.ConvertAll(g => new CalendarViewModelEvent { Type = EntityType.Goal, Text = g.Name, StartDate = g.EndDate!.Value, EndDate = g.EndDate!.Value }));
 
             return View(model);
         }
@@ -266,6 +266,12 @@ namespace LifelogBb.Controllers
             var habitList = new List<Habit>();
             foreach (var habit in allHabits)
             {
+                // Callers already filter these out, but the method has to hold up on its own.
+                if (!habit.StartDate.HasValue || !habit.EndDate.HasValue || string.IsNullOrEmpty(habit.RecurrenceRules))
+                {
+                    continue;
+                }
+
                 var calendar = new Ical.Net.Calendar();
                 calendar.Events.Add(new Ical.Net.CalendarComponents.CalendarEvent
                 {
