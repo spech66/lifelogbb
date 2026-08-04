@@ -5,7 +5,7 @@ namespace LifelogBb.Interfaces
     public interface IBaseCRUDService<INP, OUTP>
     {
         public Task<ActionResult<IEnumerable<OUTP>>> GetAll();
-        public Task<ActionResult<IEnumerable<OUTP>>> GetAll(string? filterJson);
+        public Task<ActionResult<IEnumerable<OUTP>>> GetAll(string? filterJson, string? sortOrder = null, int? limit = null);
         public Task<OUTP> GetById(long id);
         public Task<OUTP> Create(INP inputModel);
         public Task<OUTP> Update(long id, INP inputModel);

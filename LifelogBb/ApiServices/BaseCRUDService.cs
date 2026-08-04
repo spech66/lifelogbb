@@ -11,7 +11,7 @@ namespace LifelogBb.ApiServices
     {
         protected readonly IRepository<TEntity> _repository;
         protected readonly IMapper _mapper;
-        
+
         public BaseCRUDService(IRepository<TEntity> repository, IMapper mapper)
         {
             _repository = repository;
@@ -24,11 +24,62 @@ namespace LifelogBb.ApiServices
             return _mapper.Map<List<OUTP>>(entities);
         }
 
-        public virtual async Task<ActionResult<IEnumerable<OUTP>>> GetAll(string? filterJson)
+        /// <summary>
+        /// Sort order applied when the caller does not ask for one. Entities with their own date
+        /// field override this so that "newest" means the same here as it does in the UI.
+        /// </summary>
+        protected virtual string DefaultSortOrder => $"{nameof(BaseEntity.CreatedAt)}_desc";
+
+        /// <summary>
+        /// Filters, sorts and limits in one query. Results are always ordered so that a limit is
+        /// deterministic; without an explicit sortOrder the newest entries come first.
+        /// </summary>
+        public virtual async Task<ActionResult<IEnumerable<OUTP>>> GetAll(string? filterJson, string? sortOrder = null, int? limit = null)
         {
-            var query = _repository.Query.FilterByGroup<TEntity>(filterJson, throwOnInvalidFilter: true);
+            sortOrder = EnsureSortableField(sortOrder);
+
+            if (limit is < 1)
+                throw new ArgumentException($"Limit must be at least 1 but was {limit}.");
+
+            IQueryable<TEntity> query = _repository.Query
+                .FilterByGroup<TEntity>(filterJson, throwOnInvalidFilter: true)
+                .SortByName(sortOrder ?? string.Empty, DefaultSortOrder);
+
+            if (limit.HasValue)
+                query = query.Take(limit.Value);
+
             var entities = await query.ToListAsync();
             return _mapper.Map<List<OUTP>>(entities);
+        }
+
+        /// <summary>
+        /// SortByName silently falls back to its default for unknown fields. Callers of the API and
+        /// the MCP tools get a clear error instead, so a typo does not look like a successful sort.
+        /// Checked against the EF model rather than the CLR type, because computed properties such
+        /// as Weight.BmiOverweight are not mapped to a column and would only fail once EF tries to
+        /// translate the query.
+        /// Returns the sortOrder with the field's canonical (correctly-cased) name, since SortByName
+        /// resolves properties via case-sensitive reflection and would otherwise silently fall back
+        /// to the default sort for a field that only differs by case (e.g. "title" vs "Title").
+        /// </summary>
+        private string? EnsureSortableField(string? sortOrder)
+        {
+            if (string.IsNullOrWhiteSpace(sortOrder))
+                return sortOrder;
+
+            var isDescending = sortOrder.EndsWith("_desc");
+            var field = isDescending ? sortOrder[..^5] : sortOrder;
+            var entityType = _repository.Context.Model.FindEntityType(typeof(TEntity));
+            var property = entityType?.GetProperties()
+                .FirstOrDefault(p => string.Equals(p.Name, field, StringComparison.OrdinalIgnoreCase));
+            if (property == null)
+            {
+                var validFields = entityType?.GetProperties().Select(p => p.Name) ?? Enumerable.Empty<string>();
+                throw new ArgumentException(
+                    $"Unknown sort field '{field}'. Valid fields are: {string.Join(", ", validFields)}.");
+            }
+
+            return isDescending ? $"{property.Name}_desc" : property.Name;
         }
 
         public virtual async Task<OUTP> GetById(long id)

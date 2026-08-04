@@ -1,4 +1,5 @@
-﻿using LifelogBb.ApiDTOs.Quotes;
+﻿using LifelogBb.ApiDTOs;
+using LifelogBb.ApiDTOs.Quotes;
 using LifelogBb.ApiServices;
 using ModelContextProtocol.Server;
 using System.ComponentModel;
@@ -12,17 +13,34 @@ namespace LifelogBb.McpControllers
         {
         }
 
-        [McpServerTool(Name = "GetAllQuotes", Title = "Get All Quotes"), Description("Get all quote data. Optionally filter by providing a JSON filter expression.")]
-        public async Task<IEnumerable<QuoteOutput>> McpGetAll([Description("Optional JSON filter expression")] string? filter = null)
+        [McpServerTool(Name = "GetAllQuotes", Title = "Get All Quotes", ReadOnly = true, OpenWorld = false), Description("Get all quote data, newest first. Optionally filter by providing a JSON filter expression, sort by a field, and limit how many entries are returned.")]
+        public async Task<IEnumerable<QuoteOutput>> McpGetAll(
+            [Description("Optional JSON filter expression")] string? filter = null,
+            [Description("Optional sort field, for example \"CreatedAt\" ascending or \"CreatedAt_desc\" descending. Defaults to newest first.")] string? sort = null,
+            [Description("Optional maximum number of entries to return. Combine with sort to fetch only the entries you need.")] int? limit = null)
         {
-            return await GetAllFiltered(filter);
+            return await GetAllFiltered(filter, sort, limit);
         }
 
-        [McpServerTool(Name = "CreateQuote", Title = "Create quote entry"), Description("Create a new quote entry")]
+        [McpServerTool(Name = "CreateQuote", Title = "Create quote entry", Destructive = false, OpenWorld = false), Description("Create a new quote entry")]
         public async Task<QuoteOutput?> Create(QuoteInput model)
         {
             var result = await _service.Create(model);
             return result;
+        }
+
+        [McpServerTool(Name = "UpdateQuote", Title = "Update quote entry", Destructive = true, Idempotent = true, OpenWorld = false), Description("Update an existing quote entry. All fields of the entry are replaced by the provided values.")]
+        public async Task<QuoteOutput?> Update([Description("Id of the quote entry to update")] long id, QuoteInput model)
+        {
+            var result = await _service.Update(id, model);
+            return result;
+        }
+
+        [McpServerTool(Name = "DeleteQuote", Title = "Delete quote entry", Destructive = true, Idempotent = true, OpenWorld = false), Description("Delete an existing quote entry")]
+        public async Task<DeleteOutput?> Delete([Description("Id of the quote entry to delete")] long id)
+        {
+            var deletedId = await _service.Delete(id);
+            return deletedId == null ? null : new DeleteOutput() { Id = deletedId.Value };
         }
     }
 }

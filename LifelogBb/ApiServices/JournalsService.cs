@@ -10,5 +10,9 @@ namespace LifelogBb.ApiServices
         public JournalsService(IRepository<Journal> repository, IMapper mapper) : base(repository, mapper)
         {
         }
+
+        // A journal carries the day it is about, which can differ from the day it was written.
+        // Matches the sort order of the journal list in the UI.
+        protected override string DefaultSortOrder => $"{nameof(Journal.Date)}_desc";
     }
 }

@@ -234,6 +234,38 @@ Replace `https://your-lifelogbb-host` with the URL of your LifelogBB instance an
 
 The MCP token grants full read and write access to all of your life-log data and never expires. Only use it over HTTPS and treat it like a password.
 
+### Filtering, sorting and limiting results
+
+Every area (weights, journals, todos, goals, habits, quotes, strength and endurance trainings) offers `GetAll`, `Create`, `Update` and `Delete` tools. The `GetAll` tools take three optional parameters, which are also available on the REST API as the `filter`, `sort` and `limit` query parameters.
+
+| Parameter | Description |
+| --- | --- |
+| `filter` | A JSON filter expression restricting which entries are returned. |
+| `sort` | Field to sort by. Append `_desc` for descending order, e.g. `CreatedAt_desc`. An unknown field is rejected instead of being ignored. |
+| `limit` | Maximum number of entries to return. Must be at least 1. |
+
+Whenever one of these parameters is used the results are sorted, so a `limit` returns a predictable set. Without an explicit `sort` the newest entries come first — by `CreatedAt` for most areas, and by the journal `Date` for journals, since that is the day an entry is about rather than the day it was written. Combining `sort` and `limit` is the way to ask for the latest entries, for example `limit` 1 for the current weight or the last workout, instead of fetching an entire area.
+
+The `filter` expression is a group of conditions, optionally nested via `groups`:
+
+```json
+{
+  "operator": "And",
+  "conditions": [
+    { "field": "BodyWeight", "operator": "GreaterThan", "value": "80" }
+  ]
+}
+```
+
+`operator` on the group is `And` or `Or`. A condition supports `Equal`, `NotEqual`, `GreaterThan`, `GreaterThanOrEqual`, `LessThan`, `LessThanOrEqual`, `Contains`, `NotContains`, `In` and `NotIn`.
+
+The same options on the REST API:
+
+```sh
+curl -H "Authorization: Bearer <your-token>" \
+  "https://your-lifelogbb-host/api/weights?sort=CreatedAt_desc&limit=1"
+```
+
 ## Development
 
 Clone the repository and either install [Visual Studio](https://visualstudio.microsoft.com/) or just the [dotnet tools](https://dotnet.microsoft.com/en-us/learn/aspnet/hello-world-tutorial/install).
