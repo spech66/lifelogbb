@@ -9,7 +9,8 @@ ToDos and Features for LifelogBB.
 
 ### In Progress :construction:
 
-Not started yet.
+- [ ] Improve strenght training inputs
+- [ ] Improve strength training charts
 
 ### Done :heavy_check_mark:
 
