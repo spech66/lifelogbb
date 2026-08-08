@@ -1,0 +1,6 @@
+@model string?
+
+@foreach (var reminder in LifelogBb.Utilities.AlarmHelper.ToTextParts(Model))
+{
+    <span class="badge text-bg-azure">@reminder</span>
+}

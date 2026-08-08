@@ -19,6 +19,8 @@ namespace LifelogBb.ApiDTOs.Todos
 
         public DateTime? DueDate { get; set; }
 
+        public string? Alarms { get; set; }
+
         public int Progress { get; set; }
 
         public bool IsCompleted { get; set; }

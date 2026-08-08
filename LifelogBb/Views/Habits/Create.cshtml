@@ -35,6 +35,10 @@
                         @Html.EditorFor(model => model.RecurrenceRules, "RecurrenceRules")
                         <span asp-validation-for="RecurrenceRules" class="text-danger"></span>
                     </div>
+                    <div class="form-group mb-3">
+                        @Html.EditorFor(model => model.Alarms, "Alarms")
+                        <span asp-validation-for="Alarms" class="text-danger"></span>
+                    </div>
                     <div class="mb-3 mt-3">
                         <label class="form-group form-check form-switch">
                             <input class="form-check-input" asp-for="IsCompleted" type="checkbox">
@@ -70,6 +74,7 @@
 @section Scripts {
     <script src="~/lib/rrule/dist/es5/rrule.min.js"></script>
     <script src="~/js/rruleeditor.js"></script>
+    <script src="~/js/alarmeditor.js"></script>
 
     <script src="~/lib/tagify/tagify.min.js"></script>
     <script>

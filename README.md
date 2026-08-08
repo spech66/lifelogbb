@@ -22,7 +22,7 @@ All **data** is stored in a single **SQLite database** for full control and port
 * 🌄 Bucket list and Vision board
 * 📜 Quotes
 * 🛠️ RESTful API for all routes, Swagger UI
-* 📅 iCal feeds: Todo for Todos and Goals, Event for Habits (Time boxing/blocking)
+* 📅 iCal feeds: Todo for Todos and Goals, Event for Habits (Time boxing/blocking), with configurable DISPLAY reminders
 * ⚙️ Settings
 * 🖼 [Tabler](https://tabler.io/) UI
 * 🤖 MCP Server and optional OpenAI compatible Chat (supports local LLMs)

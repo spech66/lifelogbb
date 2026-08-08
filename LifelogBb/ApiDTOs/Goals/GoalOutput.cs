@@ -24,6 +24,8 @@ namespace LifelogBb.ApiDTOs.Goals
 
         public DateTime? EndDate { get; set; }
 
+        public string? Alarms { get; set; }
+
         public bool IsCompleted { get; set; }
 
         public string? Category { get; set; }

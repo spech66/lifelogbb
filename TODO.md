@@ -4,7 +4,6 @@ ToDos and Features for LifelogBB.
 
 ### Todo
 
-- [ ] iCal Alarms
 - [ ] Publish images to GHCR and/or Dockerhub
 - [ ] Notifications: Mail, Telegram, ...
 
@@ -26,6 +25,8 @@ ToDos and Features for LifelogBB.
   - VTODO for Goals/Todos
   - VEVENT for Habits (Time Boxing/Blocking)
     - RRULE ui [rrule.js](https://jakubroztocil.github.io/rrule/), [rrule-tool](https://icalendar.org/rrule-tool.html), [rrule-generator](https://freetools.textmagic.com/rrule-generator)    
+- [x] iCal Alarms
+  - DISPLAY reminders (X minutes/hours/days before), multiple per entry
 - [x] Weights in metric system and imperial units (no conversion)
 - [x] Settings (Units, Start of week, ...)
 - [x] Tags, Category

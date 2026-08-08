@@ -32,6 +32,10 @@
                         <span asp-validation-for="DueDate" class="text-danger"></span>
                     </div>
                     <div class="form-group mb-3">
+                        @Html.EditorFor(model => model.Alarms, "Alarms")
+                        <span asp-validation-for="Alarms" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-3">
                         <label asp-for="Progress" class="control-label mb-1"></label>
                         <input asp-for="Progress" class="form-control form-control-lg" />
                         <span asp-validation-for="Progress" class="text-danger"></span>
@@ -80,6 +84,7 @@
 }
 
 @section Scripts {
+    <script src="~/js/alarmeditor.js"></script>
     <script src="~/lib/tagify/tagify.min.js"></script>
     <script>
         new Tagify(document.querySelector('#Category'), {

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using LifelogBb.Utilities;
 
 namespace LifelogBb.Models.Entities
 {
@@ -18,6 +19,10 @@ namespace LifelogBb.Models.Entities
         [Display(Name = "Due")]
         [DataType(DataType.DateTime)]
         public DateTime? DueDate { get; set; }
+
+        [Display(Name = "Reminders")]
+        [RegularExpression(AlarmHelper.Pattern, ErrorMessage = "Reminders must be a comma separated list of negative ISO-8601 durations like -PT15M,-P1D")]
+        public string? Alarms { get; set; }
 
         [DisplayName("Progress")]
         [Range(0, 100)]
