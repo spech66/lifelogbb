@@ -9,15 +9,13 @@ ToDos and Features for LifelogBB.
 
 ### In Progress :construction:
 
-- [x] Chat history persistence
-
-#### External tools
-
-- [x] MCP Server
-- [x] AI Chat with tool calling (OpenAI-compatible endpoint, reads lifelog data via tools)
+Not started yet.
 
 ### Done :heavy_check_mark:
 
+- [x] MCP Server
+- [x] AI Chat with tool calling (OpenAI-compatible endpoint, reads lifelog data via tools)
+  - [x] Chat history persistence
 - [x] Filter in tables
 - [x] Dashboard
 - [x] Calendar
