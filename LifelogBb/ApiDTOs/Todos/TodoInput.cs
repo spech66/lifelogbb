@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
+using LifelogBb.Utilities;
 
 namespace LifelogBb.ApiDTOs.Todos
 {
@@ -15,6 +16,10 @@ namespace LifelogBb.ApiDTOs.Todos
         public DateTime? StartDate { get; set; }
 
         public DateTime? DueDate { get; set; }
+
+        [Description("Reminders before the due date as a comma separated list of negative ISO-8601 durations, for example \"-PT15M,-P1D\"")]
+        [RegularExpression(AlarmHelper.Pattern, ErrorMessage = "Reminders must be a comma separated list of negative ISO-8601 durations like -PT15M,-P1D")]
+        public string? Alarms { get; set; }
 
         [Range(0, 100)]
         public int Progress { get; set; }

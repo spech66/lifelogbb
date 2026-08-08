@@ -1,0 +1,30 @@
+@model string?
+
+@*
+    Reminder list editor. The visible rows carry no name attribute and never post; the hidden
+    input below holds the serialized value ("-PT15M,-P1D") that the model binder picks up.
+    See wwwroot/js/alarmeditor.js.
+*@
+<div class="alarm-editor" data-alarm-editor data-alarm-max="@LifelogBb.Utilities.AlarmHelper.MaxAlarms">
+    <label for="Alarms" class="control-label mb-1">Reminders</label>
+    <input name="Alarms" id="Alarms" class="form-control form-control-lg" value="@Model" hidden />
+
+    <div data-alarm-rows></div>
+    <div data-alarm-empty class="text-secondary mb-2">No reminders.</div>
+
+    <div>
+        <button type="button" class="btn btn-primary" data-alarm-add><i class="fas fa-plus icon"></i> Add reminder</button>
+    </div>
+
+    <template data-alarm-template>
+        <div class="input-group mb-2" data-alarm-row>
+            <input type="number" class="form-control form-control-lg" min="1" max="9999" value="15" data-alarm-amount />
+            <select class="form-select form-select-lg" data-alarm-unit>
+                <option value="M">minutes before</option>
+                <option value="H">hours before</option>
+                <option value="D">days before</option>
+            </select>
+            <button type="button" class="btn btn-lg btn-outline-danger" data-alarm-remove title="Remove reminder"><i class="fas fa-trash icon"></i></button>
+        </div>
+    </template>
+</div>

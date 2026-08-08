@@ -147,7 +147,7 @@ namespace LifelogBb.Controllers
         // POST: Habits/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,StartDate,EndDate,RecurrenceRules,IsCompleted,Category,Tags")] Habit habit)
+        public async Task<IActionResult> Create([Bind("Name,Description,StartDate,EndDate,RecurrenceRules,Alarms,IsCompleted,Category,Tags")] Habit habit)
         {
             if (ModelState.IsValid)
             {
@@ -185,7 +185,7 @@ namespace LifelogBb.Controllers
         // POST: Habits/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Name,Description,StartDate,EndDate,RecurrenceRules,IsCompleted,Category,Tags,Id")] EditHabitViewModel habitViewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Name,Description,StartDate,EndDate,RecurrenceRules,Alarms,IsCompleted,Category,Tags,Id")] EditHabitViewModel habitViewModel)
         {
             if (id != habitViewModel.Id)
             {
@@ -298,6 +298,12 @@ namespace LifelogBb.Controllers
                     // Ical.Net 5: RecurrencePattern constructor no longer accepts the "RRULE:" prefix
                     RecurrencePattern recurrenceRule = new RecurrencePattern(RecurrenceRuleHelper.Normalize(habit.RecurrenceRules));
                     calEvent.RecurrenceRules = new List<RecurrencePattern>() { recurrenceRule };
+                }
+
+                // Reminders trigger relative to DTSTART, so they repeat with every occurrence
+                foreach (var alarm in AlarmHelper.BuildAlarms(habit.Alarms, habit.Name, TriggerRelation.Start))
+                {
+                    calEvent.Alarms.Add(alarm);
                 }
 
                 calendar.Events.Add(calEvent);

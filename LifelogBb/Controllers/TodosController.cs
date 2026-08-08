@@ -113,7 +113,7 @@ namespace LifelogBb.Controllers
         // POST: Todos/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,Description,DueDate,IsCompleted,IsImportant,Category,Tags,StartDate,Progress,Progress")] Todo todo)
+        public async Task<IActionResult> Create([Bind("Title,Description,DueDate,Alarms,IsCompleted,IsImportant,Category,Tags,StartDate,Progress,Progress")] Todo todo)
         {
             if (ModelState.IsValid)
             {
@@ -155,7 +155,7 @@ namespace LifelogBb.Controllers
         // POST: Todos/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Title,Description,DueDate,IsCompleted,IsImportant,Category,Tags,StartDate,Progress,Progress,Id")] EditTodoViewModel todoViewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Title,Description,DueDate,Alarms,IsCompleted,IsImportant,Category,Tags,StartDate,Progress,Progress,Id")] EditTodoViewModel todoViewModel)
         {
             if (id != todoViewModel.Id)
             {
@@ -248,7 +248,7 @@ namespace LifelogBb.Controllers
             var todos = await todosQuery.ToListAsync();
             todos.ToList().ForEach(todo =>
             {
-                calendar.Todos.Add(new CalendarComponents.Todo()
+                var calTodo = new CalendarComponents.Todo()
                 {
                     Uid = todo.Id.ToString(),
                     Url = new Uri(Url.Action(nameof(Details), nameof(TodosController).Replace("Controller", ""), new { id = todo.Id }, "https", Request.Host.Value)!),
@@ -256,11 +256,23 @@ namespace LifelogBb.Controllers
                     Description = todo.Description,
                     Completed = todo.Completed.HasValue ? new CalDateTime(todo.Completed.Value) : null,
                     Start = todo.StartDate.HasValue ? new CalDateTime(todo.StartDate.Value) : null,
+                    Due = todo.DueDate.HasValue ? new CalDateTime(todo.DueDate.Value) : null,
                     Priority = todo.IsImportant ? 1 : 5, // 0-9, 0=undefined, 1=highest, 9=lowest
                     Status = todo.IsCompleted || todo.Completed.HasValue ? "COMPLETED" : (todo.Progress > 0 ? "IN-PROCESS" : ""),
                     Categories = new List<string>() { todo.Category ?? "" },
                     PercentComplete = todo.Progress, // 0 = not started, 1=100
-                });
+                };
+
+                // Reminders trigger relative to DUE, so they need a due date to anchor to
+                if (todo.DueDate.HasValue)
+                {
+                    foreach (var alarm in AlarmHelper.BuildAlarms(todo.Alarms, todo.Title, TriggerRelation.End))
+                    {
+                        calTodo.Alarms.Add(alarm);
+                    }
+                }
+
+                calendar.Todos.Add(calTodo);
             });
 
             var serializer = new CalendarSerializer();

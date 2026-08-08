@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using LifelogBb.Utilities;
 
 namespace LifelogBb.Models.Habits
 {
@@ -18,6 +19,10 @@ namespace LifelogBb.Models.Habits
         public DateTime? EndDate { get; set; }
 
         public string? RecurrenceRules { get; set; }
+
+        [Display(Name = "Reminders")]
+        [RegularExpression(AlarmHelper.Pattern, ErrorMessage = "Reminders must be a comma separated list of negative ISO-8601 durations like -PT15M,-P1D")]
+        public string? Alarms { get; set; }
 
         [DefaultValue(false)]
         public bool IsCompleted { get; set; }

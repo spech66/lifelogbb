@@ -104,7 +104,7 @@ namespace LifelogBb.Controllers
         // POST: Goals/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,InitialValue,TargetValue,CurrentValue,StartDate,EndDate,IsCompleted,Category,Tags")] Goal goal)
+        public async Task<IActionResult> Create([Bind("Name,Description,InitialValue,TargetValue,CurrentValue,StartDate,EndDate,Alarms,IsCompleted,Category,Tags")] Goal goal)
         {
             if (ModelState.IsValid)
             {
@@ -146,7 +146,7 @@ namespace LifelogBb.Controllers
         // POST: Goals/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Name,Description,InitialValue,TargetValue,CurrentValue,StartDate,EndDate,IsCompleted,Category,Tags,Id")] EditGoalViewModel goalViewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Name,Description,InitialValue,TargetValue,CurrentValue,StartDate,EndDate,Alarms,IsCompleted,Category,Tags,Id")] EditGoalViewModel goalViewModel)
         {
             if (id != goalViewModel.Id)
             {
@@ -243,7 +243,7 @@ namespace LifelogBb.Controllers
                     percentage = Convert.ToInt32(Math.Round((diffCurrent / diffTarget) * 100));
                 }
 
-                calendar.Todos.Add(new Ical.Net.CalendarComponents.Todo()
+                var calTodo = new Ical.Net.CalendarComponents.Todo()
                 {
                     Uid = goal.Id.ToString(),
                     Url = new Uri(Url.Action(nameof(Details), nameof(GoalsController).Replace("Controller", ""), new { id = goal.Id }, "https", Request.Host.Value)!),
@@ -251,11 +251,23 @@ namespace LifelogBb.Controllers
                     Description = $"{goal.Description}\n\nInitial Value: {goal.InitialValue}\nCurrent Value: {goal.CurrentValue}\nTarget Value: {goal.TargetValue}\n",
                     Completed = goal.EndDate.HasValue ? new CalDateTime(goal.EndDate.Value) : null,
                     Start = goal.StartDate.HasValue ? new CalDateTime(goal.StartDate.Value) : null,
+                    Due = goal.EndDate.HasValue ? new CalDateTime(goal.EndDate.Value) : null,
                     Priority = 0, // habit.IsImportant ? 1 : 5, // 0-9, 0=undefined, 1=highest, 9=lowest
                     Status = goal.IsCompleted ? "COMPLETED" : (percentage > 0 ? "IN-PROCESS" : ""),
                     Categories = new List<string>() { goal.Category ?? "" },
                     PercentComplete = percentage, // 0 = not started, 1=100
-                });
+                };
+
+                // Reminders trigger relative to DUE, so they need an end date to anchor to
+                if (goal.EndDate.HasValue)
+                {
+                    foreach (var alarm in AlarmHelper.BuildAlarms(goal.Alarms, goal.Name, TriggerRelation.End))
+                    {
+                        calTodo.Alarms.Add(alarm);
+                    }
+                }
+
+                calendar.Todos.Add(calTodo);
             });
 
             var serializer = new CalendarSerializer();
