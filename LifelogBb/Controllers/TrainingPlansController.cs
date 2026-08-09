@@ -18,6 +18,10 @@ namespace LifelogBb.Controllers
 
         private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
+        // plansetseditor.js reads plain lowercase field names (exercise/reps/weight/notes) from the
+        // hidden SetsJson input it seeds itself with, so server-rendered JSON must match that casing.
+        private static readonly JsonSerializerOptions CamelCaseJsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
         public TrainingPlansController(LifelogBbContext context, TrainingPlansService service, IMapper mapper)
         {
             _context = context;
@@ -128,7 +132,8 @@ namespace LifelogBb.Controllers
 
             var model = _mapper.Map<EditTrainingPlanViewModel>(plan);
             model.SetsJson = JsonSerializer.Serialize(plan.Sets.OrderBy(s => s.SortOrder)
-                .Select(s => new PlanSetRow { Exercise = s.Exercise, Reps = s.Reps, Weight = s.Weight, Notes = s.Notes }));
+                .Select(s => new PlanSetRow { Exercise = s.Exercise, Reps = s.Reps, Weight = s.Weight, Notes = s.Notes }),
+                CamelCaseJsonOptions);
 
             await PopulateExerciseListAsync();
             return View(model);

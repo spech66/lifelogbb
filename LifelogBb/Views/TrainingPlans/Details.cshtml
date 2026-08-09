@@ -100,12 +100,19 @@
                     }
                 </div>
                 <div class="card-footer text-end">
-                    <div class="d-flex">
+                    <div class="d-flex gap-2">
                         <a class="btn btn-secondary" asp-action="Index"><i class="fas fa-arrow-circle-left icon"></i>Back</a>
                         <a class="btn btn-danger ms-auto" asp-action="Delete" asp-route-id="@Model.Plan.Id"><i class="fas fa-trash icon"></i> Delete</a>
                         <a class="btn btn-outline-secondary" asp-action="Copy" asp-route-id="@Model.Plan.Id"><i class="fas fa-copy icon"></i> Copy</a>
                         <a class="btn btn-dark" asp-action="Edit" asp-route-id="@Model.Plan.Id"><i class="fas fa-pen icon"></i> Edit</a>
-                        <a class="btn btn-primary" asp-action="Workout" asp-route-id="@Model.Plan.Id"><i class="fas fa-play icon"></i> Start workout</a>
+                        @if (Model.Plan.Date == null)
+                        {
+                            <a class="btn btn-primary" asp-action="Workout" asp-route-id="@Model.Plan.Id"><i class="fas fa-play icon"></i> Start workout</a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-primary" asp-action="Workout" asp-route-id="@Model.Plan.Id"><i class="fas fa-forward icon"></i> Resume workout</a>
+                        }
                     </div>
                 </div>
             </div>

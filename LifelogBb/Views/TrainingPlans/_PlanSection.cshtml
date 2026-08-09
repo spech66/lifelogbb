@@ -39,7 +39,14 @@
                         <div class="btn-list">
                             @if (Model.ShowStart)
                             {
-                                <a asp-action="Workout" asp-route-id="@plan.Id" class="btn btn-sm btn-primary"><i class="fas fa-play icon"></i>Start workout</a>
+                                @if (plan.Date == null)
+                                {
+                                    <a asp-action="Workout" asp-route-id="@plan.Id" class="btn btn-sm btn-primary"><i class="fas fa-play icon"></i>Start workout</a>
+                                }
+                                else
+                                {
+                                    <a asp-action="Workout" asp-route-id="@plan.Id" class="btn btn-sm btn-primary"><i class="fas fa-forward icon"></i>Resume workout</a>
+                                }
                             }
                             <a asp-action="Edit" asp-route-id="@plan.Id" class="btn btn-sm btn-outline-secondary"><i class="fas fa-pen icon"></i></a>
                             <a asp-action="Copy" asp-route-id="@plan.Id" class="btn btn-sm btn-outline-secondary"><i class="fas fa-copy icon"></i></a>
