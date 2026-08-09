@@ -33,6 +33,8 @@ namespace LifelogBb.Views.Shared.Components.Navigation
                 new NavItem("Strength training", "fas fa-dumbbell", new List<NavItem>
                 {
                     new NavItem("StrengthTrainings", "Index", "Strength training", "fas fa-dumbbell"),
+                    new NavItem("TrainingPlans", "Index", "Plans", "fas fa-clipboard-list"),
+                    new NavItem("StrengthTrainings", "Sessions", "Sessions", "fas fa-calendar-week"),
                     new NavItem("StrengthTrainings", "Graph", "Graph", "fas fa-chart-line"),
                     new NavItem("StrengthTrainings", "Table", "Table", "fas fa-table"),
                 }),

@@ -66,7 +66,7 @@
                             <div class="text-muted">
                                 @if (Model.LastSession != null)
                                 {
-                                    <a asp-action="Details" asp-route-id="@Model.LastSession.Id">@Model.LastSession.CreatedAt.ToString("yyyy-MM-dd")</a>
+                                    <a asp-action="Details" asp-route-id="@Model.LastSession.Id">@Model.LastSession.Date.ToString("yyyy-MM-dd")</a>
                                 }
                                 else
                                 {
@@ -155,7 +155,7 @@
                                 @foreach (var s in Model.RecentSessions)
                                 {
                                     <tr>
-                                        <td><a asp-action="Details" asp-route-id="@s.Id">@s.CreatedAt.ToString("yyyy-MM-dd")</a></td>
+                                        <td><a asp-action="Details" asp-route-id="@s.Id">@s.Date.ToString("yyyy-MM-dd")</a></td>
                                         <td><a asp-action="Graph" asp-route-exercise="@s.Exercise">@s.Exercise</a></td>
                                         <td>@s.Reps</td>
                                         <td>@s.Weight.ToString("0.##") kg</td>

@@ -1,43 +1,71 @@
-﻿@model string?
+@model LifelogBb.Models.StrengthTrainings.StrengthTrainingGraphViewModel
 
 @{
     ViewData["Title"] = "Strength Training";
-    ViewData["Pretitle"] = "Graph";
-    @if (!string.IsNullOrEmpty(@Model))
-    {
-        ViewData["Pretitle"] = $"{Model} - Graph";
-    }
+    ViewData["Pretitle"] = string.IsNullOrEmpty(Model.SelectedExercise) ? "Graph" : $"{Model.SelectedExercise} - Graph";
+    ViewData["SecondaryAction"] = "table";
 }
 
 <div class="container-xl">
-    <div class="row row-deck row-cards">
+    <div class="row row-cards mb-3">
         <div class="col-12">
             <div class="card">
-                <div class="card-header border-0">
-                    <h3 class="card-title">Total</h3>
-                </div>
                 <div class="card-body">
-                    <div id="strengthtrainingTotal"></div>
+                    <div class="row g-2 align-items-end">
+                        <div class="col-12 col-md-5">
+                            <label class="form-label">Exercise</label>
+                            <select id="exercise-select" class="form-select form-select-lg">
+                                <option value="">All exercises (overview)</option>
+                                @foreach (var exercise in Model.Exercises)
+                                {
+                                    <option value="@exercise" selected="@(exercise == Model.SelectedExercise)">@exercise</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-7">
+                            <label class="form-label">Time range</label>
+                            <div class="btn-group w-100" role="group" id="range-buttons">
+                                <button type="button" class="btn" data-range="90">3M</button>
+                                <button type="button" class="btn" data-range="180">6M</button>
+                                <button type="button" class="btn active" data-range="365">1Y</button>
+                                <button type="button" class="btn" data-range="0">All</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header border-0">
-                    <h3 class="card-title">Weight</h3>
+    </div>
+
+    <div id="exercise-charts">
+        <div class="row row-deck row-cards">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header border-0"><h3 class="card-title">Top set weight per day</h3></div>
+                    <div class="card-body"><div id="chart-top-weight"></div></div>
                 </div>
-                <div class="card-body">
-                    <div id="strengthtrainingWeight"></div>
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header border-0"><h3 class="card-title">Estimated 1RM per day</h3></div>
+                    <div class="card-body"><div id="chart-1rm"></div></div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header border-0"><h3 class="card-title">Volume per training day</h3></div>
+                    <div class="card-body"><div id="chart-exercise-volume"></div></div>
                 </div>
             </div>
         </div>
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header border-0">
-                    <h3 class="card-title">Reps</h3>
-                </div>
-                <div class="card-body">
-                    <div id="strengthtrainingReps"></div>
+    </div>
+
+    <div id="overview-charts">
+        <div class="row row-deck row-cards">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header border-0"><h3 class="card-title">Weekly volume &amp; training frequency</h3></div>
+                    <div class="card-body"><div id="chart-weekly-volume"></div></div>
                 </div>
             </div>
         </div>
@@ -45,66 +73,115 @@
 </div>
 
 @section Scripts
-    {
+{
     <script src="~/lib/tabler/core/dist/libs/apexcharts/dist/apexcharts.min.js"></script>
     <script type="text/javascript">
-        function Strengthtraining(data) {
-            this.date = data.createdAt;
-            this.exercise = data.exercise;
-            this.reps = data.reps;
-            this.weight = parseFloat(data.weight).toFixed(2);
-            this.notes = data.notes;
-            this.rating = data.rating;
-        }
+        (function () {
+            var select = document.getElementById('exercise-select');
+            var rangeButtons = document.querySelectorAll('#range-buttons [data-range]');
+            var exerciseCharts = document.getElementById('exercise-charts');
+            var overviewCharts = document.getElementById('overview-charts');
+            var charts = {};
+            var currentRangeDays = 365;
 
-        function generateChart(selDiv, chartTitle, chartData) {
-            var options = {
-                chart: {
-                    type: 'bar'
-                },
-                plotOptions: {
-                },
-                series: [{
-                    name: chartTitle,
-                    data: chartData
-                }],
-                xaxis: {
-                    type: "datetime"
+            function fromDate() {
+                if (currentRangeDays <= 0) return null;
+                var d = new Date();
+                d.setDate(d.getDate() - currentRangeDays);
+                return d.toISOString().slice(0, 10);
+            }
+
+            function renderChart(key, el, options) {
+                if (charts[key]) {
+                    charts[key].destroy();
                 }
-            };
+                charts[key] = new ApexCharts(document.querySelector(el), options);
+                charts[key].render();
+            }
 
-            var chart = new ApexCharts(document.querySelector(`#${selDiv}`), options);
-            chart.render();
-        }
+            function loadExercise(exercise) {
+                exerciseCharts.classList.remove('d-none');
+                overviewCharts.classList.add('d-none');
 
-        $.getJSON("@Url.Action("GraphGet")", { exercise: "@Model" }, function (data) {
-            data = data.sort((a, b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0)); // Ascending!
-            var mappedStrengthtraining = $.map(data, function (item) { return new Strengthtraining(item) });
+                var url = new URL('@Url.Action("GraphExerciseData")', window.location.origin);
+                url.searchParams.set('exercise', exercise);
+                var from = fromDate();
+                if (from) url.searchParams.set('from', from);
 
-            const resultTotal = mappedStrengthtraining.map(sel => {
-                return {
-                    x: sel.date,
-                    y: sel.reps * sel.weight
+                fetch(url).then(function (r) { return r.json(); }).then(function (data) {
+                    var days = data.days || [];
+                    var dates = days.map(function (d) { return d.date; });
+
+                    renderChart('topWeight', '#chart-top-weight', {
+                        chart: { type: 'line', height: 260 },
+                        series: [{ name: 'Top set weight', data: days.map(function (d) { return d.topWeight; }) }],
+                        xaxis: { categories: dates },
+                        markers: { size: 4 },
+                        stroke: { curve: 'straight' }
+                    });
+
+                    renderChart('rm1', '#chart-1rm', {
+                        chart: { type: 'line', height: 260 },
+                        series: [{ name: 'Estimated 1RM', data: days.map(function (d) { return d.est1Rm; }) }],
+                        xaxis: { categories: dates },
+                        markers: { size: 4 },
+                        stroke: { curve: 'straight' }
+                    });
+
+                    renderChart('exerciseVolume', '#chart-exercise-volume', {
+                        chart: { type: 'bar', height: 260 },
+                        series: [{ name: 'Volume', data: days.map(function (d) { return d.volume; }) }],
+                        xaxis: { categories: dates }
+                    });
+                });
+            }
+
+            function loadOverview() {
+                exerciseCharts.classList.add('d-none');
+                overviewCharts.classList.remove('d-none');
+
+                var url = new URL('@Url.Action("GraphOverviewData")', window.location.origin);
+                var from = fromDate();
+                if (from) url.searchParams.set('from', from);
+
+                fetch(url).then(function (r) { return r.json(); }).then(function (data) {
+                    var weeks = data.weeks || [];
+
+                    renderChart('weeklyVolume', '#chart-weekly-volume', {
+                        chart: { height: 300 },
+                        series: [
+                            { name: 'Volume', type: 'column', data: weeks.map(function (w) { return w.volume; }) },
+                            { name: 'Training days', type: 'line', data: weeks.map(function (w) { return w.trainingDays; }) }
+                        ],
+                        xaxis: { categories: weeks.map(function (w) { return w.weekStart; }) },
+                        yaxis: [
+                            { title: { text: 'Volume' } },
+                            { opposite: true, title: { text: 'Training days' }, min: 0 }
+                        ]
+                    });
+                });
+            }
+
+            function load() {
+                if (select.value) {
+                    loadExercise(select.value);
+                } else {
+                    loadOverview();
                 }
+            }
+
+            select.addEventListener('change', load);
+
+            rangeButtons.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    rangeButtons.forEach(function (b) { b.classList.remove('active'); });
+                    btn.classList.add('active');
+                    currentRangeDays = parseInt(btn.getAttribute('data-range'), 10);
+                    load();
+                });
             });
 
-            const resultSingle = mappedStrengthtraining.map(sel => {
-                return {
-                    x: sel.date,
-                    y: sel.weight
-                }
-            });
-
-            const resultReps = mappedStrengthtraining.map(sel => {
-                return {
-                    x: sel.date,
-                    y: sel.reps
-                }
-            });
-
-            generateChart("strengthtrainingTotal", "Total by set", resultTotal);
-            generateChart("strengthtrainingWeight", "Weight by set", resultSingle);
-            generateChart("strengthtrainingReps", "Reps by set", resultReps);
-        });
+            load();
+        })();
     </script>
 }

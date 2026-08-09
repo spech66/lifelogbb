@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "lifelogbb",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "LifelogBb", "--urls", "http://localhost:5290"],
+      "port": 5290
+    }
+  ]
+}

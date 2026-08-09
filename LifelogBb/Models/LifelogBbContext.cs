@@ -20,6 +20,8 @@ namespace LifelogBb.Models
         public DbSet<Config> Configs { get; set; } = null!;
         public DbSet<ChatSession> ChatSessions { get; set; } = null!;
         public DbSet<ChatSessionMessage> ChatSessionMessages { get; set; } = null!;
+        public DbSet<TrainingPlan> TrainingPlans { get; set; } = null!;
+        public DbSet<TrainingPlanSet> TrainingPlanSets { get; set; } = null!;
 
         private readonly IConfiguration _configuration;
 
@@ -66,6 +68,7 @@ namespace LifelogBb.Models
             modelBuilder.Entity<Config>().Property(b => b.JournalPageSize).HasDefaultValue(20);
             modelBuilder.Entity<Config>().Property(b => b.QuotePageSize).HasDefaultValue(20);
             modelBuilder.Entity<Config>().Property(b => b.StrengthTrainingPageSize).HasDefaultValue(20);
+            modelBuilder.Entity<Config>().Property(b => b.TrainingPlanPageSize).HasDefaultValue(20);
             modelBuilder.Entity<Config>().Property(b => b.TodoPageSize).HasDefaultValue(20);
             modelBuilder.Entity<Config>().Property(b => b.WeightPageSize).HasDefaultValue(20);
             modelBuilder.Entity<Config>().Property(b => b.FeedToken).HasDefaultValue("ChangeMeInTheConfig");
@@ -87,6 +90,26 @@ namespace LifelogBb.Models
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Journal>().HasIndex(j => j.Date).IsUnique();
+
+            modelBuilder.Entity<TrainingPlan>()
+                .HasMany(p => p.Sets)
+                .WithOne(s => s.TrainingPlan)
+                .HasForeignKey(s => s.TrainingPlanId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Deleting a plan or a plan set must not delete the logged StrengthTraining rows that
+            // reference it -- the actual data a user recorded must survive plan cleanup.
+            modelBuilder.Entity<StrengthTraining>()
+                .HasOne(t => t.TrainingPlan)
+                .WithMany()
+                .HasForeignKey(t => t.TrainingPlanId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<StrengthTraining>()
+                .HasOne(t => t.TrainingPlanSet)
+                .WithMany()
+                .HasForeignKey(t => t.TrainingPlanSetId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
 
         public void BeginTransaction()

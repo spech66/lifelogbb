@@ -8,6 +8,7 @@ using LifelogBb.ApiDTOs.Quotes;
 using LifelogBb.ApiDTOs.Todos;
 using LifelogBb.ApiDTOs.Habits;
 using LifelogBb.ApiDTOs.Goals;
+using LifelogBb.ApiDTOs.TrainingPlans;
 
 namespace LifelogBb.DTOs
 {
@@ -29,8 +30,17 @@ namespace LifelogBb.DTOs
             CreateMap<EnduranceTraining, EnduranceTrainingOutput>();
 
             // StrengthTrainings
-            CreateMap<StrengthTrainingInput, StrengthTraining>();
+            CreateMap<StrengthTrainingInput, StrengthTraining>()
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => (src.Date ?? DateTime.UtcNow).Date));
             CreateMap<StrengthTraining, StrengthTrainingOutput>();
+
+            // TrainingPlans - Sets are built/replaced explicitly by TrainingPlansService, not by AutoMapper.
+            CreateMap<TrainingPlanInput, TrainingPlan>()
+                .ForMember(dest => dest.Sets, opt => opt.Ignore());
+            CreateMap<TrainingPlanSetInput, TrainingPlanSet>();
+            CreateMap<TrainingPlan, TrainingPlanOutput>()
+                .ForMember(dest => dest.Sets, opt => opt.MapFrom(src => src.Sets.OrderBy(s => s.SortOrder)));
+            CreateMap<TrainingPlanSet, TrainingPlanSetOutput>();
 
             // Quotes
             CreateMap<QuoteInput, Quote>();

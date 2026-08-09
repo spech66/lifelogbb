@@ -39,6 +39,8 @@ namespace LifelogBb.Models.Home
 
         public int StrengthTrainingPageSize { get; set; }
 
+        public int TrainingPlanPageSize { get; set; }
+
         public int EnduranceTrainingPageSize { get; set; }
 
         public int TodoPageSize { get; set; }

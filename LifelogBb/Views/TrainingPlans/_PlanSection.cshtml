@@ -1,0 +1,52 @@
+@model LifelogBb.Models.TrainingPlans.PlanSectionModel
+
+@if (Model.Plans.Count == 0 && Model.Title != null)
+{
+    return;
+}
+
+<div class="mb-3">
+    @if (Model.Title != null)
+    {
+        <h3 class="mb-1">@Model.Title</h3>
+        @if (Model.Subtitle != null)
+        {
+            <div class="text-secondary mb-2">@Model.Subtitle</div>
+        }
+    }
+    <div class="row row-cards">
+        @foreach (var plan in Model.Plans)
+        {
+            <div class="col-sm-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header border-0">
+                        <h3 class="card-title">
+                            <a asp-action="Details" asp-route-id="@plan.Id" class="text-reset">@plan.Name</a>
+                        </h3>
+                        @if (plan.Date != null)
+                        {
+                            <div class="card-options text-muted small">@plan.Date.Value.ToString("yyyy-MM-dd")</div>
+                        }
+                    </div>
+                    <div class="card-body pt-0">
+                        <div class="text-secondary">@plan.Sets.Count set@(plan.Sets.Count == 1 ? "" : "s"), @plan.Sets.Select(s => s.Exercise).Distinct().Count() exercise@(plan.Sets.Select(s => s.Exercise).Distinct().Count() == 1 ? "" : "s")</div>
+                        @if (!string.IsNullOrEmpty(plan.Description))
+                        {
+                            <div class="text-truncate mt-1">@plan.Description</div>
+                        }
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-list">
+                            @if (Model.ShowStart)
+                            {
+                                <a asp-action="Workout" asp-route-id="@plan.Id" class="btn btn-sm btn-primary"><i class="fas fa-play icon"></i>Start workout</a>
+                            }
+                            <a asp-action="Edit" asp-route-id="@plan.Id" class="btn btn-sm btn-outline-secondary"><i class="fas fa-pen icon"></i></a>
+                            <a asp-action="Copy" asp-route-id="@plan.Id" class="btn btn-sm btn-outline-secondary"><i class="fas fa-copy icon"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

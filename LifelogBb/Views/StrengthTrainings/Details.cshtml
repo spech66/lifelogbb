@@ -14,6 +14,19 @@
                 <div class="card-body">
                     <dl class="row">
                         <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Date)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Model?.Date.ToString("yyyy-MM-dd")
+                        </dd>
+                        @if (Model?.TrainingPlanId != null)
+                        {
+                            <dt class="col-sm-2">Plan</dt>
+                            <dd class="col-sm-10">
+                                <a asp-controller="TrainingPlans" asp-action="Details" asp-route-id="@Model.TrainingPlanId">View plan</a>
+                            </dd>
+                        }
+                        <dt class="col-sm-2">
                             @Html.DisplayNameFor(model => model.Exercise)
                         </dt>
                         <dd class="col-sm-10">

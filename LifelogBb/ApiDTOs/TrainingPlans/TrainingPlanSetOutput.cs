@@ -1,26 +1,22 @@
-﻿using LifelogBb.Interfaces.DTOs;
+using LifelogBb.Interfaces.DTOs;
 
-namespace LifelogBb.ApiDTOs.StrengthTrainings
+namespace LifelogBb.ApiDTOs.TrainingPlans
 {
-    public class StrengthTrainingOutput : IBaseOutput
+    public class TrainingPlanSetOutput : IBaseOutput
     {
         public long Id { get; set; }
 
+        public long TrainingPlanId { get; set; }
+
         public string Exercise { get; set; } = string.Empty;
+
+        public int SortOrder { get; set; }
 
         public int Reps { get; set; }
 
         public double Weight { get; set; }
 
         public string? Notes { get; set; }
-
-        public int Rating { get; set; }
-
-        public DateTime Date { get; set; }
-
-        public long? TrainingPlanId { get; set; }
-
-        public long? TrainingPlanSetId { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

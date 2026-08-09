@@ -30,6 +30,8 @@ namespace LifelogBb.Models.Entities
 
         public int StrengthTrainingPageSize { get; set; } = 20;
 
+        public int TrainingPlanPageSize { get; set; } = 20;
+
         public int EnduranceTrainingPageSize { get; set; } = 20;
 
         public int TodoPageSize { get; set; } = 20;

@@ -17,5 +17,12 @@ namespace LifelogBb.Models.StrengthTrainings
 
         [Range(1, 5)]
         public int Rating { get; set; }
+
+        [DataType(DataType.Date)]
+        public DateTime Date { get; set; }
+
+        public long? TrainingPlanId { get; set; }
+
+        public long? TrainingPlanSetId { get; set; }
     }
 }

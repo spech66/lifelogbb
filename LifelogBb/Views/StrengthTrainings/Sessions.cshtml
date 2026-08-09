@@ -1,0 +1,59 @@
+@model List<LifelogBb.Models.StrengthTrainings.StrengthTrainingSession>
+
+@{
+    ViewData["Title"] = "Strength Training";
+    ViewData["Pretitle"] = "Sessions";
+    ViewData["SecondaryAction"] = "graph";
+}
+
+<div class="container-xl">
+    @if (Model.Count == 0)
+    {
+        <div class="row row-cards">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center text-muted py-5">
+                        No sessions logged yet. <a asp-action="Create">Add your first session</a>.
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row row-cards">
+            @foreach (var session in Model)
+            {
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <span class="bg-primary text-white avatar"><i class="fa-solid fa-dumbbell"></i></span>
+                                </div>
+                                <div class="col">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <div class="font-weight-medium">@session.Date.ToString("dddd, yyyy-MM-dd")</div>
+                                            <div class="text-secondary">@session.SetCount sets &middot; @session.Volume.ToString("N0") kg volume &middot; @string.Join(", ", session.Exercises)</div>
+                                        </div>
+                                        <div class="text-end">
+                                            @if (session.TrainingPlanId != null)
+                                            {
+                                                <a class="badge bg-blue-lt" asp-controller="TrainingPlans" asp-action="Details" asp-route-id="@session.TrainingPlanId">@session.TrainingPlanName</a>
+                                                @if (session.CompletionRate != null)
+                                                {
+                                                    <div class="text-secondary small mt-1">@((session.CompletionRate.Value * 100).ToString("0")) % completed</div>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

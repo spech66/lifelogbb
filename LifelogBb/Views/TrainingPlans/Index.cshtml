@@ -1,0 +1,37 @@
+@using LifelogBb.Models.TrainingPlans
+@model TrainingPlanIndexViewModel
+
+@{
+    ViewData["Title"] = "Training Plans";
+    ViewData["PrimaryAction"] = "create";
+}
+
+<div class="container-xl">
+    @{ await Html.RenderPartialAsync("_PlanSection", new PlanSectionModel("Templates", "Reusable base plans. Start a workout from one to create today's copy.", Model.Templates, showStart: true)); }
+    @{ await Html.RenderPartialAsync("_PlanSection", new PlanSectionModel("Day plans", "Concrete plans for a specific day.", Model.DayPlans, showStart: true)); }
+
+    @if (Model.Archived.Count > 0)
+    {
+        <div class="mb-3">
+            <a class="text-secondary" data-bs-toggle="collapse" href="#archivedPlans" role="button">
+                <i class="fas fa-box-archive icon"></i> Archived (@Model.Archived.Count)
+            </a>
+            <div class="collapse mt-2" id="archivedPlans">
+                @{ await Html.RenderPartialAsync("_PlanSection", new PlanSectionModel(null, null, Model.Archived, showStart: false)); }
+            </div>
+        </div>
+    }
+
+    @if (Model.Templates.Count == 0 && Model.DayPlans.Count == 0 && Model.Archived.Count == 0)
+    {
+        <div class="row row-cards">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center text-muted py-5">
+                        No training plans yet. <a asp-action="Create">Create your first plan</a>.
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

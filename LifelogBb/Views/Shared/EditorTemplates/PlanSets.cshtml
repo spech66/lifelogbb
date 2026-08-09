@@ -1,0 +1,60 @@
+@model string?
+@*
+    Plan set editor. The visible rows carry no name attribute and never post; the hidden input below
+    holds the serialized JSON array ("[{\"exercise\":...}]") that the model binder picks up as SetsJson.
+    See wwwroot/js/plansetseditor.js.
+*@
+<div class="plan-set-editor" data-plan-set-editor data-exercise-whitelist="@ViewData["ExerciseList"]">
+    <label class="control-label mb-1">Sets</label>
+    <input name="SetsJson" id="SetsJson" value="@Model" hidden />
+
+    <datalist id="planSetExerciseList">
+        @if (!string.IsNullOrEmpty(ViewData["ExerciseList"] as string))
+        {
+            foreach (var exercise in ((string)ViewData["ExerciseList"]!).Split(','))
+            {
+                <option value="@exercise"></option>
+            }
+        }
+    </datalist>
+
+    <div data-plan-set-rows></div>
+    <div data-plan-set-empty class="text-secondary mb-2">No sets yet. Add the first one below.</div>
+
+    <div>
+        <button type="button" class="btn btn-primary" data-plan-set-add><i class="fas fa-plus icon"></i> Add set</button>
+    </div>
+
+    <template data-plan-set-template>
+        <div class="card mb-2" data-plan-set-row>
+            <div class="card-body py-2">
+                <div class="row g-2 align-items-end">
+                    <div class="col-12 col-md-4">
+                        <label class="form-label small mb-1">Exercise</label>
+                        <input type="text" class="form-control form-control-lg" data-plan-set-exercise list="planSetExerciseList" />
+                    </div>
+                    <div class="col-4 col-md-2">
+                        <label class="form-label small mb-1">Reps</label>
+                        <input type="number" min="0" class="form-control form-control-lg" data-plan-set-reps value="10" />
+                    </div>
+                    <div class="col-4 col-md-2">
+                        <label class="form-label small mb-1">Weight</label>
+                        <input type="number" min="0" step="0.5" class="form-control form-control-lg" data-plan-set-weight value="0" />
+                    </div>
+                    <div class="col-4 col-md-2">
+                        <label class="form-label small mb-1">Notes</label>
+                        <input type="text" class="form-control form-control-lg" data-plan-set-notes />
+                    </div>
+                    <div class="col-12 col-md-2 text-end">
+                        <div class="btn-list flex-nowrap">
+                            <button type="button" class="btn btn-lg btn-outline-secondary" data-plan-set-up title="Move up"><i class="fas fa-arrow-up icon m-0"></i></button>
+                            <button type="button" class="btn btn-lg btn-outline-secondary" data-plan-set-down title="Move down"><i class="fas fa-arrow-down icon m-0"></i></button>
+                            <button type="button" class="btn btn-lg btn-outline-secondary" data-plan-set-duplicate title="Duplicate"><i class="fas fa-copy icon m-0"></i></button>
+                            <button type="button" class="btn btn-lg btn-outline-danger" data-plan-set-remove title="Remove"><i class="fas fa-trash icon m-0"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>
