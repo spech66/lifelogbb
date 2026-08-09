@@ -19,6 +19,10 @@ namespace LifelogBb.ApiControllers
         }
 
         // POST: api/trainingplans/5/copy
+        // No [ValidateAntiForgeryToken], matching every other write endpoint on this generic API family
+        // (see AuthenticationController) -- it must stay callable from Swagger/bearer-token clients that
+        // never hold an antiforgery token. Cookie-authenticated cross-site requests are mitigated by the
+        // default SameSite=Lax auth cookie configured in Program.cs.
         [HttpPost("{id}/copy")]
         public async Task<ActionResult<TrainingPlanOutput>> Copy(long id, [FromBody] CopyTrainingPlanRequest? request)
         {
