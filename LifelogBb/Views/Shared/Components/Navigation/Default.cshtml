@@ -1,6 +1,11 @@
 ﻿@using LifelogBb.Views.Shared.Components.Navigation
 @model List<NavItem>
 
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
 <ul class="navbar-nav pt-lg-3">
     @if (User.Identity is not null && User.Identity.IsAuthenticated)
     {
@@ -8,10 +13,21 @@
         {
             if (item.SubItems is not null && item.SubItems.Count > 0)
             {
-                var hasActiveSubItem = item.SubItems.Any(x => x.Controller == ViewContext.RouteData.Values["controller"]?.ToString() && x.Action == ViewContext.RouteData.Values["action"]?.ToString());
+                // A feature area often spans more actions (Create/Edit/Details/...) or even more than one
+                // controller (e.g. TrainingPlans alongside StrengthTrainings) than are listed as sub items.
+                // The group counts as active for any of those controllers, not just an exact action match,
+                // so it stays open while browsing pages that have no dedicated nav entry.
+                var controllersInGroup = item.SubItems.Select(x => x.Controller).ToHashSet();
+                var hasActiveSubItem = controllersInGroup.Contains(currentController);
                 var activeClass = hasActiveSubItem ? "active" : "";
                 var showSubItems = hasActiveSubItem ? "true" : "false";
                 var showSubItemsClass = hasActiveSubItem ? "show" : "";
+
+                // Within the group, highlight the sub item whose action matches exactly; if none does
+                // (e.g. a Create/Edit/Details page), fall back to the first sub item for that controller.
+                var exactMatch = item.SubItems.FirstOrDefault(x => x.Controller == currentController && x.Action == currentAction);
+                var fallbackMatch = exactMatch == null ? item.SubItems.FirstOrDefault(x => x.Controller == currentController) : null;
+
                 <li class="nav-item @activeClass">
                     <a class="nav-link dropdown-toggle @showSubItemsClass" href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button" aria-expanded="@showSubItems">
                         <span class="nav-link-icon d-md-none d-lg-inline-block"><i class="@item.Icon"></i></span>
@@ -22,7 +38,7 @@
                             <div class="dropdown-menu-column">
                                 @foreach(var subItem in item.SubItems)
                                 {
-                                    var isSubActive = subItem.Controller == ViewContext.RouteData.Values["controller"]?.ToString() && subItem.Action == ViewContext.RouteData.Values["action"]?.ToString();
+                                    var isSubActive = subItem == exactMatch || subItem == fallbackMatch;
                                     var subActiveClass = isSubActive ? "active" : "";
                                     <a class="dropdown-item @subActiveClass" asp-area="" asp-controller="@subItem.Controller" asp-action="@subItem.Action">
                                         <span class="nav-link-icon d-md-none d-lg-inline-block"><i class="@subItem.Icon"></i></span>
