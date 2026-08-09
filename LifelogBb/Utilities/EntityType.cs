@@ -11,6 +11,7 @@
         Quote = 6,
         Todo = 7,
         Goal = 8,
-        Habit = 9
+        Habit = 9,
+        TrainingPlan = 10
     }
 }

@@ -45,7 +45,7 @@ namespace LifelogBb.Controllers
             var enduranceTraining = await _context.EnduranceTrainings.OrderByDescending(o => o.CreatedAt).Take(1).FirstOrDefaultAsync();
             model.LastEnduranceTraining = enduranceTraining;
 
-            var strengthTraining = await _context.StrengthTrainings.OrderByDescending(o => o.CreatedAt).Take(1).FirstOrDefaultAsync();
+            var strengthTraining = await _context.StrengthTrainings.OrderByDescending(o => o.Date).ThenByDescending(o => o.CreatedAt).Take(1).FirstOrDefaultAsync();
             model.LastStrengthTraining = strengthTraining;
 
             var randomBucketList = await _context.BucketLists.OrderBy(r => EF.Functions.Random()).Take(1).FirstOrDefaultAsync();
@@ -135,8 +135,8 @@ namespace LifelogBb.Controllers
                 .ThenBy(h => h.Name)
                 .ToListAsync();
             model.StrengthTrainings = await _context.StrengthTrainings
-                .Where(s => s.CreatedAt >= queryStart && s.CreatedAt < queryEndExclusive)
-                .OrderByDescending(s => s.CreatedAt)
+                .Where(s => s.Date >= queryStart && s.Date < queryEndExclusive)
+                .OrderByDescending(s => s.Date)
                 .ToListAsync();
             model.EnduranceTrainings = await _context.EnduranceTrainings
                 .Where(e => e.CreatedAt >= queryStart && e.CreatedAt < queryEndExclusive)

@@ -78,6 +78,7 @@ namespace LifelogBb
             services.AddScoped<WeightsService>();
             services.AddScoped<JournalsService>();
             services.AddScoped<StrengthTrainingsService>();
+            services.AddScoped<TrainingPlansService>();
             services.AddScoped<EnduranceTrainingsService>();
             services.AddScoped<QuotesService>();
             services.AddScoped<TodosService>();

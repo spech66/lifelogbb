@@ -10,6 +10,7 @@ using LifelogBb.Models.Habits;
 using LifelogBb.Models.Todos;
 using LifelogBb.Models.Quotes;
 using LifelogBb.Models.Goals;
+using LifelogBb.Models.TrainingPlans;
 
 namespace LifelogBb.Models
 {
@@ -62,6 +63,12 @@ namespace LifelogBb.Models
             // Goals
             CreateMap<EditGoalViewModel, Goal>();
             CreateMap<Goal, EditGoalViewModel>();
+
+            // TrainingPlans - Sets/SetsJson are handled explicitly by TrainingPlansController, not AutoMapper.
+            CreateMap<EditTrainingPlanViewModel, TrainingPlan>()
+                .ForMember(dest => dest.Sets, opt => opt.Ignore());
+            CreateMap<TrainingPlan, EditTrainingPlanViewModel>()
+                .ForMember(dest => dest.SetsJson, opt => opt.Ignore());
         }
     }
 }

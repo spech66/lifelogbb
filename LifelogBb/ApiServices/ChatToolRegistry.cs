@@ -8,6 +8,7 @@ using LifelogBb.ApiDTOs.Journals;
 using LifelogBb.ApiDTOs.Quotes;
 using LifelogBb.ApiDTOs.StrengthTrainings;
 using LifelogBb.ApiDTOs.Todos;
+using LifelogBb.ApiDTOs.TrainingPlans;
 using LifelogBb.ApiDTOs.Weights;
 using LifelogBb.Interfaces;
 using LifelogBb.Models.Entities;
@@ -56,6 +57,8 @@ namespace LifelogBb.ApiServices
                 CreateToolParameters()));
             tools.Add(CreateToolDefinition("GetAllEnduranceTrainings", "Get recent endurance training data ordered by most recently updated first. Results default to 25 records and are capped at 50.",
                 CreateToolParameters()));
+            tools.Add(CreateToolDefinition("GetAllTrainingPlans", "Get recent strength training plans (base plans and day plans), including their planned sets, ordered by most recently created first. Results default to 25 records and are capped at 50.",
+                CreateToolParameters()));
 
             return tools;
         }
@@ -95,6 +98,9 @@ namespace LifelogBb.ApiServices
                     "GetAllQuotes" => await GetAllFromRepository<Quote, QuoteOutput>(filter, limit),
                     "GetAllStrengthTrainings" => await GetAllFromRepository<StrengthTraining, StrengthTrainingOutput>(filter, limit),
                     "GetAllEnduranceTrainings" => await GetAllFromRepository<EnduranceTraining, EnduranceTrainingOutput>(filter, limit),
+                    // TrainingPlans have a Sets child collection the generic GetAllFromRepository does not
+                    // Include(), so this goes through TrainingPlansService instead, which does.
+                    "GetAllTrainingPlans" => await GetAllTrainingPlans(filter, limit),
                     _ => throw new InvalidOperationException($"Unknown tool: {toolName}")
                 };
 
@@ -104,6 +110,25 @@ namespace LifelogBb.ApiServices
             {
                 return JsonSerializer.Serialize(new { error = ex.Message });
             }
+        }
+
+        private async Task<object> GetAllTrainingPlans(string? filter, int limit)
+        {
+            var service = _serviceProvider.GetRequiredService<TrainingPlansService>();
+            // Take one extra record so the response can tell the model when more matching data exists,
+            // same as GetAllFromRepository below.
+            var result = await service.GetAll(filter, $"{nameof(TrainingPlan.CreatedAt)}_desc", limit + 1);
+            var entries = (result.Value ?? Enumerable.Empty<TrainingPlanOutput>()).ToList();
+
+            var truncated = entries.Count > limit;
+            var items = truncated ? entries.Take(limit).ToList() : entries;
+
+            return new
+            {
+                items,
+                limit,
+                truncated
+            };
         }
 
         private async Task<object> GetAllFromRepository<TEntity, TOutput>(string? filter, int limit)

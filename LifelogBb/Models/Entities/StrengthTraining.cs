@@ -22,6 +22,22 @@ namespace LifelogBb.Models.Entities
         [DefaultValue(3)]
         public int Rating { get; set; }
 
+        // The day this set was trained. Distinct from CreatedAt so sets can be logged retroactively
+        // and day plans can be matched to the day they are for.
+        [DataType(DataType.Date)]
+        public DateTime Date { get; set; }
+
+        // Set when this entry was logged against a training plan (template or day plan).
+        public long? TrainingPlanId { get; set; }
+
+        // Set when this entry was logged against a specific planned set, enabling planned-vs-actual comparison
+        // and letting the workout capture view resume/derive its done state from the database.
+        public long? TrainingPlanSetId { get; set; }
+
+        public TrainingPlan? TrainingPlan { get; set; }
+
+        public TrainingPlanSet? TrainingPlanSet { get; set; }
+
         public StrengthTraining()
         {
             // Default constructor

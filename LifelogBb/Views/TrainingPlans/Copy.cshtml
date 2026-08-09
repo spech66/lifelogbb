@@ -1,0 +1,39 @@
+@model LifelogBb.Controllers.CopyTrainingPlanViewModel
+
+@{
+    ViewData["Title"] = "Training Plans";
+    ViewData["Pretitle"] = "Copy";
+}
+
+<div class="container-xl">
+    <div class="row row-cards">
+        <div class="col-12">
+            <form asp-action="Copy" class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Copy "@ViewData["SourceName"]"</h3>
+                </div>
+                <div class="card-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group mb-3">
+                        <label asp-for="Name" class="control-label mb-1"></label>
+                        <input asp-for="Name" class="form-control form-control-lg" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="Date" class="control-label mb-1"></label>
+                        <input asp-for="Date" type="date" class="form-control form-control-lg" />
+                        <div class="form-hint">Leave empty to create another base plan. Set a date to create a plan for that specific day.</div>
+                        <span asp-validation-for="Date" class="text-danger"></span>
+                    </div>
+                    <input type="hidden" asp-for="SourceId" />
+                </div>
+                <div class="card-footer text-end">
+                    <div class="d-flex">
+                        <a class="btn btn-secondary" asp-action="Index"><i class="fas fa-arrow-circle-left icon"></i>Back</a>
+                        <button type="submit" value="Copy" class="btn btn-primary ms-auto"><i class="fas fa-copy icon"></i>Copy</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

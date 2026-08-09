@@ -23,7 +23,7 @@ namespace LifelogBb.Controllers
         public async Task<IActionResult> Index()
         {
             var all = await _context.StrengthTrainings
-                .OrderByDescending(s => s.CreatedAt)
+                .OrderByDescending(s => s.Date).ThenByDescending(s => s.CreatedAt)
                 .ToListAsync();
 
             var personalRecords = all
@@ -71,7 +71,7 @@ namespace LifelogBb.Controllers
 
             var trainings = from s in _context.StrengthTrainings select s;
             trainings = trainings.FilterByGroup(filter);
-            trainings = trainings.SortByName(sortOrder, $"{nameof(StrengthTraining.CreatedAt)}_desc");
+            trainings = trainings.SortByName(sortOrder, $"{nameof(StrengthTraining.Date)}_desc");
 
             var config = Config.GetConfig(_context);
             var list = await PaginatedList<StrengthTraining>.CreateAsync(trainings.AsNoTracking(), pageNumber ?? 1, config.StrengthTrainingPageSize);
@@ -79,11 +79,18 @@ namespace LifelogBb.Controllers
         }
 
         // GET: StrengthTrainings/Graph
-        public IActionResult Graph(string? exercise)
+        public async Task<IActionResult> Graph(string? exercise)
         {
-            return View("Graph", exercise);
+            var exercises = await _context.StrengthTrainings.Select(s => s.Exercise).Distinct().OrderBy(e => e).ToListAsync();
+            var model = new StrengthTrainingGraphViewModel
+            {
+                Exercises = exercises,
+                SelectedExercise = !string.IsNullOrEmpty(exercise) && exercises.Contains(exercise) ? exercise : null
+            };
+            return View("Graph", model);
         }
 
+        // Kept for backward compatibility with existing links; unused by the current Graph view.
         public async Task<IActionResult> GraphGet(string? exercise)
         {
             var strengthTrainings = from st in _context.StrengthTrainings select st;
@@ -93,7 +100,113 @@ namespace LifelogBb.Controllers
                 strengthTrainings = strengthTrainings.Where(s => s.Exercise == exercise);
             }
 
-            return Json(await strengthTrainings.OrderBy(o => o.CreatedAt).ToListAsync());
+            return Json(await strengthTrainings.OrderBy(o => o.Date).ToListAsync());
+        }
+
+        // GET: StrengthTrainings/GraphExerciseData
+        // One aggregated point per training day instead of one point per set -- a set-level bar chart
+        // over the whole history is unreadable once more than a handful of sessions exist.
+        public async Task<IActionResult> GraphExerciseData(string exercise, DateTime? from)
+        {
+            var query = _context.StrengthTrainings.Where(s => s.Exercise == exercise);
+            if (from.HasValue)
+            {
+                query = query.Where(s => s.Date >= from.Value.Date);
+            }
+
+            var sets = await query.ToListAsync();
+
+            var days = sets
+                .GroupBy(s => s.Date.Date)
+                .OrderBy(g => g.Key)
+                .Select(g => new
+                {
+                    date = g.Key.ToString("yyyy-MM-dd"),
+                    topWeight = g.Max(s => s.Weight),
+                    est1Rm = Math.Round(g.Max(s => s.Weight * (1 + s.Reps / 30.0)), 1),
+                    volume = g.Sum(s => s.Reps * s.Weight),
+                    sets = g.Count(),
+                    totalReps = g.Sum(s => s.Reps)
+                })
+                .ToList();
+
+            return Json(new { exercise, days });
+        }
+
+        // GET: StrengthTrainings/GraphOverviewData
+        public async Task<IActionResult> GraphOverviewData(DateTime? from)
+        {
+            var query = _context.StrengthTrainings.AsQueryable();
+            if (from.HasValue)
+            {
+                query = query.Where(s => s.Date >= from.Value.Date);
+            }
+
+            var sets = await query.ToListAsync();
+            var startOfWeek = Config.GetConfig(_context).StartOfWeek;
+
+            DateTime WeekStart(DateTime date)
+            {
+                var diff = (7 + (date.DayOfWeek - startOfWeek)) % 7;
+                return date.Date.AddDays(-diff);
+            }
+
+            var days = sets
+                .GroupBy(s => s.Date.Date)
+                .OrderBy(g => g.Key)
+                .Select(g => new
+                {
+                    date = g.Key.ToString("yyyy-MM-dd"),
+                    volume = g.Sum(s => s.Reps * s.Weight),
+                    sets = g.Count(),
+                    exercises = g.Select(s => s.Exercise).Distinct().Count()
+                })
+                .ToList();
+
+            var weeks = sets
+                .GroupBy(s => WeekStart(s.Date))
+                .OrderBy(g => g.Key)
+                .Select(g => new
+                {
+                    weekStart = g.Key.ToString("yyyy-MM-dd"),
+                    volume = g.Sum(s => s.Reps * s.Weight),
+                    trainingDays = g.Select(s => s.Date.Date).Distinct().Count(),
+                    sets = g.Count()
+                })
+                .ToList();
+
+            return Json(new { days, weeks });
+        }
+
+        // GET: StrengthTrainings/Sessions
+        public async Task<IActionResult> Sessions(DateTime? from)
+        {
+            var query = _context.StrengthTrainings.AsQueryable();
+            if (from.HasValue)
+            {
+                query = query.Where(s => s.Date >= from.Value.Date);
+            }
+
+            var sets = await query.Include(s => s.TrainingPlan).ToListAsync();
+
+            var sessions = sets
+                .GroupBy(s => s.Date.Date)
+                .OrderByDescending(g => g.Key)
+                .Select(g => new StrengthTrainingSession
+                {
+                    Date = g.Key,
+                    SetCount = g.Count(),
+                    Volume = g.Sum(s => s.Reps * s.Weight),
+                    Exercises = g.Select(s => s.Exercise).Distinct().OrderBy(e => e).ToList(),
+                    TrainingPlanId = g.Select(s => s.TrainingPlanId).FirstOrDefault(id => id != null),
+                    TrainingPlanName = g.Select(s => s.TrainingPlan).FirstOrDefault(p => p != null)?.Name,
+                    PlannedSetCount = g.Select(s => s.TrainingPlan).FirstOrDefault(p => p != null)?.Id is long planId
+                        ? _context.TrainingPlanSets.Count(ps => ps.TrainingPlanId == planId)
+                        : (int?)null
+                })
+                .ToList();
+
+            return View(sessions);
         }
 
         // GET: StrengthTrainings/Details/5
@@ -119,14 +232,19 @@ namespace LifelogBb.Controllers
         {
             var exercises = await _context.StrengthTrainings.Select(s => s.Exercise).Distinct().ToListAsync();
             ViewData["ExerciseList"] = string.Join(",", exercises);
-            return View();
+            return View(new StrengthTraining { Date = DateTime.UtcNow.Date });
         }
 
         // POST: StrengthTrainings/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Exercise,Reps,Weight,Notes,Rating")] StrengthTraining strengthTraining)
+        public async Task<IActionResult> Create([Bind("Exercise,Reps,Weight,Notes,Rating,Date")] StrengthTraining strengthTraining)
         {
+            if (strengthTraining.Date == default)
+            {
+                strengthTraining.Date = DateTime.UtcNow.Date;
+            }
+
             if (ModelState.IsValid)
             {
                 strengthTraining.SetCreateFields();
@@ -160,7 +278,7 @@ namespace LifelogBb.Controllers
         // POST: StrengthTrainings/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Exercise,Reps,Weight,Notes,Rating,Id")] EditStrengthTrainingViewModel strengthTrainingViewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Exercise,Reps,Weight,Notes,Rating,Date,Id")] EditStrengthTrainingViewModel strengthTrainingViewModel)
         {
             if (id != strengthTrainingViewModel.Id)
             {

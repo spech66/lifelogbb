@@ -1,0 +1,147 @@
+@model LifelogBb.Models.TrainingPlans.WorkoutViewModel
+
+@{
+    ViewData["Title"] = "Training Plans";
+    ViewData["Pretitle"] = "Workout";
+}
+
+<div class="container-xl">
+    @Html.AntiForgeryToken()
+    <div class="row row-cards mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="mb-1">@Model.Plan.Name</h2>
+                    @if (Model.Plan.Date != null)
+                    {
+                        <div class="text-secondary mb-2">@Model.Plan.Date.Value.ToString("yyyy-MM-dd")</div>
+                    }
+                    <div class="d-flex justify-content-between mb-1">
+                        <span id="workout-progress-label">@Model.DoneCount / @Model.TotalCount sets done</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" id="workout-progress-bar" style="width: @(Model.TotalCount == 0 ? 0 : (Model.DoneCount * 100 / Model.TotalCount))%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row row-cards" id="workout-set-list">
+        @{ var index = 1; }
+        @foreach (var row in Model.Rows)
+        {
+            <div class="col-12" data-workout-set-card data-plan-set-id="@row.Planned.Id" data-training-id="@(row.Actual?.Id)">
+                <div class="card @(row.Actual != null ? "bg-success-lt" : "")">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <div class="text-secondary small">Set @index</div>
+                                <h3 class="mb-0">@row.Planned.Exercise</h3>
+                                <div class="text-secondary">Planned: @row.Planned.Reps &times; @row.Planned.Weight.ToString("0.##") kg</div>
+                            </div>
+                            <div data-workout-set-done-badge class="@(row.Actual == null ? "d-none" : "")">
+                                <span class="badge bg-success"><i class="fas fa-check icon m-0"></i> Done</span>
+                            </div>
+                        </div>
+                        <div data-workout-set-pending class="@(row.Actual != null ? "d-none" : "")">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-5 col-md-3">
+                                    <label class="form-label small mb-1">Reps</label>
+                                    <input type="number" min="0" class="form-control form-control-lg" data-workout-reps value="@row.Planned.Reps" />
+                                </div>
+                                <div class="col-5 col-md-3">
+                                    <label class="form-label small mb-1">Weight</label>
+                                    <input type="number" min="0" step="0.5" class="form-control form-control-lg" data-workout-weight value="@row.Planned.Weight.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                                </div>
+                                <div class="col-2 col-md-6 text-end">
+                                    <button type="button" class="btn btn-lg btn-success w-100" data-workout-confirm><i class="fas fa-check icon"></i> Done</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div data-workout-set-done class="@(row.Actual == null ? "d-none" : "")">
+                            <span data-workout-actual-text>
+                                @if (row.Actual != null)
+                                {
+                                    @: @row.Actual.Reps &times; @row.Actual.Weight.ToString("0.##") kg
+                                }
+                            </span>
+                            <button type="button" class="btn btn-sm btn-outline-secondary ms-2" data-workout-undo><i class="fas fa-rotate-left icon"></i> Undo</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            index++;
+        }
+    </div>
+
+    <div class="row row-cards mt-3">
+        <div class="col-12 d-flex">
+            <a class="btn btn-secondary" asp-controller="StrengthTrainings" asp-action="Create">Log extra set</a>
+            <a class="btn btn-primary ms-auto" asp-action="Details" asp-route-id="@Model.Plan.Id">Finish</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+            var totalSets = @Model.TotalCount;
+
+            function updateProgress() {
+                var done = document.querySelectorAll('[data-workout-set-card][data-training-id]:not([data-training-id=""])').length;
+                document.getElementById('workout-progress-label').textContent = done + ' / ' + totalSets + ' sets done';
+                document.getElementById('workout-progress-bar').style.width = (totalSets === 0 ? 0 : (done * 100 / totalSets)) + '%';
+            }
+
+            document.querySelectorAll('[data-workout-set-card]').forEach(function (card) {
+                var planSetId = card.getAttribute('data-plan-set-id');
+
+                card.querySelector('[data-workout-confirm]').addEventListener('click', function () {
+                    var reps = parseInt(card.querySelector('[data-workout-reps]').value, 10) || 0;
+                    var weight = parseFloat(card.querySelector('[data-workout-weight]').value) || 0;
+
+                    fetch('@Url.Action("WorkoutConfirmSet")', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
+                        body: JSON.stringify({ planSetId: planSetId, reps: reps, weight: weight, rating: 3 })
+                    })
+                        .then(function (r) { return r.json(); })
+                        .then(function (data) {
+                            if (!data.ok) return;
+                            card.setAttribute('data-training-id', data.trainingId);
+                            card.querySelector('.card').classList.add('bg-success-lt');
+                            card.querySelector('[data-workout-set-done-badge]').classList.remove('d-none');
+                            card.querySelector('[data-workout-set-pending]').classList.add('d-none');
+                            var doneEl = card.querySelector('[data-workout-set-done]');
+                            doneEl.classList.remove('d-none');
+                            doneEl.querySelector('[data-workout-actual-text]').textContent = reps + ' × ' + weight + ' kg';
+                            updateProgress();
+                        });
+                });
+
+                card.querySelector('[data-workout-undo]').addEventListener('click', function () {
+                    var trainingId = card.getAttribute('data-training-id');
+                    if (!trainingId) return;
+
+                    fetch('@Url.Action("WorkoutUndoSet")', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
+                        body: JSON.stringify({ trainingId: trainingId })
+                    })
+                        .then(function (r) { return r.json(); })
+                        .then(function (data) {
+                            if (!data.ok) return;
+                            card.setAttribute('data-training-id', '');
+                            card.querySelector('.card').classList.remove('bg-success-lt');
+                            card.querySelector('[data-workout-set-done-badge]').classList.add('d-none');
+                            card.querySelector('[data-workout-set-pending]').classList.remove('d-none');
+                            card.querySelector('[data-workout-set-done]').classList.add('d-none');
+                            updateProgress();
+                        });
+                });
+            });
+        })();
+    </script>
+}
