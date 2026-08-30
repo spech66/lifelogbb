@@ -11,7 +11,11 @@ namespace LifelogBb.Models.StrengthTrainings
 
         public int Reps { get; set; }
 
-        public double Weight { get; set; }
+        public double? Weight { get; set; }
+
+        [Range(1, 86400)]
+        [Display(Name = "Duration (seconds)")]
+        public int? DurationSeconds { get; set; }
 
         public string? Notes { get; set; }
 

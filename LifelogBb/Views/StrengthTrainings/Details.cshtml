@@ -42,7 +42,13 @@
                             @Html.DisplayNameFor(model => model.Weight)
                         </dt>
                         <dd class="col-sm-10">
-                            @Html.DisplayFor(model => model.Weight)
+                            @(Model?.Weight?.ToString("0.##") ?? TrainingSetFormat.Empty)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.DurationSeconds)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @(Model?.DurationSeconds is int seconds ? TrainingSetFormat.FormatDuration(seconds) : TrainingSetFormat.Empty)
                         </dd>
                         <dt class="col-sm-2">
                             @Html.DisplayNameFor(model => model.Notes)

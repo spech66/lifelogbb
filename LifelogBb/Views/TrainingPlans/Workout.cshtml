@@ -31,6 +31,9 @@
         @{ var index = 1; }
         @foreach (var row in Model.Rows)
         {
+            var hasDuration = row.Planned.DurationSeconds is > 0;
+            var fieldClass = hasDuration ? "col-4 col-md-2" : "col-5 col-md-3";
+
             <div class="col-12" data-workout-set-card data-plan-set-id="@row.Planned.Id" data-training-id="@(row.Actual?.Id)">
                 <div class="card @(row.Actual != null ? "bg-success-lt" : "")">
                     <div class="card-body">
@@ -38,7 +41,7 @@
                             <div>
                                 <div class="text-secondary small">Set @index</div>
                                 <h3 class="mb-0">@row.Planned.Exercise</h3>
-                                <div class="text-secondary">Planned: @row.Planned.Reps &times; @row.Planned.Weight.ToString("0.##") kg</div>
+                                <div class="text-secondary">Planned: @TrainingSetFormat.Describe(row.Planned)</div>
                             </div>
                             <div data-workout-set-done-badge class="@(row.Actual == null ? "d-none" : "")">
                                 <span class="badge bg-success"><i class="fas fa-check icon m-0"></i> Done</span>
@@ -46,15 +49,24 @@
                         </div>
                         <div data-workout-set-pending class="@(row.Actual != null ? "d-none" : "")">
                             <div class="row g-2 align-items-end">
-                                <div class="col-5 col-md-3">
+                                <div class="@fieldClass">
                                     <label class="form-label small mb-1">Reps</label>
                                     <input type="number" min="0" class="form-control form-control-lg" data-workout-reps value="@row.Planned.Reps" />
                                 </div>
-                                <div class="col-5 col-md-3">
+                                @* Blank means the set was done without a weight -- that is stored as null, not 0. *@
+                                <div class="@fieldClass">
                                     <label class="form-label small mb-1">Weight</label>
-                                    <input type="number" min="0" step="0.5" class="form-control form-control-lg" data-workout-weight value="@row.Planned.Weight.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                                    <input type="number" min="0" step="0.5" class="form-control form-control-lg" data-workout-weight placeholder="none" value="@(row.Planned.Weight?.ToString(System.Globalization.CultureInfo.InvariantCulture))" />
                                 </div>
-                                <div class="col-2 col-md-6 text-end">
+                                @* Only offered for planned holds, so plain strength sets keep the two-field layout. *@
+                                @if (hasDuration)
+                                {
+                                    <div class="@fieldClass">
+                                        <label class="form-label small mb-1">Hold (s)</label>
+                                        <input type="number" min="0" class="form-control form-control-lg" data-workout-duration value="@row.Planned.DurationSeconds" />
+                                    </div>
+                                }
+                                <div class="@(hasDuration ? "col-12 col-md-6" : "col-2 col-md-6") text-end">
                                     <button type="button" class="btn btn-lg btn-success w-100" data-workout-confirm><i class="fas fa-check icon"></i> Done</button>
                                 </div>
                             </div>
@@ -63,7 +75,7 @@
                             <span data-workout-actual-text>
                                 @if (row.Actual != null)
                                 {
-                                    @: @row.Actual.Reps &times; @row.Actual.Weight.ToString("0.##") kg
+                                    @TrainingSetFormat.Describe(row.Actual)
                                 }
                             </span>
                             <button type="button" class="btn btn-sm btn-outline-secondary ms-2" data-workout-undo><i class="fas fa-rotate-left icon"></i> Undo</button>
@@ -89,6 +101,35 @@
             var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
             var totalSets = @Model.TotalCount;
 
+            function formatDuration(seconds) {
+                if (seconds < 60) return seconds + ' s';
+                var minutes = Math.floor(seconds / 60);
+                var rest = seconds % 60;
+                return rest === 0 ? minutes + ' min' : minutes + ':' + String(rest).padStart(2, '0') + ' min';
+            }
+
+            // Mirrors Utilities/TrainingSetFormat.Describe so a confirmed set reads the same before and
+            // after the next page load.
+            function describeSet(reps, weight, duration) {
+                var core = null;
+                if (reps > 0 && weight !== null) core = reps + ' × ' + weight + ' kg';
+                else if (reps > 0) core = reps + ' reps';
+                else if (weight !== null) core = weight + ' kg';
+
+                var timed = duration > 0 ? formatDuration(duration) : null;
+                if (core === null) return timed || '-';
+                return timed === null ? core : core + ' · ' + timed;
+            }
+
+            // Blank stays blank: an empty numeric field posts as null, not 0.
+            function optionalNumber(input) {
+                if (!input) return null;
+                var raw = input.value.trim();
+                if (raw === '') return null;
+                var value = parseFloat(raw);
+                return isNaN(value) ? null : value;
+            }
+
             function updateProgress() {
                 var done = document.querySelectorAll('[data-workout-set-card][data-training-id]:not([data-training-id=""])').length;
                 document.getElementById('workout-progress-label').textContent = done + ' / ' + totalSets + ' sets done';
@@ -100,12 +141,13 @@
 
                 card.querySelector('[data-workout-confirm]').addEventListener('click', function () {
                     var reps = parseInt(card.querySelector('[data-workout-reps]').value, 10) || 0;
-                    var weight = parseFloat(card.querySelector('[data-workout-weight]').value) || 0;
+                    var weight = optionalNumber(card.querySelector('[data-workout-weight]'));
+                    var duration = optionalNumber(card.querySelector('[data-workout-duration]'));
 
                     fetch('@Url.Action("WorkoutConfirmSet")', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
-                        body: JSON.stringify({ planSetId: planSetId, reps: reps, weight: weight, rating: 3 })
+                        body: JSON.stringify({ planSetId: planSetId, reps: reps, weight: weight, durationSeconds: duration, rating: 3 })
                     })
                         .then(function (r) { return r.json(); })
                         .then(function (data) {
@@ -116,7 +158,7 @@
                             card.querySelector('[data-workout-set-pending]').classList.add('d-none');
                             var doneEl = card.querySelector('[data-workout-set-done]');
                             doneEl.classList.remove('d-none');
-                            doneEl.querySelector('[data-workout-actual-text]').textContent = reps + ' × ' + weight + ' kg';
+                            doneEl.querySelector('[data-workout-actual-text]').textContent = describeSet(reps, weight, duration);
                             updateProgress();
                         });
                 });

@@ -110,7 +110,8 @@
                             <div class="row g-2 text-center">
                                 <div class="col-4">
                                     <div class="text-muted small">Max Weight</div>
-                                    <div class="fw-bold">@pr.MaxWeight.ToString("0.##") kg</div>
+                                    @* Exercises only ever done without a weight have no record to show. *@
+                                    <div class="fw-bold">@(pr.MaxWeight is double max ? $"{max.ToString("0.##")} kg" : TrainingSetFormat.Empty)</div>
                                 </div>
                                 <div class="col-4">
                                     <div class="text-muted small">Max Reps</div>
@@ -118,7 +119,7 @@
                                 </div>
                                 <div class="col-4">
                                     <div class="text-muted small">Best Volume</div>
-                                    <div class="fw-bold">@pr.MaxVolume.ToString("N0") kg</div>
+                                    <div class="fw-bold">@(pr.MaxVolume is double best ? $"{best.ToString("N0")} kg" : TrainingSetFormat.Empty)</div>
                                 </div>
                             </div>
                         </div>
@@ -158,8 +159,8 @@
                                         <td><a asp-action="Details" asp-route-id="@s.Id">@s.Date.ToString("yyyy-MM-dd")</a></td>
                                         <td><a asp-action="Graph" asp-route-exercise="@s.Exercise">@s.Exercise</a></td>
                                         <td>@s.Reps</td>
-                                        <td>@s.Weight.ToString("0.##") kg</td>
-                                        <td>@((s.Reps * s.Weight).ToString("N0")) kg</td>
+                                        <td>@(s.Weight is double weight ? $"{weight.ToString("0.##")} kg" : TrainingSetFormat.Empty)</td>
+                                        <td>@(TrainingSetFormat.Volume(s.Reps, s.Weight) is double volume ? $"{volume.ToString("N0")} kg" : TrainingSetFormat.Empty)</td>
                                         <td>@Html.DisplayFor(m => s.Rating, "Rating")</td>
                                     </tr>
                                 }

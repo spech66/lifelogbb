@@ -22,13 +22,13 @@ namespace LifelogBb.McpControllers
             return await GetAllFiltered(filter, sort, limit);
         }
 
-        [McpServerTool(Name = "CreateTrainingPlan", Title = "Create training plan", Destructive = false, OpenWorld = false), Description("Create a new strength training plan with its planned sets in one call. The order of the Sets array becomes the order the sets are performed in. Leave Date empty for a base/template plan, or set it to create a concrete day plan.")]
+        [McpServerTool(Name = "CreateTrainingPlan", Title = "Create training plan", Destructive = false, OpenWorld = false), Description("Create a new strength training plan with its planned sets in one call. The order of the Sets array becomes the order the sets are performed in. Sets are stored one row per set: send \"3 x 15\" as one entry with Repeat 3 rather than three entries. Leave Weight empty for bodyweight, band or mobility work, and use DurationSeconds for holds. Leave Date empty for a base/template plan, or set it to create a concrete day plan.")]
         public async Task<TrainingPlanOutput?> Create(TrainingPlanInput model)
         {
             return await _service.Create(model);
         }
 
-        [McpServerTool(Name = "UpdateTrainingPlan", Title = "Update training plan", Destructive = true, Idempotent = true, OpenWorld = false), Description("Update an existing training plan. All fields are replaced by the provided values, including the full list of Sets: sets not included are removed. Logged strength trainings that reference a removed set keep their history but lose that link. Prefer editing templates and using CopyTrainingPlan for individual days rather than rewriting a day plan that already has logged trainings.")]
+        [McpServerTool(Name = "UpdateTrainingPlan", Title = "Update training plan", Destructive = true, Idempotent = true, OpenWorld = false), Description("Update an existing training plan. All fields are replaced by the provided values, including the full list of Sets: sets not included are removed. Repeat expands into individual sets here too, so reading a plan back returns more entries than were sent. Logged strength trainings that reference a removed set keep their history but lose that link. Prefer editing templates and using CopyTrainingPlan for individual days rather than rewriting a day plan that already has logged trainings.")]
         public async Task<TrainingPlanOutput?> Update([Description("Id of the training plan to update")] long id, TrainingPlanInput model)
         {
             return await _service.Update(id, model);

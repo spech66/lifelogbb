@@ -107,6 +107,7 @@ namespace LifelogBb.ApiServices
                         SortOrder = index,
                         Reps = s.Reps,
                         Weight = s.Weight,
+                        DurationSeconds = s.DurationSeconds,
                         Notes = s.Notes,
                         TrainingPlan = copy
                     };
@@ -121,25 +122,46 @@ namespace LifelogBb.ApiServices
             return _mapper.Map<TrainingPlanOutput>(copy);
         }
 
+        // The stored model is one row per set, but a caller describing "3 x 15" should not have to repeat
+        // itself three times. Repeat expands one input into that many consecutive rows; SortOrder therefore
+        // counts expanded sets, not input entries.
         private static List<TrainingPlanSet> BuildSets(List<TrainingPlanSetInput> inputs, TrainingPlan plan)
         {
             var sets = new List<TrainingPlanSet>();
-            for (var index = 0; index < inputs.Count; index++)
+            foreach (var input in inputs)
             {
-                var input = inputs[index];
-                var set = new TrainingPlanSet
+                var repeat = input.Repeat ?? 1;
+                if (repeat < 1)
+                    throw new ArgumentException($"Repeat must be at least 1 but was {repeat}.");
+
+                for (var pass = 1; pass <= repeat; pass++)
                 {
-                    Exercise = input.Exercise ?? string.Empty,
-                    SortOrder = index,
-                    Reps = input.Reps,
-                    Weight = input.Weight,
-                    Notes = input.Notes,
-                    TrainingPlan = plan
-                };
-                set.SetCreateFields();
-                sets.Add(set);
+                    var set = new TrainingPlanSet
+                    {
+                        Exercise = input.Exercise ?? string.Empty,
+                        SortOrder = sets.Count,
+                        Reps = input.Reps,
+                        Weight = input.Weight,
+                        DurationSeconds = input.DurationSeconds,
+                        Notes = NumberSetNote(input.Notes, pass, repeat),
+                        TrainingPlan = plan
+                    };
+                    set.SetCreateFields();
+                    sets.Add(set);
+                }
             }
             return sets;
+        }
+
+        // Expanded sets are otherwise indistinguishable from each other, so each one says which pass it is.
+        // A single set keeps its note untouched.
+        private static string? NumberSetNote(string? notes, int pass, int repeat)
+        {
+            if (repeat <= 1)
+                return notes;
+
+            var marker = $"Set {pass}/{repeat}";
+            return string.IsNullOrWhiteSpace(notes) ? marker : $"{notes} ({marker})";
         }
     }
 }

@@ -8,9 +8,15 @@ namespace LifelogBb.ApiDTOs.StrengthTrainings
     {
         public string? Exercise { get; set; }
 
+        [Description("Number of repetitions. Use 0 for a pure hold and set DurationSeconds instead.")]
         public int Reps { get; set; }
 
-        public double Weight { get; set; }
+        [Description("Weight used for this set. Leave empty when no weight applies (bodyweight, band, mobility work) -- that is kept distinct from an explicit 0 and excluded from volume statistics.")]
+        public double? Weight { get; set; }
+
+        [Description("Duration of this set in seconds, for holds and timed work such as planks or stretches. Combine with Reps for timed repetitions, or use it alone with Reps 0 for a single hold.")]
+        [Range(1, 86400)]
+        public int? DurationSeconds { get; set; }
 
         public string? Notes { get; set; }
 

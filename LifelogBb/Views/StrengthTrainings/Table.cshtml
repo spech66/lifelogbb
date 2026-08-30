@@ -59,10 +59,11 @@
                                         @Html.DisplayFor(modelItem => item.Reps)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.Weight)
+                                        @(item.Weight?.ToString("0.##") ?? TrainingSetFormat.Empty)
                                     </td>
                                     <td>
-                                        @(string.Format("{0:0.00}", item.Reps * item.Weight))
+                                        @* Sets without a weight have no volume to show, rather than a misleading 0.00. *@
+                                        @(TrainingSetFormat.Volume(item.Reps, item.Weight)?.ToString("0.00") ?? TrainingSetFormat.Empty)
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.Rating, "Rating")
