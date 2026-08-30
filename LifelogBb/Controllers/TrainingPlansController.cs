@@ -273,6 +273,17 @@ namespace LifelogBb.Controllers
             if (planSet == null)
                 return NotFound();
 
+            // What arrives here is whatever the client posted, so the same contract the plan editor and
+            // the API enforce is applied before anything is written.
+            if (request.Reps < 0)
+                return BadRequest(new { ok = false, error = "Reps cannot be negative." });
+            if (request.Weight < 0)
+                return BadRequest(new { ok = false, error = "Weight cannot be negative." });
+            if (request.DurationSeconds is not null && (request.DurationSeconds < 1 || request.DurationSeconds > TrainingSetRules.MaxDurationSeconds))
+                return BadRequest(new { ok = false, error = $"Duration must be between 1 and {TrainingSetRules.MaxDurationSeconds} seconds." });
+            if (!TrainingSetRules.HasEffort(request.Reps, request.DurationSeconds))
+                return BadRequest(new { ok = false, error = "A set needs either reps or a duration." });
+
             var training = new StrengthTraining
             {
                 Exercise = planSet.Exercise,
@@ -372,9 +383,9 @@ namespace LifelogBb.Controllers
                     ModelState.AddModelError(string.Empty, $"Set {i + 1}: reps cannot be negative.");
                 if (rows[i].Weight < 0)
                     ModelState.AddModelError(string.Empty, $"Set {i + 1}: weight cannot be negative.");
-                if (rows[i].DurationSeconds < 0)
-                    ModelState.AddModelError(string.Empty, $"Set {i + 1}: duration cannot be negative.");
-                if (rows[i].Reps == 0 && rows[i].DurationSeconds is null or 0)
+                if (rows[i].DurationSeconds is not null && (rows[i].DurationSeconds < 1 || rows[i].DurationSeconds > TrainingSetRules.MaxDurationSeconds))
+                    ModelState.AddModelError(string.Empty, $"Set {i + 1}: duration must be between 1 and {TrainingSetRules.MaxDurationSeconds} seconds.");
+                if (!TrainingSetRules.HasEffort(rows[i].Reps, rows[i].DurationSeconds))
                     ModelState.AddModelError(string.Empty, $"Set {i + 1}: needs either reps or a duration.");
             }
         }

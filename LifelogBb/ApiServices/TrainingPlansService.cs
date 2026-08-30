@@ -130,9 +130,8 @@ namespace LifelogBb.ApiServices
             var sets = new List<TrainingPlanSet>();
             foreach (var input in inputs)
             {
-                var repeat = input.Repeat ?? 1;
-                if (repeat < 1)
-                    throw new ArgumentException($"Repeat must be at least 1 but was {repeat}.");
+                var repeat = TrainingSetRules.ValidateRepeat(input.Repeat);
+                TrainingSetRules.ValidateDuration(input.DurationSeconds);
 
                 for (var pass = 1; pass <= repeat; pass++)
                 {

@@ -1,4 +1,5 @@
 ﻿using LifelogBb.Interfaces.DTOs;
+using LifelogBb.Utilities;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -20,6 +21,7 @@ namespace LifelogBb.Models.Entities
         public double? Weight { get; set; }
 
         // Set for timed work (planks, stretches, holds) where reps do not describe the effort.
+        [Range(1, TrainingSetRules.MaxDurationSeconds)]
         [Display(Name = "Duration (seconds)")]
         public int? DurationSeconds { get; set; }
 

@@ -54,7 +54,8 @@ document.addEventListener("DOMContentLoaded", function () {
       var notesInput = row.querySelector("[data-plan-set-notes]");
 
       exerciseInput.value = (data && data.exercise) || "";
-      repsInput.value = (data && data.reps) || 10;
+      // Not a truthy fallback: 0 reps is a real value for a pure hold and has to survive editing.
+      repsInput.value = data && data.reps !== null && data.reps !== undefined ? data.reps : 10;
       weightInput.value = data && data.weight !== null && data.weight !== undefined ? data.weight : "";
       durationInput.value = data && data.durationSeconds !== null && data.durationSeconds !== undefined ? data.durationSeconds : "";
       notesInput.value = (data && data.notes) || "";
