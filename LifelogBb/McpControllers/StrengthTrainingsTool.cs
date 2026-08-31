@@ -22,7 +22,7 @@ namespace LifelogBb.McpControllers
             return await GetAllFiltered(filter, sort, limit);
         }
 
-        [McpServerTool(Name = "CreateStrengthTraining", Title = "Create strength training entry", Destructive = false, OpenWorld = false), Description("Create a new strength training entry")]
+        [McpServerTool(Name = "CreateStrengthTraining", Title = "Create strength training entry", Destructive = false, OpenWorld = false), Description("Create a new strength training entry. One entry is one set. Leave Weight empty for bodyweight, band or mobility work -- that is distinct from an explicit 0 and keeps the set out of volume statistics -- and use DurationSeconds for holds such as planks or stretches.")]
         public async Task<StrengthTrainingOutput?> Create(StrengthTrainingInput model)
         {
             var result = await _service.Create(model);

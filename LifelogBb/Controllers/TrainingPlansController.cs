@@ -18,8 +18,8 @@ namespace LifelogBb.Controllers
 
         private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
-        // plansetseditor.js reads plain lowercase field names (exercise/reps/weight/notes) from the
-        // hidden SetsJson input it seeds itself with, so server-rendered JSON must match that casing.
+        // plansetseditor.js reads plain lowercase field names (exercise/reps/weight/durationSeconds/notes)
+        // from the hidden SetsJson input it seeds itself with, so server-rendered JSON must match that casing.
         private static readonly JsonSerializerOptions CamelCaseJsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
         public TrainingPlansController(LifelogBbContext context, TrainingPlansService service, IMapper mapper)
@@ -132,7 +132,7 @@ namespace LifelogBb.Controllers
 
             var model = _mapper.Map<EditTrainingPlanViewModel>(plan);
             model.SetsJson = JsonSerializer.Serialize(plan.Sets.OrderBy(s => s.SortOrder)
-                .Select(s => new PlanSetRow { Exercise = s.Exercise, Reps = s.Reps, Weight = s.Weight, Notes = s.Notes }),
+                .Select(s => new PlanSetRow { Exercise = s.Exercise, Reps = s.Reps, Weight = s.Weight, DurationSeconds = s.DurationSeconds, Notes = s.Notes }),
                 CamelCaseJsonOptions);
 
             await PopulateExerciseListAsync();
@@ -258,7 +258,8 @@ namespace LifelogBb.Controllers
         {
             public long PlanSetId { get; set; }
             public int Reps { get; set; }
-            public double Weight { get; set; }
+            public double? Weight { get; set; }
+            public int? DurationSeconds { get; set; }
             public int Rating { get; set; } = 3;
             public string? Notes { get; set; }
         }
@@ -272,11 +273,23 @@ namespace LifelogBb.Controllers
             if (planSet == null)
                 return NotFound();
 
+            // What arrives here is whatever the client posted, so the same contract the plan editor and
+            // the API enforce is applied before anything is written.
+            if (request.Reps < 0)
+                return BadRequest(new { ok = false, error = "Reps cannot be negative." });
+            if (request.Weight < 0)
+                return BadRequest(new { ok = false, error = "Weight cannot be negative." });
+            if (request.DurationSeconds is not null && (request.DurationSeconds < 1 || request.DurationSeconds > TrainingSetRules.MaxDurationSeconds))
+                return BadRequest(new { ok = false, error = $"Duration must be between 1 and {TrainingSetRules.MaxDurationSeconds} seconds." });
+            if (!TrainingSetRules.HasEffort(request.Reps, request.DurationSeconds))
+                return BadRequest(new { ok = false, error = "A set needs either reps or a duration." });
+
             var training = new StrengthTraining
             {
                 Exercise = planSet.Exercise,
                 Reps = request.Reps,
                 Weight = request.Weight,
+                DurationSeconds = request.DurationSeconds,
                 Rating = request.Rating,
                 Notes = request.Notes,
                 Date = planSet.TrainingPlan.Date ?? DateTime.UtcNow.Date,
@@ -370,6 +383,10 @@ namespace LifelogBb.Controllers
                     ModelState.AddModelError(string.Empty, $"Set {i + 1}: reps cannot be negative.");
                 if (rows[i].Weight < 0)
                     ModelState.AddModelError(string.Empty, $"Set {i + 1}: weight cannot be negative.");
+                if (rows[i].DurationSeconds is not null && (rows[i].DurationSeconds < 1 || rows[i].DurationSeconds > TrainingSetRules.MaxDurationSeconds))
+                    ModelState.AddModelError(string.Empty, $"Set {i + 1}: duration must be between 1 and {TrainingSetRules.MaxDurationSeconds} seconds.");
+                if (!TrainingSetRules.HasEffort(rows[i].Reps, rows[i].DurationSeconds))
+                    ModelState.AddModelError(string.Empty, $"Set {i + 1}: needs either reps or a duration.");
             }
         }
 
@@ -384,6 +401,7 @@ namespace LifelogBb.Controllers
                     SortOrder = i,
                     Reps = rows[i].Reps,
                     Weight = rows[i].Weight,
+                    DurationSeconds = rows[i].DurationSeconds,
                     Notes = rows[i].Notes,
                     TrainingPlan = plan
                 };

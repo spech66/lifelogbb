@@ -53,11 +53,11 @@
                                     <tr>
                                         <td>@i</td>
                                         <td>@row.Planned.Exercise</td>
-                                        <td>@row.Planned.Reps &times; @row.Planned.Weight.ToString("0.##") kg</td>
+                                        <td>@TrainingSetFormat.Describe(row.Planned)</td>
                                         <td>
                                             @if (row.Actual != null)
                                             {
-                                                @: @row.Actual.Reps &times; @row.Actual.Weight.ToString("0.##") kg
+                                                @TrainingSetFormat.Describe(row.Actual)
                                             }
                                             else
                                             {
@@ -83,15 +83,14 @@
                         <div class="table-responsive">
                             <table class="table table-vcenter">
                                 <thead>
-                                    <tr><th>Exercise</th><th>Reps</th><th>Weight</th></tr>
+                                    <tr><th>Exercise</th><th>Set</th></tr>
                                 </thead>
                                 <tbody>
                                     @foreach (var extra in Model.ExtraTrainings)
                                     {
                                         <tr>
                                             <td><a asp-controller="StrengthTrainings" asp-action="Details" asp-route-id="@extra.Id">@extra.Exercise</a></td>
-                                            <td>@extra.Reps</td>
-                                            <td>@extra.Weight.ToString("0.##") kg</td>
+                                            <td>@TrainingSetFormat.Describe(extra)</td>
                                         </tr>
                                     }
                                 </tbody>

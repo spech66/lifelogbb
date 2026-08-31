@@ -5,9 +5,10 @@ namespace LifelogBb.Models.StrengthTrainings
     public class StrengthTrainingPersonalRecord
     {
         public string Exercise { get; set; } = string.Empty;
-        public double MaxWeight { get; set; }
+        // Null when the exercise was only ever done without a weight.
+        public double? MaxWeight { get; set; }
         public int MaxReps { get; set; }
-        public double MaxVolume { get; set; }
+        public double? MaxVolume { get; set; }
         public int TotalSessions { get; set; }
     }
 

@@ -1,4 +1,5 @@
 ﻿using LifelogBb.Interfaces.DTOs;
+using LifelogBb.Utilities;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,10 +12,18 @@ namespace LifelogBb.Models.Entities
         [MinLength(1)]
         public string Exercise { get; set; } = string.Empty;
 
+        // 0 for pure holds, where DurationSeconds carries the effort instead.
         public int Reps { get; set; }
 
+        // Null means no weight applies (bodyweight, band, mobility work) as opposed to an actual 0,
+        // so volume aggregations can skip the set instead of counting it as zero volume.
         [DisplayFormat(DataFormatString = "{0:0.00}")]
-        public double Weight { get; set; }
+        public double? Weight { get; set; }
+
+        // Set for timed work (planks, stretches, holds) where reps do not describe the effort.
+        [Range(1, TrainingSetRules.MaxDurationSeconds)]
+        [Display(Name = "Duration (seconds)")]
+        public int? DurationSeconds { get; set; }
 
         public string? Notes { get; set; }
 
@@ -43,7 +52,7 @@ namespace LifelogBb.Models.Entities
             // Default constructor
         }
 
-        public StrengthTraining(string exercise, int reps, double weight, string notes, int rating)
+        public StrengthTraining(string exercise, int reps, double? weight, string notes, int rating)
         {
             Exercise = exercise;
             Reps = reps;

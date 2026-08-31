@@ -31,9 +31,11 @@ namespace LifelogBb.Controllers
                 .Select(g => new StrengthTrainingPersonalRecord
                 {
                     Exercise = g.Key,
+                    // Max/Sum over a nullable weight skips the sets that have none instead of
+                    // treating bodyweight work as a 0 kg record.
                     MaxWeight = g.Max(s => s.Weight),
                     MaxReps = g.Max(s => s.Reps),
-                    MaxVolume = g.Max(s => s.Reps * s.Weight),
+                    MaxVolume = g.Max(s => TrainingSetFormat.Volume(s.Reps, s.Weight)),
                     TotalSessions = g.Count()
                 })
                 .OrderBy(r => r.Exercise)
@@ -43,7 +45,7 @@ namespace LifelogBb.Controllers
             {
                 TotalSessions = all.Count,
                 UniqueExerciseCount = personalRecords.Count,
-                TotalVolume = all.Sum(s => s.Reps * s.Weight),
+                TotalVolume = all.Sum(s => TrainingSetFormat.Volume(s.Reps, s.Weight)) ?? 0,
                 LastSession = all.FirstOrDefault(),
                 PersonalRecords = personalRecords,
                 RecentSessions = all.Take(5).ToList()
@@ -123,8 +125,8 @@ namespace LifelogBb.Controllers
                 {
                     date = g.Key.ToString("yyyy-MM-dd"),
                     topWeight = g.Max(s => s.Weight),
-                    est1Rm = Math.Round(g.Max(s => s.Weight * (1 + s.Reps / 30.0)), 1),
-                    volume = g.Sum(s => s.Reps * s.Weight),
+                    est1Rm = g.Max(s => s.Weight * (1 + s.Reps / 30.0)) is double oneRm ? Math.Round(oneRm, 1) : (double?)null,
+                    volume = g.Sum(s => TrainingSetFormat.Volume(s.Reps, s.Weight)) ?? 0,
                     sets = g.Count(),
                     totalReps = g.Sum(s => s.Reps)
                 })
@@ -157,7 +159,7 @@ namespace LifelogBb.Controllers
                 .Select(g => new
                 {
                     date = g.Key.ToString("yyyy-MM-dd"),
-                    volume = g.Sum(s => s.Reps * s.Weight),
+                    volume = g.Sum(s => TrainingSetFormat.Volume(s.Reps, s.Weight)) ?? 0,
                     sets = g.Count(),
                     exercises = g.Select(s => s.Exercise).Distinct().Count()
                 })
@@ -169,7 +171,7 @@ namespace LifelogBb.Controllers
                 .Select(g => new
                 {
                     weekStart = g.Key.ToString("yyyy-MM-dd"),
-                    volume = g.Sum(s => s.Reps * s.Weight),
+                    volume = g.Sum(s => TrainingSetFormat.Volume(s.Reps, s.Weight)) ?? 0,
                     trainingDays = g.Select(s => s.Date.Date).Distinct().Count(),
                     sets = g.Count()
                 })
@@ -196,7 +198,7 @@ namespace LifelogBb.Controllers
                 {
                     Date = g.Key,
                     SetCount = g.Count(),
-                    Volume = g.Sum(s => s.Reps * s.Weight),
+                    Volume = g.Sum(s => TrainingSetFormat.Volume(s.Reps, s.Weight)) ?? 0,
                     Exercises = g.Select(s => s.Exercise).Distinct().OrderBy(e => e).ToList(),
                     TrainingPlanId = g.Select(s => s.TrainingPlanId).FirstOrDefault(id => id != null),
                     TrainingPlanName = g.Select(s => s.TrainingPlan).FirstOrDefault(p => p != null)?.Name,
@@ -238,7 +240,7 @@ namespace LifelogBb.Controllers
         // POST: StrengthTrainings/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Exercise,Reps,Weight,Notes,Rating,Date")] StrengthTraining strengthTraining)
+        public async Task<IActionResult> Create([Bind("Exercise,Reps,Weight,DurationSeconds,Notes,Rating,Date")] StrengthTraining strengthTraining)
         {
             if (strengthTraining.Date == default)
             {
@@ -278,7 +280,7 @@ namespace LifelogBb.Controllers
         // POST: StrengthTrainings/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Exercise,Reps,Weight,Notes,Rating,Date,Id")] EditStrengthTrainingViewModel strengthTrainingViewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Exercise,Reps,Weight,DurationSeconds,Notes,Rating,Date,Id")] EditStrengthTrainingViewModel strengthTrainingViewModel)
         {
             if (id != strengthTrainingViewModel.Id)
             {

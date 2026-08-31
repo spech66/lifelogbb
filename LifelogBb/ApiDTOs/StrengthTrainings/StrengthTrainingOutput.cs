@@ -10,7 +10,9 @@ namespace LifelogBb.ApiDTOs.StrengthTrainings
 
         public int Reps { get; set; }
 
-        public double Weight { get; set; }
+        public double? Weight { get; set; }
+
+        public int? DurationSeconds { get; set; }
 
         public string? Notes { get; set; }
 

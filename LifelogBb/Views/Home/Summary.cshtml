@@ -26,7 +26,7 @@
     var recentQuotes = Model.Quotes.Take(3).ToList();
     var recentBucketLists = Model.BucketLists.Take(3).ToList();
     var recentWorkouts = Model.StrengthTrainings
-        .Select(s => new { Date = s.CreatedAt, Title = s.Exercise, Meta = $"{s.Weight:0.##} × {s.Reps}", Type = "Strength", Badge = "bg-azure-lt text-azure", Icon = "fa-dumbbell" })
+        .Select(s => new { Date = s.CreatedAt, Title = s.Exercise, Meta = TrainingSetFormat.Describe(s), Type = "Strength", Badge = "bg-azure-lt text-azure", Icon = "fa-dumbbell" })
         .Concat(Model.EnduranceTrainings.Select(e => new { Date = e.CreatedAt, Title = e.Exercise, Meta = $"{e.Distance:0.##} km{(e.Duration.HasValue ? $" · {e.Duration:hh\\:mm\\:ss}" : string.Empty)}", Type = "Endurance", Badge = "bg-green-lt text-green", Icon = "fa-person-running" }))
         .OrderByDescending(x => x.Date)
         .Take(5)

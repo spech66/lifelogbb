@@ -29,19 +29,24 @@
         <div class="card mb-2" data-plan-set-row>
             <div class="card-body py-2">
                 <div class="row g-2 align-items-end">
-                    <div class="col-12 col-md-4">
+                    <div class="col-12 col-md-3">
                         <label class="form-label small mb-1">Exercise</label>
                         <input type="text" class="form-control form-control-lg" data-plan-set-exercise list="planSetExerciseList" />
                     </div>
-                    <div class="col-4 col-md-2">
+                    <div class="col-4 col-md-1">
                         <label class="form-label small mb-1">Reps</label>
                         <input type="number" min="0" class="form-control form-control-lg" data-plan-set-reps value="10" />
                     </div>
+                    @* Left empty on purpose: a blank weight means "no weight applies" and is stored as null. *@
                     <div class="col-4 col-md-2">
                         <label class="form-label small mb-1">Weight</label>
-                        <input type="number" min="0" step="0.5" class="form-control form-control-lg" data-plan-set-weight value="0" />
+                        <input type="number" min="0" step="0.5" class="form-control form-control-lg" data-plan-set-weight placeholder="none" />
                     </div>
                     <div class="col-4 col-md-2">
+                        <label class="form-label small mb-1">Hold (s)</label>
+                        <input type="number" min="0" class="form-control form-control-lg" data-plan-set-duration placeholder="none" />
+                    </div>
+                    <div class="col-12 col-md-2">
                         <label class="form-label small mb-1">Notes</label>
                         <input type="text" class="form-control form-control-lg" data-plan-set-notes />
                     </div>

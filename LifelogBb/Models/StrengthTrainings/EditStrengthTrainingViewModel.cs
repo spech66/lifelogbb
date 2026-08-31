@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using LifelogBb.Utilities;
 
 namespace LifelogBb.Models.StrengthTrainings
 {
@@ -11,7 +12,11 @@ namespace LifelogBb.Models.StrengthTrainings
 
         public int Reps { get; set; }
 
-        public double Weight { get; set; }
+        public double? Weight { get; set; }
+
+        [Range(1, TrainingSetRules.MaxDurationSeconds)]
+        [Display(Name = "Duration (seconds)")]
+        public int? DurationSeconds { get; set; }
 
         public string? Notes { get; set; }
 
