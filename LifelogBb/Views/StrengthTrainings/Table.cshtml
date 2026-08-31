@@ -42,6 +42,9 @@
                                 <th>
                                     Notes
                                 </th>
+                                <th>
+                                    Plan
+                                </th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -70,6 +73,17 @@
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.Notes)
+                                    </td>
+                                    <td>
+                                        @* Without this a training day that mixes two plans reads as one undifferentiated block of sets. *@
+                                        @if (item.TrainingPlan != null)
+                                        {
+                                            <a class="badge bg-blue-lt" asp-controller="TrainingPlans" asp-action="Details" asp-route-id="@item.TrainingPlanId">@item.TrainingPlan.Name</a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">@TrainingSetFormat.Empty</span>
+                                        }
                                     </td>
                                     <td class="text-end">
                                         <div class="dropdown">

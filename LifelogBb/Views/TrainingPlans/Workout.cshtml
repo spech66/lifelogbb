@@ -16,6 +16,10 @@
                     {
                         <div class="text-secondary mb-2">@Model.Plan.Date.Value.ToString("yyyy-MM-dd")</div>
                     }
+                    @if (!string.IsNullOrWhiteSpace(Model.Plan.Description))
+                    {
+                        <p class="text-secondary mb-2">@Model.Plan.Description</p>
+                    }
                     <div class="d-flex justify-content-between mb-1">
                         <span id="workout-progress-label">@Model.DoneCount / @Model.TotalCount sets done</span>
                     </div>
@@ -42,6 +46,12 @@
                                 <div class="text-secondary small">Set @index</div>
                                 <h3 class="mb-0">@row.Planned.Exercise</h3>
                                 <div class="text-secondary">Planned: @TrainingSetFormat.Describe(row.Planned)</div>
+                                @* The note is where the how-to of a set lives (grip, tempo, cues), so it has to be
+                                   readable while the set is being done, not only back in the plan editor. *@
+                                @if (!string.IsNullOrWhiteSpace(row.Planned.Notes))
+                                {
+                                    <div class="text-secondary">Note: @row.Planned.Notes</div>
+                                }
                             </div>
                             <div data-workout-set-done-badge class="@(row.Actual == null ? "d-none" : "")">
                                 <span class="badge bg-success"><i class="fas fa-check icon m-0"></i> Done</span>

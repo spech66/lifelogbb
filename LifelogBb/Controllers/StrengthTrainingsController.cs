@@ -73,10 +73,17 @@ namespace LifelogBb.Controllers
 
             var trainings = from s in _context.StrengthTrainings select s;
             trainings = trainings.FilterByGroup(filter);
-            trainings = trainings.SortByName(sortOrder, $"{nameof(StrengthTraining.Date)}_desc");
+
+            // The chosen column alone leaves ties -- a whole training day ties on Date -- and an unordered
+            // tie is free to interleave the sets of two plans and to shuffle rows between pages. Plan and
+            // logging order break the tie, so a day reads plan by plan, in the order the sets were logged.
+            var sorted = trainings.SortByName(sortOrder, $"{nameof(StrengthTraining.Date)}_desc")
+                .ThenBy(s => s.TrainingPlanId)
+                .ThenBy(s => s.CreatedAt)
+                .ThenBy(s => s.Id);
 
             var config = Config.GetConfig(_context);
-            var list = await PaginatedList<StrengthTraining>.CreateAsync(trainings.AsNoTracking(), pageNumber ?? 1, config.StrengthTrainingPageSize);
+            var list = await PaginatedList<StrengthTraining>.CreateAsync(sorted.Include(s => s.TrainingPlan).AsNoTracking(), pageNumber ?? 1, config.StrengthTrainingPageSize);
             return View(new PaginatedListViewModel<StrengthTraining>(list, config));
         }
 
@@ -191,19 +198,28 @@ namespace LifelogBb.Controllers
 
             var sets = await query.Include(s => s.TrainingPlan).ToListAsync();
 
+            // One lookup instead of a count query per session row.
+            var plannedSetCounts = await _context.TrainingPlanSets
+                .GroupBy(ps => ps.TrainingPlanId)
+                .Select(g => new { PlanId = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(g => g.PlanId, g => g.Count);
+
+            // Grouped by day *and* plan: two plans worked on the same day are two sessions, and sets logged
+            // without a plan stay their own row instead of being folded into whichever plan came first.
             var sessions = sets
-                .GroupBy(s => s.Date.Date)
-                .OrderByDescending(g => g.Key)
+                .GroupBy(s => new { Date = s.Date.Date, s.TrainingPlanId })
+                .OrderByDescending(g => g.Key.Date)
+                .ThenBy(g => g.Min(s => s.CreatedAt))
                 .Select(g => new StrengthTrainingSession
                 {
-                    Date = g.Key,
+                    Date = g.Key.Date,
                     SetCount = g.Count(),
                     Volume = g.Sum(s => TrainingSetFormat.Volume(s.Reps, s.Weight)) ?? 0,
                     Exercises = g.Select(s => s.Exercise).Distinct().OrderBy(e => e).ToList(),
-                    TrainingPlanId = g.Select(s => s.TrainingPlanId).FirstOrDefault(id => id != null),
+                    TrainingPlanId = g.Key.TrainingPlanId,
                     TrainingPlanName = g.Select(s => s.TrainingPlan).FirstOrDefault(p => p != null)?.Name,
-                    PlannedSetCount = g.Select(s => s.TrainingPlan).FirstOrDefault(p => p != null)?.Id is long planId
-                        ? _context.TrainingPlanSets.Count(ps => ps.TrainingPlanId == planId)
+                    PlannedSetCount = g.Key.TrainingPlanId is long planId && plannedSetCounts.TryGetValue(planId, out var plannedCount)
+                        ? plannedCount
                         : (int?)null
                 })
                 .ToList();
