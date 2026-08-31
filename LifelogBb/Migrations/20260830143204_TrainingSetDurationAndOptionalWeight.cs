@@ -38,12 +38,10 @@ namespace LifelogBb.Migrations
                 type: "INTEGER",
                 nullable: true);
 
-            // Before this migration a set without a weight had to be stored as 0, so every bodyweight,
-            // band and mobility set looks like an explicit 0 kg. Nothing is lost by reading those back
-            // as "no weight applies": a 0 kg set has no volume either way, and null keeps it out of the
-            // volume statistics instead of dragging them down.
-            migrationBuilder.Sql("UPDATE StrengthTrainings SET Weight = NULL WHERE Weight = 0");
-            migrationBuilder.Sql("UPDATE TrainingPlanSets SET Weight = NULL WHERE Weight = 0");
+            // The 0 -> null backfill for existing rows lives in the BackfillOptionalSetWeight migration.
+            // SQLite cannot alter a column in place, so the AlterColumn calls above are applied as a
+            // deferred table rebuild at the end of this migration. Raw SQL does not force that rebuild,
+            // so an UPDATE writing null here would still hit the old NOT NULL table and fail.
         }
 
         /// <inheritdoc />
