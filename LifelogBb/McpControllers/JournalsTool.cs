@@ -15,7 +15,7 @@ namespace LifelogBb.McpControllers
 
         [McpServerTool(Name = "GetAllJournals", Title = "Get All Journals", ReadOnly = true, OpenWorld = false), Description("Get all journal data, newest first by journal date. Optionally filter by providing a JSON filter expression, sort by a field, and limit how many entries are returned. For the most recent entries use a small limit.")]
         public async Task<IEnumerable<JournalOutput>> McpGetAll(
-            [Description("Optional JSON filter expression")] string? filter = null,
+            [Description("Optional JSON filter expression, passed as a string containing a filter group: {\"operator\":\"And\",\"conditions\":[{\"field\":\"FieldName\",\"operator\":\"Equal\",\"value\":\"someValue\"}]}. The group operator is And or Or, conditions support Equal, NotEqual, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, Contains, NotContains, In and NotIn, and value is always a string (In/NotIn take a comma-separated list). Groups can be nested via \"groups\".")] string? filter = null,
             [Description("Optional sort field, for example \"Date\" ascending or \"Date_desc\" descending. Date is the day the entry is about, CreatedAt is when it was written. Defaults to the newest journal date first.")] string? sort = null,
             [Description("Optional maximum number of entries to return. Combine with sort to fetch only the entries you need.")] int? limit = null)
         {
