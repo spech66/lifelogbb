@@ -186,7 +186,7 @@ namespace LifelogBb.ApiServices
                     ["filter"] = new JsonObject
                     {
                         ["type"] = "string",
-                        ["description"] = "Optional JSON filter expression to filter results"
+                        ["description"] = "Optional JSON filter expression to filter results, passed as a string containing a filter group: {\"operator\":\"And\",\"conditions\":[{\"field\":\"FieldName\",\"operator\":\"Equal\",\"value\":\"someValue\"}]}. The group operator is And or Or, conditions support Equal, NotEqual, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, Contains, NotContains, In and NotIn, and value is always a string (In/NotIn take a comma-separated list)."
                     },
                     ["limit"] = new JsonObject
                     {
