@@ -13,7 +13,7 @@ namespace LifelogBb.McpControllers
         {
         }
 
-        [McpServerTool(Name = "GetAllTrainingPlans", Title = "Get All Training Plans", ReadOnly = true, OpenWorld = false), Description("Get strength training plans, newest first, including their planned sets in order. A plan with no Date is a reusable base/template plan; a plan with a Date is a concrete plan for that specific day. Optionally filter (e.g. {\"IsArchived\":false}), sort, and limit results.")]
+        [McpServerTool(Name = "GetAllTrainingPlans", Title = "Get All Training Plans", ReadOnly = true, OpenWorld = false), Description("Get strength training plans, newest first, including their planned sets in order. A plan with no Date is a reusable base/template plan; a plan with a Date is a concrete plan for that specific day. Optionally filter, sort, and limit results. The filter is a JSON filter group, so hiding archived plans is {\"operator\":\"And\",\"conditions\":[{\"field\":\"IsArchived\",\"operator\":\"Equal\",\"value\":\"false\"}]} passed as a string, with the condition value always a string.")]
         public async Task<IEnumerable<TrainingPlanOutput>> McpGetAll(
             [Description("Optional JSON filter expression")] string? filter = null,
             [Description("Optional sort field, for example \"CreatedAt\" ascending or \"CreatedAt_desc\" descending. Defaults to newest first.")] string? sort = null,
