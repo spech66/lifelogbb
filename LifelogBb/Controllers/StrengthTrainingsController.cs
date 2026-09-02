@@ -75,12 +75,14 @@ namespace LifelogBb.Controllers
             trainings = trainings.FilterByGroup(filter);
 
             // The chosen column alone leaves ties -- a whole training day ties on Date -- and an unordered
-            // tie is free to interleave the sets of two plans and to shuffle rows between pages. Plan and
-            // logging order break the tie, so a day reads plan by plan, in the order the sets were logged.
-            var sorted = trainings.SortByName(sortOrder, $"{nameof(StrengthTraining.Date)}_desc")
-                .ThenBy(s => s.TrainingPlanId)
-                .ThenBy(s => s.CreatedAt)
-                .ThenBy(s => s.Id);
+            // tie is free to shuffle rows between pages. Logging order breaks the tie, in the same
+            // direction as the chosen column: the default descending table is a log of every set with the
+            // most recent on top, so a second plan trained later the same day sorts above the first one.
+            var defaultSort = $"{nameof(StrengthTraining.Date)}_desc";
+            var byColumn = trainings.SortByName(sortOrder, defaultSort);
+            var sorted = trainings.ResolveSortOrder(sortOrder, defaultSort).EndsWith("_desc")
+                ? byColumn.ThenByDescending(s => s.CreatedAt).ThenByDescending(s => s.Id)
+                : byColumn.ThenBy(s => s.CreatedAt).ThenBy(s => s.Id);
 
             var config = Config.GetConfig(_context);
             var list = await PaginatedList<StrengthTraining>.CreateAsync(sorted.Include(s => s.TrainingPlan).AsNoTracking(), pageNumber ?? 1, config.StrengthTrainingPageSize);

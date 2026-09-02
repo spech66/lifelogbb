@@ -1,4 +1,4 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using LifelogBb.Models.Filtering;
 using Microsoft.EntityFrameworkCore;
 
@@ -63,14 +63,26 @@ namespace LifelogBb.Utilities
             }
         }
 
-        // https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/advanced?view=aspnetcore-7.0#use-dynamic-linq-to-simplify-code
-        public static IOrderedQueryable<T> SortByName<T>(this IQueryable<T> query, string sortOrder, string defaultSort = "CreatedAt_desc") where T : class
+        /// <summary>
+        /// The sort order SortByName will actually apply, i.e. the requested one or the default it
+        /// falls back to. Callers that append their own tiebreakers need it to sort those in the
+        /// same direction as the chosen column.
+        /// </summary>
+        public static string ResolveSortOrder<T>(this IQueryable<T> query, string sortOrder, string defaultSort = "CreatedAt_desc") where T : class
         {
             // Sorting name is not specified or on the entity => fallback to default to prevent errors
             if (string.IsNullOrEmpty(sortOrder) || query.ElementType.GetProperty(sortOrder.Replace("_desc", "")) == null)
             {
-                sortOrder = defaultSort;
+                return defaultSort;
             }
+
+            return sortOrder;
+        }
+
+        // https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/advanced?view=aspnetcore-7.0#use-dynamic-linq-to-simplify-code
+        public static IOrderedQueryable<T> SortByName<T>(this IQueryable<T> query, string sortOrder, string defaultSort = "CreatedAt_desc") where T : class
+        {
+            sortOrder = query.ResolveSortOrder(sortOrder, defaultSort);
 
             bool descending = false;
             if (sortOrder.EndsWith("_desc"))
