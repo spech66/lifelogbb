@@ -1,4 +1,5 @@
-using System.Text.Json;
+﻿using System.Text.Json;
+using LifelogBb.Models.Entities;
 using LifelogBb.Models.Filtering;
 using Microsoft.EntityFrameworkCore;
 
@@ -79,14 +80,26 @@ namespace LifelogBb.Utilities
                 descending = true;
             }
 
-            if (descending)
+            var ordered = descending
+                ? query.OrderByDescending(e => EF.Property<object>(e, sortOrder))
+                : query.OrderBy(e => EF.Property<object>(e, sortOrder));
+
+            // Sorting by a field several rows share -- a day-granular Date above all, where one
+            // workout is many sets -- leaves the tied rows in whatever order the database happens
+            // to return them. A limited query then picks an arbitrary row out of that group, so
+            // "newest first" with limit 1 could hand back the first set of the latest day instead
+            // of the last one logged. Break ties by Id in the same direction to keep the order
+            // stable and the newest entry actually first.
+            const string idProperty = nameof(BaseEntity.Id);
+            if (!string.Equals(sortOrder, idProperty, StringComparison.Ordinal)
+                && query.ElementType.GetProperty(idProperty) != null)
             {
-                return query.OrderByDescending(e => EF.Property<object>(e, sortOrder));
+                ordered = descending
+                    ? ordered.ThenByDescending(e => EF.Property<object>(e, idProperty))
+                    : ordered.ThenBy(e => EF.Property<object>(e, idProperty));
             }
-            else
-            {
-                return query.OrderBy(e => EF.Property<object>(e, sortOrder));
-            }
+
+            return ordered;
         }
 
         public static IQueryable<T> FilterByStringProps<T>(this IQueryable<T> query, string field, string searchString) where T : class
