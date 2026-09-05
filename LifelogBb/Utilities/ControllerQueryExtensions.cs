@@ -64,14 +64,27 @@ namespace LifelogBb.Utilities
             }
         }
 
-        // https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/advanced?view=aspnetcore-7.0#use-dynamic-linq-to-simplify-code
-        public static IOrderedQueryable<T> SortByName<T>(this IQueryable<T> query, string sortOrder, string defaultSort = "CreatedAt_desc") where T : class
+        /// <summary>
+        /// The sort order SortByName actually applies, i.e. the requested one or the default it
+        /// falls back to for a field the entity does not have. Kept separate because the tiebreakers
+        /// below have to follow the direction of the order that is really in effect, not of the
+        /// requested one.
+        /// </summary>
+        private static string ResolveSortOrder<T>(this IQueryable<T> query, string sortOrder, string defaultSort) where T : class
         {
             // Sorting name is not specified or on the entity => fallback to default to prevent errors
             if (string.IsNullOrEmpty(sortOrder) || query.ElementType.GetProperty(sortOrder.Replace("_desc", "")) == null)
             {
-                sortOrder = defaultSort;
+                return defaultSort;
             }
+
+            return sortOrder;
+        }
+
+        // https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/advanced?view=aspnetcore-7.0#use-dynamic-linq-to-simplify-code
+        public static IOrderedQueryable<T> SortByName<T>(this IQueryable<T> query, string sortOrder, string defaultSort = "CreatedAt_desc") where T : class
+        {
+            sortOrder = query.ResolveSortOrder(sortOrder, defaultSort);
 
             bool descending = false;
             if (sortOrder.EndsWith("_desc"))
@@ -86,17 +99,21 @@ namespace LifelogBb.Utilities
 
             // Sorting by a field several rows share -- a day-granular Date above all, where one
             // workout is many sets -- leaves the tied rows in whatever order the database happens
-            // to return them. A limited query then picks an arbitrary row out of that group, so
-            // "newest first" with limit 1 could hand back the first set of the latest day instead
-            // of the last one logged. Break ties by Id in the same direction to keep the order
-            // stable and the newest entry actually first.
-            const string idProperty = nameof(BaseEntity.Id);
-            if (!string.Equals(sortOrder, idProperty, StringComparison.Ordinal)
-                && query.ElementType.GetProperty(idProperty) != null)
+            // to return them. A limited query then picks an arbitrary row out of that group and a
+            // paged one is free to shuffle rows between pages, so "newest first" with limit 1 could
+            // hand back the first set of the latest day instead of the last one logged. Logging
+            // order breaks the tie, in the same direction as the chosen column, which keeps the
+            // order stable and puts the newest entry actually first.
+            foreach (var tiebreaker in new[] { nameof(BaseEntity.CreatedAt), nameof(BaseEntity.Id) })
             {
+                if (string.Equals(sortOrder, tiebreaker, StringComparison.Ordinal)
+                    || query.ElementType.GetProperty(tiebreaker) == null)
+                    continue;
+
+                var field = tiebreaker;
                 ordered = descending
-                    ? ordered.ThenByDescending(e => EF.Property<object>(e, idProperty))
-                    : ordered.ThenBy(e => EF.Property<object>(e, idProperty));
+                    ? ordered.ThenByDescending(e => EF.Property<object>(e, field))
+                    : ordered.ThenBy(e => EF.Property<object>(e, field));
             }
 
             return ordered;

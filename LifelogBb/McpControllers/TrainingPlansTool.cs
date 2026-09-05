@@ -13,9 +13,9 @@ namespace LifelogBb.McpControllers
         {
         }
 
-        [McpServerTool(Name = "GetAllTrainingPlans", Title = "Get All Training Plans", ReadOnly = true, OpenWorld = false), Description("Get strength training plans, newest first, including their planned sets in order. A plan with no Date is a reusable base/template plan; a plan with a Date is a concrete plan for that specific day. Optionally filter (e.g. {\"IsArchived\":false}), sort, and limit results.")]
+        [McpServerTool(Name = "GetAllTrainingPlans", Title = "Get All Training Plans", ReadOnly = true, OpenWorld = false), Description("Get strength training plans, newest first, including their planned sets in order. A plan with no Date is a reusable base/template plan; a plan with a Date is a concrete plan for that specific day. Optionally filter, sort, and limit results; filter IsArchived Equal false to leave out archived plans.")]
         public async Task<IEnumerable<TrainingPlanOutput>> McpGetAll(
-            [Description("Optional JSON filter expression")] string? filter = null,
+            [Description("Optional JSON filter expression, passed as a string containing a filter group: {\"operator\":\"And\",\"conditions\":[{\"field\":\"FieldName\",\"operator\":\"Equal\",\"value\":\"someValue\"}]}. The group operator is And or Or, conditions support Equal, NotEqual, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, Contains, NotContains, In and NotIn, and value is always a string (In/NotIn take a comma-separated list). Groups can be nested via \"groups\".")] string? filter = null,
             [Description("Optional sort field, for example \"CreatedAt\" ascending or \"CreatedAt_desc\" descending. Defaults to newest first.")] string? sort = null,
             [Description("Optional maximum number of entries to return.")] int? limit = null)
         {
