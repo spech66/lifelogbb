@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using LifelogBb.Models.Entities;
 using LifelogBb.Models.Filtering;
 using Microsoft.EntityFrameworkCore;
 
@@ -64,11 +65,12 @@ namespace LifelogBb.Utilities
         }
 
         /// <summary>
-        /// The sort order SortByName will actually apply, i.e. the requested one or the default it
-        /// falls back to. Callers that append their own tiebreakers need it to sort those in the
-        /// same direction as the chosen column.
+        /// The sort order SortByName actually applies, i.e. the requested one or the default it
+        /// falls back to for a field the entity does not have. Kept separate because the tiebreakers
+        /// below have to follow the direction of the order that is really in effect, not of the
+        /// requested one.
         /// </summary>
-        public static string ResolveSortOrder<T>(this IQueryable<T> query, string sortOrder, string defaultSort = "CreatedAt_desc") where T : class
+        private static string ResolveSortOrder<T>(this IQueryable<T> query, string sortOrder, string defaultSort) where T : class
         {
             // Sorting name is not specified or on the entity => fallback to default to prevent errors
             if (string.IsNullOrEmpty(sortOrder) || query.ElementType.GetProperty(sortOrder.Replace("_desc", "")) == null)
@@ -91,14 +93,30 @@ namespace LifelogBb.Utilities
                 descending = true;
             }
 
-            if (descending)
+            var ordered = descending
+                ? query.OrderByDescending(e => EF.Property<object>(e, sortOrder))
+                : query.OrderBy(e => EF.Property<object>(e, sortOrder));
+
+            // Sorting by a field several rows share -- a day-granular Date above all, where one
+            // workout is many sets -- leaves the tied rows in whatever order the database happens
+            // to return them. A limited query then picks an arbitrary row out of that group and a
+            // paged one is free to shuffle rows between pages, so "newest first" with limit 1 could
+            // hand back the first set of the latest day instead of the last one logged. Logging
+            // order breaks the tie, in the same direction as the chosen column, which keeps the
+            // order stable and puts the newest entry actually first.
+            foreach (var tiebreaker in new[] { nameof(BaseEntity.CreatedAt), nameof(BaseEntity.Id) })
             {
-                return query.OrderByDescending(e => EF.Property<object>(e, sortOrder));
+                if (string.Equals(sortOrder, tiebreaker, StringComparison.Ordinal)
+                    || query.ElementType.GetProperty(tiebreaker) == null)
+                    continue;
+
+                var field = tiebreaker;
+                ordered = descending
+                    ? ordered.ThenByDescending(e => EF.Property<object>(e, field))
+                    : ordered.ThenBy(e => EF.Property<object>(e, field));
             }
-            else
-            {
-                return query.OrderBy(e => EF.Property<object>(e, sortOrder));
-            }
+
+            return ordered;
         }
 
         public static IQueryable<T> FilterByStringProps<T>(this IQueryable<T> query, string field, string searchString) where T : class

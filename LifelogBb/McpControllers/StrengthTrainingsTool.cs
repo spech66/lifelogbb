@@ -13,7 +13,7 @@ namespace LifelogBb.McpControllers
         {
         }
 
-        [McpServerTool(Name = "GetAllStrengthTrainings", Title = "Get All Strength Trainings", ReadOnly = true, OpenWorld = false), Description("Get all strength training data, newest first. Optionally filter by providing a JSON filter expression, sort by a field, and limit how many entries are returned. For the last workout use limit 1.")]
+        [McpServerTool(Name = "GetAllStrengthTrainings", Title = "Get All Strength Trainings", ReadOnly = true, OpenWorld = false), Description("Get all strength training entries, newest first: latest training day first, and within a day the set logged last comes first. One entry is one set, so limit 1 returns the single most recent set, not a whole workout -- for the last workout use a larger limit or filter by its date.")]
         public async Task<IEnumerable<StrengthTrainingOutput>> McpGetAll(
             [Description("Optional JSON filter expression, passed as a string containing a filter group: {\"operator\":\"And\",\"conditions\":[{\"field\":\"FieldName\",\"operator\":\"Equal\",\"value\":\"someValue\"}]}. The group operator is And or Or, conditions support Equal, NotEqual, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, Contains, NotContains, In and NotIn, and value is always a string (In/NotIn take a comma-separated list). Groups can be nested via \"groups\".")] string? filter = null,
             [Description("Optional sort field, for example \"CreatedAt\" ascending or \"CreatedAt_desc\" descending. Defaults to newest first.")] string? sort = null,
