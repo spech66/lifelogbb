@@ -18,10 +18,10 @@ namespace LifelogBb.ApiServices
             _mapper = mapper;
         }
 
+        // Goes through the sorted overload so a plain GET has the same default order as a filtered one.
         public virtual async Task<ActionResult<IEnumerable<OUTP>>> GetAll()
         {
-            var entities = await _repository.Query.ToListAsync();
-            return _mapper.Map<List<OUTP>>(entities);
+            return await GetAll(null);
         }
 
         /// <summary>

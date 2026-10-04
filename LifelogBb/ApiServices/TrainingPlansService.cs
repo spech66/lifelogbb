@@ -20,12 +20,6 @@ namespace LifelogBb.ApiServices
 
         protected override string DefaultSortOrder => $"{nameof(TrainingPlan.CreatedAt)}_desc";
 
-        public override async Task<ActionResult<IEnumerable<TrainingPlanOutput>>> GetAll()
-        {
-            var entities = await _repository.Query.Include(p => p.Sets).ToListAsync();
-            return _mapper.Map<List<TrainingPlanOutput>>(entities);
-        }
-
         public override async Task<ActionResult<IEnumerable<TrainingPlanOutput>>> GetAll(string? filterJson, string? sortOrder = null, int? limit = null)
         {
             sortOrder = string.IsNullOrWhiteSpace(sortOrder) ? DefaultSortOrder : sortOrder;
