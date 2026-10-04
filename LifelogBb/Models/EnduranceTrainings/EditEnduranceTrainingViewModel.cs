@@ -20,5 +20,8 @@ namespace LifelogBb.Models.EnduranceTrainings
 
         [Range(1, 5)]
         public int Rating { get; set; }
+
+        [DataType(DataType.Date)]
+        public DateTime Date { get; set; }
     }
 }

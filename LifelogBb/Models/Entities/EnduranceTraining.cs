@@ -25,6 +25,10 @@ namespace LifelogBb.Models.Entities
         [DefaultValue(3)]
         public int Rating { get; set; }
 
+        // The day this workout was done. Distinct from CreatedAt so workouts can be logged retroactively.
+        [DataType(DataType.Date)]
+        public DateTime Date { get; set; }
+
         public EnduranceTraining()
         {
             // Default constructor

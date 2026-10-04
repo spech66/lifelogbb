@@ -42,7 +42,7 @@ namespace LifelogBb.Controllers
             var weights = await _context.Weights.OrderByDescending(o => o.CreatedAt).Take(10).ToListAsync();
             model.WeightList = weights.OrderBy(o => o.CreatedAt).ToList();
 
-            var enduranceTraining = await _context.EnduranceTrainings.OrderByDescending(o => o.CreatedAt).Take(1).FirstOrDefaultAsync();
+            var enduranceTraining = await _context.EnduranceTrainings.OrderByDescending(o => o.Date).ThenByDescending(o => o.CreatedAt).Take(1).FirstOrDefaultAsync();
             model.LastEnduranceTraining = enduranceTraining;
 
             var strengthTraining = await _context.StrengthTrainings.OrderByDescending(o => o.Date).ThenByDescending(o => o.CreatedAt).Take(1).FirstOrDefaultAsync();
@@ -139,8 +139,8 @@ namespace LifelogBb.Controllers
                 .OrderByDescending(s => s.Date)
                 .ToListAsync();
             model.EnduranceTrainings = await _context.EnduranceTrainings
-                .Where(e => e.CreatedAt >= queryStart && e.CreatedAt < queryEndExclusive)
-                .OrderByDescending(e => e.CreatedAt)
+                .Where(e => e.Date >= queryStart && e.Date < queryEndExclusive)
+                .OrderByDescending(e => e.Date)
                 .ToListAsync();
             model.BucketLists = await _context.BucketLists
                 .Where(b => b.CreatedAt >= queryStart && b.CreatedAt < queryEndExclusive)
@@ -161,8 +161,8 @@ namespace LifelogBb.Controllers
                     .Concat(model.Todos.Select(x => x.CreatedAt))
                     .Concat(model.Goals.Select(x => x.CreatedAt))
                     .Concat(model.Habits.Select(x => x.CreatedAt))
-                    .Concat(model.StrengthTrainings.Select(x => x.CreatedAt))
-                    .Concat(model.EnduranceTrainings.Select(x => x.CreatedAt))
+                    .Concat(model.StrengthTrainings.Select(x => x.Date))
+                    .Concat(model.EnduranceTrainings.Select(x => x.Date))
                     .Concat(model.BucketLists.Select(x => x.CreatedAt))
                     .Concat(model.Quotes.Select(x => x.CreatedAt))
                     .Concat(model.Journals.Select(x => x.CreatedAt))

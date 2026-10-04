@@ -35,6 +35,13 @@
                         <input asp-for="Notes" class="form-control form-control-lg" />
                         <span asp-validation-for="Notes" class="text-danger"></span>
                     </div>
+                    @* Prefilled with today and placed last, so the usual entry flow is unchanged and
+                       only a workout logged after the fact needs a touch here. *@
+                    <div class="form-group mb-3">
+                        <label asp-for="Date" class="control-label mb-1"></label>
+                        <input asp-for="Date" type="date" class="form-control form-control-lg" />
+                        <span asp-validation-for="Date" class="text-danger"></span>
+                    </div>
                 </div>
                 <div class="card-footer text-end">
                     <div class="d-flex">
