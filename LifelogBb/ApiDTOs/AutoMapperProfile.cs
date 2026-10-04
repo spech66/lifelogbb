@@ -26,12 +26,13 @@ namespace LifelogBb.DTOs
             CreateMap<Journal, JournalOutput>();
 
             // EnduranceTrainings
-            CreateMap<EnduranceTrainingInput, EnduranceTraining>();
+            CreateMap<EnduranceTrainingInput, EnduranceTraining>()
+                .ForMember(dest => dest.Date, opt => opt.MapFrom((src, dest) => TrainingDate(src.Date, dest.Date)));
             CreateMap<EnduranceTraining, EnduranceTrainingOutput>();
 
             // StrengthTrainings
             CreateMap<StrengthTrainingInput, StrengthTraining>()
-                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => (src.Date ?? DateTime.UtcNow).Date));
+                .ForMember(dest => dest.Date, opt => opt.MapFrom((src, dest) => TrainingDate(src.Date, dest.Date)));
             CreateMap<StrengthTraining, StrengthTrainingOutput>();
 
             // TrainingPlans - Sets are built/replaced explicitly by TrainingPlansService, not by AutoMapper.
@@ -57,6 +58,15 @@ namespace LifelogBb.DTOs
             // Goals
             CreateMap<GoalInput, Goal>();
             CreateMap<Goal, GoalOutput>();
+        }
+
+        /// <summary>
+        /// A training date that is omitted defaults to today for a new entry, but keeps the stored day
+        /// on update -- otherwise correcting the reps of a backdated entry would silently move it to today.
+        /// </summary>
+        private static DateTime TrainingDate(DateTime? requested, DateTime existing)
+        {
+            return (requested ?? (existing == default ? DateTime.UtcNow : existing)).Date;
         }
     }
 }

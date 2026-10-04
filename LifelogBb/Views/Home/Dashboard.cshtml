@@ -32,17 +32,18 @@
 
     var lastWorkoutType = "No training yet";
     DateTime? lastWorkoutDate = null;
-    if (Model.LastStrengthTraining?.CreatedAt != null || Model.LastEnduranceTraining?.CreatedAt != null)
+    if (Model.LastStrengthTraining != null || Model.LastEnduranceTraining != null)
     {
-        if (Model.LastStrengthTraining?.CreatedAt >= Model.LastEnduranceTraining?.CreatedAt)
+        // Same-day ties go to strength; a missing side never wins, unlike a lifted null comparison.
+        if ((Model.LastStrengthTraining?.Date ?? DateTime.MinValue) >= (Model.LastEnduranceTraining?.Date ?? DateTime.MinValue))
         {
             lastWorkoutType = "Strength training";
-            lastWorkoutDate = Model.LastStrengthTraining?.CreatedAt;
+            lastWorkoutDate = Model.LastStrengthTraining?.Date;
         }
         else
         {
             lastWorkoutType = "Endurance workout";
-            lastWorkoutDate = Model.LastEnduranceTraining?.CreatedAt;
+            lastWorkoutDate = Model.LastEnduranceTraining?.Date;
         }
     }
 

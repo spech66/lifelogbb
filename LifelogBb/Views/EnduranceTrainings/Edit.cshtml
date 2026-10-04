@@ -35,6 +35,11 @@
                         <input asp-for="Notes" class="form-control form-control-lg" />
                         <span asp-validation-for="Notes" class="text-danger"></span>
                     </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="Date" class="control-label mb-1"></label>
+                        <input asp-for="Date" type="date" class="form-control form-control-lg" />
+                        <span asp-validation-for="Date" class="text-danger"></span>
+                    </div>
                     <input type="hidden" asp-for="Id" />
                 </div>
                 <div class="card-footer text-end">

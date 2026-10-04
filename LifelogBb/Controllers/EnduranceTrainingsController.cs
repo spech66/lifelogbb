@@ -23,7 +23,7 @@ namespace LifelogBb.Controllers
         public async Task<IActionResult> Index()
         {
             var all = await _context.EnduranceTrainings
-                .OrderByDescending(e => e.CreatedAt)
+                .OrderByDescending(e => e.Date).ThenByDescending(e => e.CreatedAt)
                 .ToListAsync();
 
             var personalRecords = all
@@ -78,7 +78,7 @@ namespace LifelogBb.Controllers
 
             var trainings = from s in _context.EnduranceTrainings select s;
             trainings = trainings.FilterByGroup(filter);
-            trainings = trainings.SortByName(sortOrder, $"{nameof(EnduranceTraining.CreatedAt)}_desc");
+            trainings = trainings.SortByName(sortOrder, $"{nameof(EnduranceTraining.Date)}_desc");
 
             var config = Config.GetConfig(_context);
             var list = await PaginatedList<EnduranceTraining>.CreateAsync(trainings.AsNoTracking(), pageNumber ?? 1, config.EnduranceTrainingPageSize);
@@ -100,7 +100,7 @@ namespace LifelogBb.Controllers
                 enduranceTrainings = enduranceTrainings.Where(s => s.Exercise == exercise);
             }
 
-            return Json(await enduranceTrainings.OrderBy(o => o.CreatedAt).ToListAsync());
+            return Json(await enduranceTrainings.OrderBy(o => o.Date).ThenBy(o => o.CreatedAt).ToListAsync());
         }
 
         // GET: EnduranceTrainings/Details/5
@@ -126,14 +126,19 @@ namespace LifelogBb.Controllers
         {
             var exercises = await _context.EnduranceTrainings.Select(s => s.Exercise).Distinct().ToListAsync();
             ViewData["ExerciseList"] = string.Join(",", exercises);
-            return View();
+            return View(new EnduranceTraining { Date = DateTime.UtcNow.Date });
         }
 
         // POST: EnduranceTrainings/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Exercise,Distance,Duration,Notes,Rating")] EnduranceTraining enduranceTraining)
+        public async Task<IActionResult> Create([Bind("Exercise,Distance,Duration,Notes,Rating,Date")] EnduranceTraining enduranceTraining)
         {
+            if (enduranceTraining.Date == default)
+            {
+                enduranceTraining.Date = DateTime.UtcNow.Date;
+            }
+
             if (ModelState.IsValid)
             {
                 enduranceTraining.SetCreateFields();
@@ -167,7 +172,7 @@ namespace LifelogBb.Controllers
         // POST: EnduranceTrainings/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Exercise,Distance,Duration,Notes,Rating,Id")] EditEnduranceTrainingViewModel enduranceTrainingViewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Exercise,Distance,Duration,Notes,Rating,Date,Id")] EditEnduranceTrainingViewModel enduranceTrainingViewModel)
         {
             if (id != enduranceTrainingViewModel.Id)
             {

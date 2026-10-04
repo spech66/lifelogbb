@@ -12,5 +12,8 @@ namespace LifelogBb.ApiServices
         public EnduranceTrainingsService(IRepository<EnduranceTraining> repository, IMapper mapper) : base(repository, mapper)
         {
         }
+
+        // The day the workout was done can differ from the day it was logged (retroactive entry).
+        protected override string DefaultSortOrder => $"{nameof(EnduranceTraining.Date)}_desc";
     }
 }

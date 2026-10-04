@@ -16,6 +16,8 @@ namespace LifelogBb.ApiDTOs.EnduranceTrainings
 
         public int Rating { get; set; }
 
+        public DateTime Date { get; set; }
+
         public DateTime CreatedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; }

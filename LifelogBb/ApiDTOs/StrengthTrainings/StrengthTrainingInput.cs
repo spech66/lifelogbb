@@ -24,7 +24,7 @@ namespace LifelogBb.ApiDTOs.StrengthTrainings
         [Range(1, 5)]
         public int Rating { get; set; }
 
-        [Description("The day this set was trained. Defaults to today when omitted.")]
+        [Description("The day this set was trained. Defaults to today when creating; left unchanged when omitted on update.")]
         public DateTime? Date { get; set; }
 
         [Description("Id of the training plan (template or day plan) this set belongs to, if any.")]
